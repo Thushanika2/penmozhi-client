@@ -37,7 +37,7 @@ function DialogTrigger({
   children,
   asChild,
 }: {
-  children: React.ReactElement
+  children: React.ReactElement<{ onClick?: (event: React.MouseEvent) => void }>
   asChild?: boolean
 }) {
   const context = React.useContext(DialogContext)
@@ -49,7 +49,7 @@ function DialogTrigger({
       child.props.onClick?.(event)
       context.setOpen(true)
     },
-  } as React.HTMLAttributes<HTMLElement>)
+  })
 }
 
 function DialogContent({
