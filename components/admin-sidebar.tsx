@@ -13,6 +13,7 @@ import {
 import * as React from "react"
 
 import { Button } from "@/components/ui/button"
+import { ThemeToggle } from "@/components/theme-toggle"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/providers/auth-provider"
 
@@ -40,14 +41,17 @@ export function AdminSidebar({ children }: { children: React.ReactNode }) {
             <p className="text-lg font-bold text-primary">Penmozhi Admin</p>
             <p className="text-xs text-muted-foreground">Content Management</p>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="lg:hidden"
-            onClick={() => setMobileOpen(false)}
-          >
-            <X className="size-4" />
-          </Button>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <Button
+              variant="ghost"
+              size="icon"
+              className="lg:hidden"
+              onClick={() => setMobileOpen(false)}
+            >
+              <X className="size-4" />
+            </Button>
+          </div>
         </div>
         <nav className="flex-1 space-y-1 p-3">
           {navItems.map((item) => {
@@ -98,7 +102,8 @@ export function AdminSidebar({ children }: { children: React.ReactNode }) {
           <Button variant="outline" size="icon" onClick={() => setMobileOpen(true)}>
             <Menu className="size-4" />
           </Button>
-          <span className="font-semibold">Admin</span>
+          <span className="flex-1 font-semibold">Admin</span>
+          <ThemeToggle />
         </header>
         <main className="flex-1 p-4 md:p-8">{children}</main>
       </div>

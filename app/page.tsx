@@ -2,6 +2,7 @@ import Link from "next/link"
 import { ArrowRight, BookOpen, HeartPulse, Sparkles } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
+import { ThemeToggle } from "@/components/theme-toggle"
 import {
   Card,
   CardContent,
@@ -12,13 +13,14 @@ import {
 
 export default function LandingPage() {
   return (
-    <div className="min-h-svh bg-gradient-to-b from-primary/5 via-background to-background">
+    <div className="min-h-svh bg-gradient-to-b from-[#f98fcd]/20 via-background to-background">
       <header className="mx-auto flex max-w-6xl items-center justify-between px-4 py-6">
         <div>
           <p className="text-2xl font-extrabold text-primary">Penmozhi</p>
           <p className="text-sm text-muted-foreground">பெண்மொழி · Women&apos;s Health</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
           <Button variant="outline" render={<Link href="/auth/login" />}>
             Login
           </Button>
