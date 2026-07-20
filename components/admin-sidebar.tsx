@@ -12,6 +12,7 @@ import {
 } from "lucide-react"
 import * as React from "react"
 
+import { BrandLogo } from "@/components/brand-logo"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { cn } from "@/lib/utils"
@@ -29,30 +30,35 @@ export function AdminSidebar({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = React.useState(false)
 
   return (
-    <div className="flex min-h-svh bg-muted/30">
+    <div className="flex min-h-svh bg-muted/20 gradient-mesh">
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r bg-background transition-transform lg:static lg:translate-x-0",
+          "fixed inset-y-0 left-0 z-40 flex w-72 flex-col border-r border-border/60 bg-background/90 shadow-xl shadow-primary/5 backdrop-blur-xl transition-transform lg:static lg:translate-x-0",
           mobileOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >
-        <div className="flex items-center justify-between border-b px-4 py-5">
-          <div>
-            <p className="text-lg font-bold text-primary">Penmozhi Admin</p>
-            <p className="text-xs text-muted-foreground">Content Management</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <ThemeToggle />
-            <Button
-              variant="ghost"
-              size="icon"
-              className="lg:hidden"
-              onClick={() => setMobileOpen(false)}
-            >
-              <X className="size-4" />
-            </Button>
+        <div className="border-b border-border/60 px-4 py-5">
+          <div className="flex items-start justify-between gap-2">
+            <div>
+              <BrandLogo href="/admin/dashboard" size="sm" />
+              <p className="mt-1 text-xs font-medium text-muted-foreground">
+                Admin · Content Management
+              </p>
+            </div>
+            <div className="flex items-center gap-1">
+              <ThemeToggle />
+              <Button
+                variant="ghost"
+                size="icon"
+                className="lg:hidden"
+                onClick={() => setMobileOpen(false)}
+              >
+                <X className="size-4" />
+              </Button>
+            </div>
           </div>
         </div>
+
         <nav className="flex-1 space-y-1 p-3">
           {navItems.map((item) => {
             const Icon = item.icon
@@ -63,9 +69,9 @@ export function AdminSidebar({ children }: { children: React.ReactNode }) {
                 href={item.href}
                 onClick={() => setMobileOpen(false)}
                 className={cn(
-                  "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                  "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all",
                   active
-                    ? "bg-primary/10 text-primary"
+                    ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
                     : "text-muted-foreground hover:bg-muted hover:text-foreground",
                 )}
               >
@@ -75,9 +81,12 @@ export function AdminSidebar({ children }: { children: React.ReactNode }) {
             )
           })}
         </nav>
-        <div className="border-t p-4">
-          <p className="truncate text-sm font-medium">{user?.full_name}</p>
-          <p className="truncate text-xs text-muted-foreground">{user?.email}</p>
+
+        <div className="border-t border-border/60 p-4">
+          <div className="rounded-xl bg-muted/60 p-3">
+            <p className="truncate text-sm font-semibold">{user?.full_name}</p>
+            <p className="truncate text-xs text-muted-foreground">{user?.email}</p>
+          </div>
           <Button
             variant="outline"
             size="sm"
@@ -92,17 +101,17 @@ export function AdminSidebar({ children }: { children: React.ReactNode }) {
 
       {mobileOpen ? (
         <div
-          className="fixed inset-0 z-30 bg-black/40 lg:hidden"
+          className="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm lg:hidden"
           onClick={() => setMobileOpen(false)}
         />
       ) : null}
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex items-center gap-3 border-b bg-background px-4 py-3 lg:hidden">
+        <header className="flex items-center gap-3 border-b border-border/60 bg-background/80 px-4 py-3 backdrop-blur-md lg:hidden">
           <Button variant="outline" size="icon" onClick={() => setMobileOpen(true)}>
             <Menu className="size-4" />
           </Button>
-          <span className="flex-1 font-semibold">Admin</span>
+          <span className="flex-1 text-sm font-semibold">Admin Panel</span>
           <ThemeToggle />
         </header>
         <main className="flex-1 p-4 md:p-8">{children}</main>
