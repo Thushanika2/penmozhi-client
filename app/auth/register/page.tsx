@@ -7,14 +7,13 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { toast } from "sonner"
 import { z } from "zod"
 
+import { AuthShell } from "@/components/auth-shell"
 import { GuestRoute } from "@/components/auth-guard"
-import { PageHeader } from "@/components/page-header"
-import { ThemeToggle } from "@/components/theme-toggle"
+import { BrandLogo } from "@/components/brand-logo"
 import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -72,43 +71,53 @@ function RegisterForm() {
   }
 
   return (
-    <div className="relative flex min-h-svh items-center justify-center bg-muted/30 p-4">
-      <div className="absolute right-4 top-4">
-        <ThemeToggle />
-      </div>
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <PageHeader
-            title="Create account"
-            description="Start tracking your health with Penmozhi"
-          />
+    <AuthShell>
+      <Card className="glass-panel w-full rounded-3xl border-border/60 shadow-2xl shadow-primary/10">
+        <CardHeader className="space-y-4">
+          <div className="lg:hidden">
+            <BrandLogo href="/" size="md" />
+          </div>
+          <CardTitle className="text-2xl">Create account</CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Start tracking your health with Penmozhi
+          </p>
         </CardHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="fullName">Full name</Label>
-              <Input id="fullName" {...register("fullName")} />
+              <Input id="fullName" className="rounded-xl" {...register("fullName")} />
               {errors.fullName ? (
                 <p className="text-sm text-destructive">{errors.fullName.message}</p>
               ) : null}
             </div>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" {...register("email")} />
+              <Input id="email" type="email" className="rounded-xl" {...register("email")} />
               {errors.email ? (
                 <p className="text-sm text-destructive">{errors.email.message}</p>
               ) : null}
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" {...register("password")} />
+              <Input
+                id="password"
+                type="password"
+                className="rounded-xl"
+                {...register("password")}
+              />
               {errors.password ? (
                 <p className="text-sm text-destructive">{errors.password.message}</p>
               ) : null}
             </div>
             <div className="space-y-2">
               <Label htmlFor="dateOfBirth">Date of birth</Label>
-              <Input id="dateOfBirth" type="date" {...register("dateOfBirth")} />
+              <Input
+                id="dateOfBirth"
+                type="date"
+                className="rounded-xl"
+                {...register("dateOfBirth")}
+              />
               {errors.dateOfBirth ? (
                 <p className="text-sm text-destructive">
                   {errors.dateOfBirth.message}
@@ -117,25 +126,29 @@ function RegisterForm() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="languagePreference">Language</Label>
-              <Select id="languagePreference" {...register("languagePreference")}>
+              <Select
+                id="languagePreference"
+                className="rounded-xl"
+                {...register("languagePreference")}
+              >
                 <option value="english">English</option>
                 <option value="tamil">Tamil (தமிழ்)</option>
               </Select>
             </div>
           </CardContent>
           <CardFooter className="flex flex-col gap-3">
-            <Button type="submit" className="w-full" disabled={isSubmitting}>
+            <Button type="submit" className="w-full rounded-full" disabled={isSubmitting}>
               {isSubmitting ? "Creating account..." : "Register"}
             </Button>
             <p className="text-sm text-muted-foreground">
               Already have an account?{" "}
-              <Link href="/auth/login" className="text-primary underline">
+              <Link href="/auth/login" className="font-medium text-primary underline">
                 Sign in
               </Link>
             </p>
           </CardFooter>
         </form>
       </Card>
-    </div>
+    </AuthShell>
   )
 }

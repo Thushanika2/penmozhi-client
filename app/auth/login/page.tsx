@@ -7,14 +7,13 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { toast } from "sonner"
 import { z } from "zod"
 
+import { AuthShell } from "@/components/auth-shell"
 import { GuestRoute } from "@/components/auth-guard"
-import { PageHeader } from "@/components/page-header"
-import { ThemeToggle } from "@/components/theme-toggle"
+import { BrandLogo } from "@/components/brand-logo"
 import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -59,47 +58,52 @@ function LoginForm() {
   }
 
   return (
-    <div className="relative flex min-h-svh items-center justify-center bg-muted/30 p-4">
-      <div className="absolute right-4 top-4">
-        <ThemeToggle />
-      </div>
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <PageHeader
-            title="Sign in"
-            description="Access your Penmozhi health dashboard"
-          />
+    <AuthShell>
+      <Card className="glass-panel rounded-3xl border-border/60 shadow-2xl shadow-primary/10">
+        <CardHeader className="space-y-4">
+          <div className="lg:hidden">
+            <BrandLogo href="/" size="md" />
+          </div>
+          <CardTitle className="text-2xl">Sign in</CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Access your Penmozhi health dashboard
+          </p>
         </CardHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" {...register("email")} />
+              <Input id="email" type="email" className="rounded-xl" {...register("email")} />
               {errors.email ? (
                 <p className="text-sm text-destructive">{errors.email.message}</p>
               ) : null}
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" {...register("password")} />
+              <Input
+                id="password"
+                type="password"
+                className="rounded-xl"
+                {...register("password")}
+              />
               {errors.password ? (
                 <p className="text-sm text-destructive">{errors.password.message}</p>
               ) : null}
             </div>
           </CardContent>
           <CardFooter className="flex flex-col gap-3">
-            <Button type="submit" className="w-full" disabled={isSubmitting}>
+            <Button type="submit" className="w-full rounded-full" disabled={isSubmitting}>
               {isSubmitting ? "Signing in..." : "Sign in"}
             </Button>
             <p className="text-sm text-muted-foreground">
               No account?{" "}
-              <Link href="/auth/register" className="text-primary underline">
+              <Link href="/auth/register" className="font-medium text-primary underline">
                 Register
               </Link>
             </p>
           </CardFooter>
         </form>
       </Card>
-    </div>
+    </AuthShell>
   )
 }

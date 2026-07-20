@@ -36,8 +36,8 @@ export function EducationDetailView({ id }: { id: number }) {
   if (!resource) return <p className="text-destructive">Article not found.</p>
 
   return (
-    <Card>
-      <CardHeader>
+    <Card className="overflow-hidden rounded-3xl border-border/70 shadow-lg shadow-primary/5">
+      <CardHeader className="border-b border-border/50 bg-gradient-to-r from-primary/5 to-[#f98fcd]/10">
         <div className="flex items-center gap-2">
           <Badge>{resource.content_category}</Badge>
           <span className="text-sm text-muted-foreground">
