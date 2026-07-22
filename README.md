@@ -33,8 +33,36 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Environment
 
-```
-NEXT_PUBLIC_API_URL=http://127.0.0.1:5000
+| Variable | Description |
+|----------|-------------|
+| `API_URL` | Backend URL for Next.js server rewrites (not exposed to the browser) |
+| `NEXT_PUBLIC_API_URL` | Client API base URL; use `/backend` to proxy through Next.js |
+
+Copy `.env.example` to `.env.local` for local development.
+
+## Deploy to Vercel
+
+1. Push this repo to GitHub (or GitLab / Bitbucket).
+2. In [Vercel](https://vercel.com/new), import the repository.
+3. Set **Root Directory** to `penmozhi-client` (the repo has both client and API).
+4. Framework preset should auto-detect **Next.js** (see `vercel.json`).
+5. Add environment variables under **Settings → Environment Variables**:
+
+   | Name | Value (production) |
+   |------|--------------------|
+   | `API_URL` | Your deployed Flask API URL, e.g. `https://your-api.example.com` |
+   | `NEXT_PUBLIC_API_URL` | `/backend` |
+
+6. Deploy. Vercel runs `npm run build` and serves the app.
+
+The `/backend` rewrite in `next.config.ts` forwards browser API calls to `API_URL`, so you do not need to expose the backend URL to the client or change CORS for the Vercel domain.
+
+**CLI (optional):**
+
+```bash
+cd penmozhi-client
+npx vercel
+npx vercel --prod
 ```
 
 ## Routes
