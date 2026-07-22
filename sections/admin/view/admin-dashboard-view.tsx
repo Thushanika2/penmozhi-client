@@ -11,35 +11,40 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { useLanguage } from "@/providers/language-provider"
 
 export function AdminDashboardView() {
+  const { t } = useLanguage()
+
   return (
     <div>
       <PageHeader
-        title="Admin Dashboard"
-        description="Manage educational content and moderate the community forum"
+        title={t("admin.dashboard.title")}
+        description={t("admin.dashboard.description")}
       />
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Education</CardTitle>
-            <CardDescription>Publish and edit health articles</CardDescription>
+            <CardTitle>{t("admin.dashboard.educationTitle")}</CardTitle>
+            <CardDescription>{t("admin.dashboard.educationDescription")}</CardDescription>
           </CardHeader>
           <CardContent className="flex gap-2">
-            <Button render={<Link href="/admin/education" />}>Manage articles</Button>
+            <Button render={<Link href="/admin/education" />}>
+              {t("admin.dashboard.manageArticles")}
+            </Button>
             <Button variant="outline" render={<Link href="/admin/education/new" />}>
-              New article
+              {t("admin.dashboard.newArticle")}
             </Button>
           </CardContent>
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>Forum</CardTitle>
-            <CardDescription>Review and remove inappropriate posts</CardDescription>
+            <CardTitle>{t("admin.dashboard.forumTitle")}</CardTitle>
+            <CardDescription>{t("admin.dashboard.forumDescription")}</CardDescription>
           </CardHeader>
           <CardContent>
             <Button render={<Link href="/admin/forum/moderation" />}>
-              Open moderation
+              {t("admin.dashboard.openModeration")}
             </Button>
           </CardContent>
         </Card>

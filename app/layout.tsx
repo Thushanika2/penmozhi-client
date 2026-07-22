@@ -1,14 +1,29 @@
 import type { Metadata } from "next"
-import { Geist_Mono, Inter } from "next/font/google"
+import { Cormorant_Garamond, Geist_Mono, Inter, Noto_Sans_Tamil } from "next/font/google"
 import { Toaster } from "sonner"
 
 import { ThemeProvider } from "@/components/theme-provider"
+import { DocumentLocale } from "@/components/document-locale"
 import { cn } from "@/lib/utils"
+import { themeInitScript } from "@/lib/theme-script"
 import { AuthProvider } from "@/providers/auth-provider"
+import { LanguageProvider } from "@/providers/language-provider"
 
 import "./globals.css"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
+
+const cormorant = Cormorant_Garamond({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-heading",
+})
+
+const notoTamil = Noto_Sans_Tamil({
+  subsets: ["tamil"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-tamil",
+})
 
 const fontMono = Geist_Mono({
   subsets: ["latin"],
@@ -16,9 +31,8 @@ const fontMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "Penmozhi — Women's Health",
-  description:
-    "Track cycles, symptoms, and wellness with bilingual support for Tamil and English.",
+  title: "Penmozhi",
+  description: "Penmozhi app",
 }
 
 export default function RootLayout({
@@ -30,13 +44,26 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={cn("antialiased", fontMono.variable, "font-sans", inter.variable)}
+      className={cn(
+        "antialiased",
+        fontMono.variable,
+        cormorant.variable,
+        notoTamil.variable,
+        "font-sans",
+        inter.variable,
+      )}
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
       <body>
         <ThemeProvider>
           <AuthProvider>
-            {children}
-            <Toaster richColors position="top-right" />
+            <LanguageProvider>
+              <DocumentLocale />
+              {children}
+              <Toaster richColors position="top-right" />
+            </LanguageProvider>
           </AuthProvider>
         </ThemeProvider>
       </body>

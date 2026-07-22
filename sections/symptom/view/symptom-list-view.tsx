@@ -36,7 +36,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { getApiErrorMessage } from "@/lib/api-client"
+import { getLocalizedApiError } from "@/lib/localize-api-error"
+import { useLanguage } from "@/providers/language-provider"
 import {
   createSymptom,
   getMySymptoms,
@@ -44,19 +45,30 @@ import {
 } from "@/services/symptom"
 import type { SymptomTrackingLog, SymptomTrends } from "@/types/symptom-tracking-log"
 
-const schema = z.object({
-  category: z.string().min(1, "Category is required"),
-  painSeverity: z.number().min(0).max(10),
-  moodStatus: z.string().optional(),
-  sleepMetrics: z.string().optional(),
-})
+function buildSchema(t: (key: string) => string) {
+  return z.object({
+    category: z.string().min(1, t("symptoms.validation.categoryRequired")),
+    painSeverity: z.number().min(0).max(10),
+    moodStatus: z.string().optional(),
+    sleepMetrics: z.string().optional(),
+  })
+}
 
-type FormValues = z.infer<typeof schema>
+type FormValues = z.infer<ReturnType<typeof buildSchema>>
 
 export function SymptomListView() {
+  const { t } = useLanguage()
+  function translateApiMessage(code: string, fallback?: string | null) {
+    const key = `api.messages.${code}`
+    const translated = t(key)
+    return translated === key ? (fallback ?? key) : translated
+  }
+
   const [symptoms, setSymptoms] = React.useState<SymptomTrackingLog[]>([])
   const [trends, setTrends] = React.useState<SymptomTrends | null>(null)
   const [loading, setLoading] = React.useState(true)
+
+  const schema = React.useMemo(() => buildSchema(t), [t])
 
   const {
     register,
@@ -68,6 +80,29 @@ export function SymptomListView() {
     defaultValues: { painSeverity: 3 },
   })
 
+  React.useEffect(() => {
+    let cancelled = false
+    async function load() {
+      try {
+        const [symptomsData, trendsData] = await Promise.all([
+          getMySymptoms(),
+          getSymptomTrends(),
+        ])
+        if (cancelled) return
+        setSymptoms(symptomsData.symptoms)
+        setTrends(trendsData)
+      } catch (error) {
+        if (!cancelled) toast.error(getLocalizedApiError(error, t))
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
+    }
+    void load()
+    return () => {
+      cancelled = true
+    }
+  }, [t])
+
   async function loadData() {
     try {
       const [symptomsData, trendsData] = await Promise.all([
@@ -77,15 +112,11 @@ export function SymptomListView() {
       setSymptoms(symptomsData.symptoms)
       setTrends(trendsData)
     } catch (error) {
-      toast.error(getApiErrorMessage(error))
+      toast.error(getLocalizedApiError(error, t))
     } finally {
       setLoading(false)
     }
   }
-
-  React.useEffect(() => {
-    loadData()
-  }, [])
 
   async function onSubmit(values: FormValues) {
     try {
@@ -95,28 +126,32 @@ export function SymptomListView() {
         mood_status: values.moodStatus || null,
         sleep_metrics: values.sleepMetrics || null,
       })
-      toast.success("Symptom logged")
+      toast.success(t("symptoms.toast.logged"))
       if (result.ai_flag) {
-        toast.info(result.ai_flag)
+        toast.info(
+          result.ai_flag_code
+            ? translateApiMessage(result.ai_flag_code, result.ai_flag)
+            : result.ai_flag,
+        )
       }
       reset({ painSeverity: 3 })
       await loadData()
     } catch (error) {
-      toast.error(getApiErrorMessage(error))
+      toast.error(getLocalizedApiError(error, t))
     }
   }
 
   return (
     <div>
       <PageHeader
-        title="Symptom Tracking"
-        description="Monitor pain, mood, and sleep patterns over time"
+        title={t("symptoms.title")}
+        description={t("symptoms.description")}
       />
 
       <div className="mb-6 grid gap-4 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Pain trend by date</CardTitle>
+            <CardTitle>{t("symptoms.charts.painTrendTitle")}</CardTitle>
           </CardHeader>
           <CardContent className="h-56">
             {trends?.date_trends.length ? (
@@ -126,17 +161,24 @@ export function SymptomListView() {
                   <XAxis dataKey="date" tick={{ fontSize: 11 }} />
                   <YAxis domain={[0, 10]} tick={{ fontSize: 11 }} />
                   <Tooltip />
-                  <Line type="monotone" dataKey="avg_pain" stroke="hsl(var(--primary))" />
+                  <Line
+                    type="monotone"
+                    dataKey="avg_pain"
+                    name={t("symptoms.charts.avgPainLabel")}
+                    stroke="hsl(var(--primary))"
+                  />
                 </LineChart>
               </ResponsiveContainer>
             ) : (
-              <p className="text-sm text-muted-foreground">No trend data yet</p>
+              <p className="text-sm text-muted-foreground">
+                {t("symptoms.charts.painTrendEmpty")}
+              </p>
             )}
           </CardContent>
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>Symptoms by category</CardTitle>
+            <CardTitle>{t("symptoms.charts.categoryTitle")}</CardTitle>
           </CardHeader>
           <CardContent className="h-56">
             {trends?.category_trends.length ? (
@@ -146,11 +188,17 @@ export function SymptomListView() {
                   <XAxis dataKey="category" tick={{ fontSize: 11 }} />
                   <YAxis tick={{ fontSize: 11 }} />
                   <Tooltip />
-                  <Bar dataKey="count" fill="hsl(var(--primary))" />
+                  <Bar
+                    dataKey="count"
+                    name={t("symptoms.charts.countLabel")}
+                    fill="hsl(var(--primary))"
+                  />
                 </BarChart>
               </ResponsiveContainer>
             ) : (
-              <p className="text-sm text-muted-foreground">No category data yet</p>
+              <p className="text-sm text-muted-foreground">
+                {t("symptoms.charts.categoryEmpty")}
+              </p>
             )}
           </CardContent>
         </Card>
@@ -158,19 +206,22 @@ export function SymptomListView() {
 
       <Card className="mb-6">
         <CardHeader>
-          <CardTitle>Log symptom</CardTitle>
+          <CardTitle>{t("symptoms.form.title")}</CardTitle>
         </CardHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
           <CardContent className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
             <div className="space-y-2">
-              <Label>Category</Label>
-              <Input placeholder="e.g. cramps" {...register("category")} />
+              <Label>{t("symptoms.form.category")}</Label>
+              <Input
+                placeholder={t("symptoms.form.categoryPlaceholder")}
+                {...register("category")}
+              />
               {errors.category ? (
                 <p className="text-sm text-destructive">{errors.category.message}</p>
               ) : null}
             </div>
             <div className="space-y-2">
-              <Label>Pain severity (0-10)</Label>
+              <Label>{t("symptoms.form.painSeverity")}</Label>
               <Input
                 type="number"
                 min={0}
@@ -179,16 +230,24 @@ export function SymptomListView() {
               />
             </div>
             <div className="space-y-2">
-              <Label>Mood</Label>
-              <Input placeholder="e.g. anxious" {...register("moodStatus")} />
+              <Label>{t("symptoms.form.mood")}</Label>
+              <Input
+                placeholder={t("symptoms.form.moodPlaceholder")}
+                {...register("moodStatus")}
+              />
             </div>
             <div className="space-y-2">
-              <Label>Sleep</Label>
-              <Input placeholder="e.g. 6 hours" {...register("sleepMetrics")} />
+              <Label>{t("symptoms.form.sleep")}</Label>
+              <Input
+                placeholder={t("symptoms.form.sleepPlaceholder")}
+                {...register("sleepMetrics")}
+              />
             </div>
             <div className="flex items-end">
               <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Saving..." : "Log symptom"}
+                {isSubmitting
+                  ? t("symptoms.form.submitting")
+                  : t("symptoms.form.submit")}
               </Button>
             </div>
           </CardContent>
@@ -197,20 +256,22 @@ export function SymptomListView() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Recent entries ({trends?.total_entries ?? 0} total)</CardTitle>
+          <CardTitle>
+            {t("symptoms.table.title", { count: trends?.total_entries ?? 0 })}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           {loading ? (
-            <p className="text-muted-foreground">Loading...</p>
+            <p className="text-muted-foreground">{t("common.loading")}</p>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Category</TableHead>
-                  <TableHead>Pain</TableHead>
-                  <TableHead>Mood</TableHead>
-                  <TableHead>Sleep</TableHead>
+                  <TableHead>{t("symptoms.table.date")}</TableHead>
+                  <TableHead>{t("symptoms.table.category")}</TableHead>
+                  <TableHead>{t("symptoms.table.pain")}</TableHead>
+                  <TableHead>{t("symptoms.table.mood")}</TableHead>
+                  <TableHead>{t("symptoms.table.sleep")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -220,7 +281,11 @@ export function SymptomListView() {
                     <TableCell>
                       <Badge variant="secondary">{symptom.category}</Badge>
                     </TableCell>
-                    <TableCell>{symptom.pain_severity}/10</TableCell>
+                    <TableCell>
+                      {t("symptoms.table.painValue", {
+                        value: symptom.pain_severity,
+                      })}
+                    </TableCell>
                     <TableCell>{symptom.mood_status ?? "—"}</TableCell>
                     <TableCell>{symptom.sleep_metrics ?? "—"}</TableCell>
                   </TableRow>

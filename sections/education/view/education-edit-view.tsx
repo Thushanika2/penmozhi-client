@@ -3,13 +3,15 @@
 import * as React from "react"
 import { toast } from "sonner"
 
-import { getApiErrorMessage } from "@/lib/api-client"
+import { getLocalizedApiError } from "@/lib/localize-api-error"
+import { useLanguage } from "@/providers/language-provider"
 import { getEducationResource } from "@/services/education"
 import type { EducationalResource } from "@/types/educational-resource"
 
 import { EducationFormView } from "../education-new-edit-form"
 
 export function EducationEditView({ id }: { id: number }) {
+  const { t } = useLanguage()
   const [resource, setResource] = React.useState<EducationalResource | null>(null)
   const [loading, setLoading] = React.useState(true)
 
@@ -19,16 +21,20 @@ export function EducationEditView({ id }: { id: number }) {
         const data = await getEducationResource(id)
         setResource(data.education_resource)
       } catch (error) {
-        toast.error(getApiErrorMessage(error))
+        toast.error(getLocalizedApiError(error, t))
       } finally {
         setLoading(false)
       }
     }
     load()
-  }, [id])
+  }, [id, t])
 
-  if (loading) return <p className="text-muted-foreground">Loading article...</p>
-  if (!resource) return <p className="text-destructive">Article not found.</p>
+  if (loading)
+    return (
+      <p className="text-muted-foreground">{t("education.detail.loadingArticle")}</p>
+    )
+  if (!resource)
+    return <p className="text-destructive">{t("education.detail.articleNotFound")}</p>
 
   return <EducationFormView resource={resource} />
 }

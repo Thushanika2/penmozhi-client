@@ -3,6 +3,7 @@
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useRouter } from "next/navigation"
+import * as React from "react"
 import { toast } from "sonner"
 import { z } from "zod"
 
@@ -17,28 +18,48 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { getApiErrorMessage } from "@/lib/api-client"
+import { getLocalizedApiError } from "@/lib/localize-api-error"
+import { useLanguage } from "@/providers/language-provider"
 import {
   createEducationResource,
   updateEducationResource,
 } from "@/services/education"
 import type { EducationalResource } from "@/types/educational-resource"
 
-const schema = z.object({
-  articleTitle: z.string().min(3, "Title is required"),
-  contentCategory: z.string().min(2, "Category is required"),
-  contentBody: z.string().min(10, "Content is required"),
-  publicationDate: z.string().min(1, "Publication date is required"),
-})
-
-type FormValues = z.infer<typeof schema>
+interface FormValues {
+  articleTitle: string
+  contentCategory: string
+  contentBody: string
+  publicationDate: string
+}
 
 export function EducationFormView({
   resource,
 }: {
   resource?: EducationalResource
 }) {
+  const { t } = useLanguage()
   const router = useRouter()
+
+  const schema = React.useMemo(
+    () =>
+      z.object({
+        articleTitle: z
+          .string()
+          .min(3, t("education.form.validation.titleRequired")),
+        contentCategory: z
+          .string()
+          .min(2, t("education.form.validation.categoryRequired")),
+        contentBody: z
+          .string()
+          .min(10, t("education.form.validation.contentRequired")),
+        publicationDate: z
+          .string()
+          .min(1, t("education.form.validation.publicationDateRequired")),
+      }),
+    [t],
+  )
+
   const {
     register,
     handleSubmit,
@@ -68,33 +89,35 @@ export function EducationFormView({
     try {
       if (resource) {
         await updateEducationResource(resource.id, payload)
-        toast.success("Article updated")
+        toast.success(t("education.form.articleUpdated"))
       } else {
         await createEducationResource(payload)
-        toast.success("Article published")
+        toast.success(t("education.form.articlePublished"))
       }
       router.push("/admin/education")
     } catch (error) {
-      toast.error(getApiErrorMessage(error))
+      toast.error(getLocalizedApiError(error, t))
     }
   }
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{resource ? "Edit article" : "New article"}</CardTitle>
+        <CardTitle>
+          {resource ? t("education.form.editArticle") : t("education.form.newArticle")}
+        </CardTitle>
       </CardHeader>
       <form onSubmit={handleSubmit(onSubmit)}>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="articleTitle">Title</Label>
+            <Label htmlFor="articleTitle">{t("education.form.titleLabel")}</Label>
             <Input id="articleTitle" {...register("articleTitle")} />
             {errors.articleTitle ? (
               <p className="text-sm text-destructive">{errors.articleTitle.message}</p>
             ) : null}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="contentCategory">Category</Label>
+            <Label htmlFor="contentCategory">{t("education.form.categoryLabel")}</Label>
             <Input id="contentCategory" {...register("contentCategory")} />
             {errors.contentCategory ? (
               <p className="text-sm text-destructive">
@@ -103,7 +126,9 @@ export function EducationFormView({
             ) : null}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="publicationDate">Publication date</Label>
+            <Label htmlFor="publicationDate">
+              {t("education.form.publicationDateLabel")}
+            </Label>
             <Input
               id="publicationDate"
               type="date"
@@ -111,7 +136,7 @@ export function EducationFormView({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="contentBody">Content</Label>
+            <Label htmlFor="contentBody">{t("education.form.contentLabel")}</Label>
             <Textarea
               id="contentBody"
               rows={12}
@@ -124,14 +149,18 @@ export function EducationFormView({
         </CardContent>
         <CardFooter className="gap-2">
           <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Saving..." : resource ? "Update" : "Publish"}
+            {isSubmitting
+              ? t("common.saving")
+              : resource
+                ? t("education.form.update")
+                : t("education.form.publish")}
           </Button>
           <Button
             type="button"
             variant="outline"
             onClick={() => router.push("/admin/education")}
           >
-            Cancel
+            {t("common.cancel")}
           </Button>
         </CardFooter>
       </form>

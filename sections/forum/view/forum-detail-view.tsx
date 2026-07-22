@@ -16,19 +16,27 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
-import { getApiErrorMessage } from "@/lib/api-client"
+import { getLocalizedApiError } from "@/lib/localize-api-error"
+import { useLanguage } from "@/providers/language-provider"
 import { createForumComment, getForumPost } from "@/services/forum"
 import type { ForumPost } from "@/types/forum-post"
 
-const schema = z.object({
-  body: z.string().min(3, "Comment is required"),
-})
-
-type FormValues = z.infer<typeof schema>
+interface FormValues {
+  body: string
+}
 
 export function ForumDetailView({ id }: { id: number }) {
+  const { t } = useLanguage()
   const [post, setPost] = React.useState<ForumPost | null>(null)
   const [loading, setLoading] = React.useState(true)
+
+  const schema = React.useMemo(
+    () =>
+      z.object({
+        body: z.string().min(3, t("forum.validation.commentRequired")),
+      }),
+    [t],
+  )
 
   const {
     register,
@@ -42,39 +50,53 @@ export function ForumDetailView({ id }: { id: number }) {
       const data = await getForumPost(id)
       setPost(data.forum_post)
     } catch (error) {
-      toast.error(getApiErrorMessage(error))
+      toast.error(getLocalizedApiError(error, t))
     } finally {
       setLoading(false)
     }
   }
 
   React.useEffect(() => {
-    loadPost()
-  }, [id])
+    async function load() {
+      try {
+        const data = await getForumPost(id)
+        setPost(data.forum_post)
+      } catch (error) {
+        toast.error(getLocalizedApiError(error, t))
+      } finally {
+        setLoading(false)
+      }
+    }
+    void load()
+  }, [id, t])
 
   async function onSubmit(values: FormValues) {
     try {
       await createForumComment(id, { body: values.body })
-      toast.success("Comment posted anonymously")
+      toast.success(t("forum.detail.commentPosted"))
       reset()
       await loadPost()
     } catch (error) {
-      toast.error(getApiErrorMessage(error))
+      toast.error(getLocalizedApiError(error, t))
     }
   }
 
-  if (loading) return <p className="text-muted-foreground">Loading post...</p>
-  if (!post) return <p className="text-destructive">Post not found.</p>
+  if (loading)
+    return <p className="text-muted-foreground">{t("forum.detail.loadingPost")}</p>
+  if (!post)
+    return <p className="text-destructive">{t("forum.detail.postNotFound")}</p>
 
   return (
     <div>
       <Button variant="outline" className="mb-4" render={<Link href="/dashboard/forum" />}>
-        Back to forum
+        {t("forum.detail.backToForum")}
       </Button>
       <Card className="mb-6">
         <CardHeader>
           <div className="flex items-center gap-2">
-            <Badge variant="secondary">{post.author_display ?? "Anonymous"}</Badge>
+            <Badge variant="secondary">
+              {post.author_display ?? t("forum.anonymous")}
+            </Badge>
             <span className="text-sm text-muted-foreground">
               {post.posted_at?.slice(0, 10)}
             </span>
@@ -88,7 +110,9 @@ export function ForumDetailView({ id }: { id: number }) {
 
       <Card>
         <CardHeader>
-          <CardTitle>Comments ({post.comments?.length ?? 0})</CardTitle>
+          <CardTitle>
+            {t("forum.detail.comments", { count: post.comments?.length ?? 0 })}
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {post.comments?.map((comment) => (
@@ -101,7 +125,7 @@ export function ForumDetailView({ id }: { id: number }) {
           ))}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
             <Textarea
-              placeholder="Write an anonymous comment..."
+              placeholder={t("forum.detail.commentPlaceholder")}
               rows={3}
               {...register("body")}
             />
@@ -109,7 +133,7 @@ export function ForumDetailView({ id }: { id: number }) {
               <p className="text-sm text-destructive">{errors.body.message}</p>
             ) : null}
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Posting..." : "Post comment"}
+              {isSubmitting ? t("forum.list.posting") : t("forum.detail.postComment")}
             </Button>
           </form>
         </CardContent>

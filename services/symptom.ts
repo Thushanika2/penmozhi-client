@@ -16,8 +16,10 @@ export interface CreateSymptomPayload {
 export async function createSymptom(payload: CreateSymptomPayload) {
   const { data } = await apiClient.post<{
     message: string
+    message_code?: string
     symptom: SymptomTrackingLog
     ai_flag?: string | null
+    ai_flag_code?: string | null
   }>("/api/symptoms", payload)
   return data
 }

@@ -15,7 +15,8 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { getApiErrorMessage } from "@/lib/api-client"
+import { getLocalizedApiError } from "@/lib/localize-api-error"
+import { useLanguage } from "@/providers/language-provider"
 import {
   getRecommendations,
   getSessions,
@@ -29,6 +30,7 @@ interface ChatMessage {
 }
 
 export function AIAssistantView() {
+  const { t } = useLanguage()
   const [message, setMessage] = React.useState("")
   const [chat, setChat] = React.useState<ChatMessage[]>([])
   const [recommendations, setRecommendations] = React.useState<string[]>([])
@@ -45,11 +47,11 @@ export function AIAssistantView() {
         setRecommendations(recData.recommendations)
         setSessions(sessionData.sessions)
       } catch (error) {
-        toast.error(getApiErrorMessage(error))
+        toast.error(getLocalizedApiError(error, t))
       }
     }
     load()
-  }, [])
+  }, [t])
 
   async function handleSend(event: React.FormEvent) {
     event.preventDefault()
@@ -68,7 +70,7 @@ export function AIAssistantView() {
       }
       setSessions((prev) => [data.session, ...prev])
     } catch (error) {
-      toast.error(getApiErrorMessage(error))
+      toast.error(getLocalizedApiError(error, t))
     } finally {
       setSending(false)
     }
@@ -77,8 +79,8 @@ export function AIAssistantView() {
   return (
     <div>
       <PageHeader
-        title="AI Health Assistant"
-        description="Ask questions about symptoms and get personalized wellness guidance"
+        title={t("aiAssistant.title")}
+        description={t("aiAssistant.description")}
       />
 
       <div className="grid gap-6 lg:grid-cols-3">
@@ -86,14 +88,14 @@ export function AIAssistantView() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Sparkles className="size-5 text-primary" />
-              Chat
+              {t("aiAssistant.chat")}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="mb-4 max-h-96 space-y-3 overflow-y-auto rounded-lg border p-4">
               {!chat.length ? (
                 <p className="text-sm text-muted-foreground">
-                  Describe your symptoms or ask a health question to get started.
+                  {t("aiAssistant.emptyChat")}
                 </p>
               ) : (
                 chat.map((entry, index) => (
@@ -114,12 +116,12 @@ export function AIAssistantView() {
               <Input
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                placeholder="e.g. I have severe cramps today..."
+                placeholder={t("aiAssistant.inputPlaceholder")}
                 disabled={sending}
               />
               <Button type="submit" disabled={sending}>
                 <Send className="size-4" />
-                Send
+                {t("aiAssistant.send")}
               </Button>
             </form>
           </CardContent>
@@ -128,8 +130,8 @@ export function AIAssistantView() {
         <div className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Recommendations</CardTitle>
-              <CardDescription>Based on your symptom patterns</CardDescription>
+              <CardTitle>{t("aiAssistant.recommendations")}</CardTitle>
+              <CardDescription>{t("aiAssistant.recommendationsDescription")}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-2">
               {recommendations.length ? (
@@ -139,13 +141,15 @@ export function AIAssistantView() {
                   </p>
                 ))
               ) : (
-                <p className="text-sm text-muted-foreground">No recommendations yet</p>
+                <p className="text-sm text-muted-foreground">
+                  {t("aiAssistant.noRecommendations")}
+                </p>
               )}
             </CardContent>
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle>Recent sessions</CardTitle>
+              <CardTitle>{t("aiAssistant.recentSessions")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
               {sessions.slice(0, 3).map((session) => (
@@ -154,7 +158,7 @@ export function AIAssistantView() {
                     {session.created_at?.slice(0, 10)}
                   </Badge>
                   <p className="line-clamp-2 text-muted-foreground">
-                    {session.symptom_analysis_log ?? "Session"}
+                    {session.symptom_analysis_log ?? t("aiAssistant.sessionFallback")}
                   </p>
                 </div>
               ))}
