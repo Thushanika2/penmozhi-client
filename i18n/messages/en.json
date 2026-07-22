@@ -1,0 +1,575 @@
+{
+  "metadata": {
+    "title": "Penmozhi — Women's Health",
+    "description": "Track cycles, symptoms, and wellness with bilingual support for Tamil and English."
+  },
+  "brand": {
+    "tamilMark": "பெண்மொழி"
+  },
+  "brandLogo": {
+    "alt": "Penmozhi logo",
+    "name": "Penmozhi",
+    "tagline": "Women's health, in your language"
+  },
+  "common": {
+    "back": "Back",
+    "cancel": "Cancel",
+    "english": "English",
+    "loading": "Loading...",
+    "notSet": "Not set",
+    "saving": "Saving...",
+    "selectLanguage": "Select language",
+    "tamil": "தமிழ்"
+  },
+  "a11y": {
+    "closeDialog": "Close dialog",
+    "closeSidebar": "Close sidebar",
+    "openSidebar": "Open sidebar"
+  },
+  "languageSwitcher": {
+    "label": "Language",
+    "english": "English",
+    "tamil": "தமிழ்",
+    "updateFailed": "Failed to save language preference",
+    "updateSuccess": "Language updated"
+  },
+  "themeToggle": {
+    "toggleTheme": "Toggle theme",
+    "switchToLight": "Switch to light mode",
+    "switchToDark": "Switch to dark mode"
+  },
+  "header": {
+    "education": "Education",
+    "login": "Sign in",
+    "getStarted": "Get started",
+    "home": "Home"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "cycleTracking": "Cycle Tracking",
+    "symptoms": "Symptoms",
+    "reminders": "Reminders",
+    "aiAssistant": "AI Assistant",
+    "pcosStatus": "PCOS Status",
+    "forum": "Forum",
+    "profile": "Profile",
+    "education": "Education",
+    "logout": "Log out",
+    "forumModeration": "Forum Moderation",
+    "adminContentManagement": "Content management",
+    "adminPanel": "Admin panel"
+  },
+  "landing": {
+    "badge": "Bilingual women's health",
+    "heroTitle": "Understand your cycle, in",
+    "heroTitleHighlight": "your own language",
+    "heroDescription": "Penmozhi helps you track periods, symptoms, and PCOS with AI-powered insights — fully available in Tamil and English.",
+    "createFreeAccount": "Create free account",
+    "exploreEducation": "Explore education",
+    "cardDescription": "A personal health companion for cycle prediction, symptom trends, PCOS tracking, and evidence-based education.",
+    "cardBadges": {
+      "cycleAi": "Cycle AI",
+      "pcosTracking": "PCOS tracking",
+      "reminders": "Reminders"
+    },
+    "stats": {
+      "bilingualLabel": "Tamil & English",
+      "bilingualValue": "Fully bilingual",
+      "forumLabel": "Anonymous community",
+      "forumValue": "Private forum",
+      "secureLabel": "Your data stays yours",
+      "secureValue": "Secure & private"
+    },
+    "howItWorks": {
+      "eyebrow": "How it works",
+      "title": "Three simple steps",
+      "step1Title": "Create your profile",
+      "step1Desc": "Register with your language preference and set up your health profile.",
+      "step2Title": "Log cycles & symptoms",
+      "step2Desc": "Track periods, pain, mood, and sleep in just a few taps.",
+      "step3Title": "Get insights",
+      "step3Desc": "See predictions, trends, and AI recommendations tailored to you."
+    },
+    "features": {
+      "eyebrow": "Features",
+      "title": "Everything you need",
+      "description": "From cycle prediction to a private community — designed for women's health, in your language.",
+      "cycleTrackingTitle": "Cycle tracking",
+      "cycleTrackingDesc": "Log periods and get next-period predictions based on your history.",
+      "symptomTrendsTitle": "Symptom trends",
+      "symptomTrendsDesc": "Visualize pain, mood, and sleep patterns over time.",
+      "aiAssistantTitle": "AI health assistant",
+      "aiAssistantDesc": "Ask questions and receive personalized wellness recommendations.",
+      "educationHubTitle": "Education hub",
+      "educationHubDesc": "Browse trusted articles on menstrual health, PCOS, and wellness."
+    },
+    "cta": {
+      "title": "Start your health journey today",
+      "description": "Join Penmozhi and take control of your cycle, symptoms, and wellbeing — in Tamil or English.",
+      "button": "Get started free"
+    }
+  },
+  "footer": {
+    "description": "Bilingual women's health tracking with cycle prediction, symptom trends, and a private community.",
+    "explore": "Explore",
+    "features": "Features",
+    "links": {
+      "education": "Education",
+      "signIn": "Sign in",
+      "register": "Register"
+    },
+    "featureItems": {
+      "cycleTracking": "Cycle tracking",
+      "aiAssistant": "AI assistant",
+      "privateForum": "Private forum"
+    },
+    "copyright": "© {year} Penmozhi. All rights reserved.",
+    "privacyNote": "Your health data stays private."
+  },
+  "authShell": {
+    "title": "Your health, your language.",
+    "description": "Track cycles, symptoms, and wellness with support in Tamil and English.",
+    "highlights": {
+      "cycleTrackingTitle": "Cycle tracking",
+      "cycleTrackingDesc": "Predictions from your history",
+      "bilingualTitle": "Bilingual",
+      "bilingualDesc": "Tamil and English support",
+      "privateForumTitle": "Private forum",
+      "privateForumDesc": "Anonymous community",
+      "aiInsightsTitle": "AI insights",
+      "aiInsightsDesc": "Personalized recommendations"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Welcome back",
+      "subtitle": "Sign in to continue to your dashboard",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Sign in",
+      "submitting": "Signing in...",
+      "noAccount": "Don't have an account?",
+      "registerLink": "Register",
+      "welcomeBack": "Welcome back!"
+    },
+    "register": {
+      "title": "Create your account",
+      "subtitle": "Start tracking your health in your language",
+      "fullName": "Full name",
+      "email": "Email",
+      "password": "Password",
+      "dateOfBirth": "Date of birth",
+      "language": "Preferred language",
+      "languageEnglish": "English",
+      "languageTamil": "தமிழ் (Tamil)",
+      "submit": "Create account",
+      "submitting": "Creating account...",
+      "alreadyHaveAccount": "Already have an account?",
+      "signInLink": "Sign in",
+      "accountCreated": "Account created successfully!"
+    },
+    "validation": {
+      "fullNameRequired": "Please enter your full name",
+      "emailInvalid": "Please enter a valid email address",
+      "passwordMin": "Password must be at least 6 characters",
+      "dateOfBirthRequired": "Please select your date of birth"
+    }
+  },
+  "dashboard": {
+    "eyebrow": "Overview",
+    "welcome": "Welcome back, {name}",
+    "welcomeFallbackName": "friend",
+    "description": "Here's a snapshot of your health tracking.",
+    "yourModules": "Your modules",
+    "stats": {
+      "currentBmi": "Current BMI",
+      "languagePreference": "Language preference",
+      "languageReady": "Interface ready in your language",
+      "aiInsights": "AI insights",
+      "aiInsightsHint": "Ask the assistant for personalized tips"
+    },
+    "modules": {
+      "cycleTracking": {
+        "title": "Cycle Tracking",
+        "description": "Log periods and see predictions"
+      },
+      "symptoms": {
+        "title": "Symptoms",
+        "description": "Track pain, mood, and sleep"
+      },
+      "pcosStatus": {
+        "title": "PCOS Status",
+        "description": "Manage your diagnosis status"
+      },
+      "healthProfile": {
+        "title": "Health Profile",
+        "description": "Update weight, height, and risks"
+      },
+      "reminders": {
+        "title": "Reminders",
+        "description": "Medication and supplement alerts"
+      },
+      "aiAssistant": {
+        "title": "AI Assistant",
+        "description": "Personalized health recommendations"
+      },
+      "forum": {
+        "title": "Forum",
+        "description": "Anonymous community discussions"
+      }
+    }
+  },
+  "cycle": {
+    "title": "Cycle Tracking",
+    "description": "Log your periods and view predictions",
+    "prediction": {
+      "title": "Next period prediction",
+      "basedOnHistory": "Based on your cycle history",
+      "basedOnCycles": "Based on {count} logged cycles"
+    },
+    "trend": {
+      "title": "Cycle length trend",
+      "daysLabel": "Days",
+      "empty": "Log cycles to see your trend"
+    },
+    "form": {
+      "title": "Log a cycle",
+      "startDate": "Start date",
+      "endDate": "End date",
+      "flowIntensity": "Flow intensity",
+      "submit": "Log cycle",
+      "submitting": "Logging..."
+    },
+    "flow": {
+      "light": "Light",
+      "medium": "Medium",
+      "heavy": "Heavy"
+    },
+    "history": {
+      "title": "Cycle history",
+      "start": "Start",
+      "end": "End",
+      "flow": "Flow",
+      "predictedNext": "Predicted next"
+    },
+    "toast": {
+      "logged": "Cycle logged"
+    },
+    "validation": {
+      "startDateRequired": "Start date is required",
+      "endDateRequired": "End date is required",
+      "flowIntensityRequired": "Flow intensity is required"
+    }
+  },
+  "symptoms": {
+    "title": "Symptom Tracking",
+    "description": "Log symptoms and monitor trends",
+    "charts": {
+      "painTrendTitle": "Pain trend",
+      "painTrendEmpty": "Log symptoms to see your pain trend",
+      "avgPainLabel": "Avg pain",
+      "categoryTitle": "By category",
+      "categoryEmpty": "Log symptoms to see category breakdown",
+      "countLabel": "Count"
+    },
+    "form": {
+      "title": "Log a symptom",
+      "category": "Category",
+      "categoryPlaceholder": "e.g. cramps, headache",
+      "painSeverity": "Pain severity (0–10)",
+      "mood": "Mood",
+      "moodPlaceholder": "e.g. calm, anxious",
+      "sleep": "Sleep",
+      "sleepPlaceholder": "e.g. 7 hours, restless",
+      "submit": "Log symptom",
+      "submitting": "Logging..."
+    },
+    "table": {
+      "title": "Symptom log ({count} entries)",
+      "date": "Date",
+      "category": "Category",
+      "pain": "Pain",
+      "mood": "Mood",
+      "sleep": "Sleep",
+      "painValue": "{value}/10"
+    },
+    "toast": {
+      "logged": "Symptom logged"
+    },
+    "validation": {
+      "categoryRequired": "Category is required"
+    }
+  },
+  "reminders": {
+    "title": "Reminders",
+    "description": "Manage medication and supplement reminders",
+    "form": {
+      "title": "Create a reminder",
+      "itemName": "Item name",
+      "type": "Type",
+      "scheduledTime": "Scheduled time",
+      "dosage": "Dosage",
+      "dosagePlaceholder": "e.g. 500 mg",
+      "submit": "Create reminder"
+    },
+    "type": {
+      "medication": "Medication",
+      "supplement": "Supplement"
+    },
+    "status": {
+      "pending": "Pending",
+      "taken": "Taken",
+      "snoozed": "Snoozed"
+    },
+    "actions": {
+      "markTaken": "Mark taken",
+      "snooze": "Snooze",
+      "delete": "Delete"
+    },
+    "deleteDialog": {
+      "title": "Delete reminder",
+      "description": "Are you sure you want to delete \"{name}\"?",
+      "cancel": "Cancel",
+      "confirm": "Delete"
+    },
+    "toast": {
+      "created": "Reminder created",
+      "markedTaken": "Marked as taken",
+      "snoozed": "Reminder snoozed",
+      "deleted": "Reminder deleted"
+    },
+    "validation": {
+      "itemNameRequired": "Item name is required",
+      "typeRequired": "Type is required",
+      "timeRequired": "Scheduled time is required"
+    }
+  },
+  "pcosStatus": {
+    "title": "PCOS Disorder Status",
+    "description": "View and update your diagnosis status and history",
+    "currentStatus": {
+      "title": "Current status",
+      "diagnosisLabel": "Diagnosis",
+      "diagnosedLabel": "Diagnosed"
+    },
+    "form": {
+      "disorderType": "Disorder type",
+      "diagnosisStatus": "Diagnosis status",
+      "diagnosedDate": "Diagnosed date",
+      "updateStatus": "Update status"
+    },
+    "options": {
+      "disorder": {
+        "none": "None",
+        "pcos": "PCOS",
+        "endometriosis": "Endometriosis",
+        "other": "Other"
+      },
+      "diagnosis": {
+        "notDiagnosed": "Not diagnosed",
+        "suspected": "Suspected",
+        "diagnosed": "Diagnosed",
+        "monitoring": "Monitoring"
+      }
+    },
+    "history": {
+      "title": "Status history",
+      "recorded": "Recorded",
+      "disorder": "Disorder",
+      "diagnosis": "Diagnosis",
+      "empty": "No history entries yet"
+    },
+    "toast": {
+      "updated": "PCOS status updated"
+    },
+    "validation": {
+      "disorderTypeRequired": "Disorder type is required",
+      "diagnosisStatusRequired": "Diagnosis status is required"
+    }
+  },
+  "aiAssistant": {
+    "title": "AI Health Assistant",
+    "description": "Ask questions and get personalized recommendations",
+    "chat": "Chat",
+    "emptyChat": "Ask a question about your cycle, symptoms, or wellness to get started.",
+    "inputPlaceholder": "Type your question...",
+    "send": "Send",
+    "recommendations": "Recommendations",
+    "recommendationsDescription": "Based on your recent symptoms and questions",
+    "noRecommendations": "No recommendations yet — start a chat to receive tips.",
+    "recentSessions": "Recent sessions",
+    "sessionFallback": "Chat session"
+  },
+  "forum": {
+    "anonymous": "Anonymous",
+    "list": {
+      "title": "Community Forum",
+      "description": "Share and discuss anonymously with the community",
+      "newPost": "New post",
+      "createPost": "Create a post",
+      "createPostDescription": "Your post will be shown anonymously",
+      "titleLabel": "Title",
+      "bodyLabel": "Body",
+      "postAnonymously": "Post anonymously",
+      "posting": "Posting...",
+      "postCreated": "Post created",
+      "loadingPosts": "Loading posts...",
+      "view": "View"
+    },
+    "detail": {
+      "backToForum": "Back to forum",
+      "loadingPost": "Loading post...",
+      "postNotFound": "Post not found",
+      "comments": "Comments ({count})",
+      "commentPlaceholder": "Write a comment...",
+      "postComment": "Post comment",
+      "commentPosted": "Comment posted"
+    },
+    "moderation": {
+      "title": "Forum Moderation",
+      "description": "Review and remove community posts",
+      "allPosts": "All posts",
+      "titleColumn": "Title",
+      "postedColumn": "Posted",
+      "authorColumn": "Author",
+      "actionsColumn": "Actions",
+      "remove": "Remove",
+      "removePostTitle": "Remove post",
+      "removePostDescription": "Are you sure you want to remove \"{title}\"?",
+      "postRemoved": "Post removed"
+    },
+    "validation": {
+      "titleRequired": "Title must be at least 3 characters",
+      "bodyRequired": "Body must be at least 10 characters",
+      "commentRequired": "Comment must be at least 3 characters"
+    }
+  },
+  "education": {
+    "eyebrow": "Education",
+    "title": "Health Education Hub",
+    "description": "Evidence-based articles on menstrual health, PCOS, and wellness",
+    "filterPlaceholder": "Filter by category...",
+    "loadingArticles": "Loading articles...",
+    "noArticles": "No articles found",
+    "published": "Published {date}",
+    "readMore": "Read more",
+    "editArticle": "Edit article",
+    "allArticles": "All articles",
+    "backToArticles": "Back to articles",
+    "detail": {
+      "loadingArticle": "Loading article...",
+      "articleNotFound": "Article not found"
+    },
+    "admin": {
+      "manageTitle": "Manage Articles",
+      "manageDescription": "Create, edit, and publish educational content",
+      "newArticleTitle": "New article",
+      "newArticleDescription": "Publish a new educational resource"
+    },
+    "form": {
+      "newArticle": "New article",
+      "editArticle": "Edit article",
+      "titleLabel": "Title",
+      "categoryLabel": "Category",
+      "publicationDateLabel": "Publication date",
+      "contentLabel": "Content",
+      "publish": "Publish",
+      "update": "Update",
+      "articlePublished": "Article published",
+      "articleUpdated": "Article updated",
+      "validation": {
+        "titleRequired": "Title must be at least 3 characters",
+        "categoryRequired": "Category is required",
+        "contentRequired": "Content must be at least 10 characters",
+        "publicationDateRequired": "Publication date is required"
+      }
+    }
+  },
+  "admin": {
+    "dashboard": {
+      "title": "Admin Dashboard",
+      "description": "Manage content and community",
+      "educationTitle": "Education",
+      "educationDescription": "Manage educational articles",
+      "manageArticles": "Manage articles",
+      "newArticle": "New article",
+      "forumTitle": "Forum",
+      "forumDescription": "Moderate community posts",
+      "openModeration": "Open moderation"
+    }
+  },
+  "profile": {
+    "title": "Profile & Health",
+    "description": "Your account and health profile",
+    "updated": "Profile updated",
+    "account": {
+      "title": "Account",
+      "name": "Name",
+      "email": "Email",
+      "language": "Language",
+      "dateOfBirth": "Date of birth"
+    },
+    "risks": {
+      "title": "Health summary",
+      "description": "BMI and risk indicators from your health profile",
+      "bmi": "BMI",
+      "nutritionalNeeds": "Nutritional needs",
+      "healthRisks": "Health risks"
+    },
+    "form": {
+      "title": "Update health profile",
+      "weight": "Weight (kg)",
+      "height": "Height (m)",
+      "nutritionalNeeds": "Nutritional needs",
+      "healthRisks": "Health risks",
+      "save": "Save changes"
+    }
+  },
+  "api": {
+    "errors": {
+      "network": "Cannot reach the Penmozhi API. Make sure the backend is running on port 5000.",
+      "unexpected": "An unexpected error occurred.",
+      "request": {
+        "body_required": "Request body is required."
+      },
+      "server": {
+        "internal_error": "A server error occurred. Please try again."
+      },
+      "auth": {
+        "invalid_credentials": "Invalid email or password.",
+        "user_not_found": "User not found.",
+        "forbidden": "Access forbidden: insufficient permissions."
+      },
+      "validation": {
+        "language_required": "Language preference is required.",
+        "language_invalid": "Language must be Tamil or English.",
+        "minutes_positive": "Minutes must be a positive number.",
+        "message_required": "Message is required.",
+        "body_required": "Comment text is required."
+      },
+      "reminders": {
+        "not_found": "Reminder not found."
+      },
+      "pcos": {
+        "not_found": "PCOS disorder status not found."
+      },
+      "health": {
+        "not_found": "Health profile not found."
+      },
+      "forum": {
+        "post_not_found": "Forum post not found."
+      },
+      "education": {
+        "not_found": "Educational resource not found."
+      }
+    },
+    "messages": {
+      "symptoms": {
+        "high_pain_severity": "High pain severity detected. Review your PCOS status and consider asking the AI Health Assistant for recommendations."
+      },
+      "cycle": {
+        "log_at_least_one": "Log at least one cycle to get a prediction."
+      }
+    }
+  }
+}

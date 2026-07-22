@@ -1,39 +1,38 @@
+"use client"
+
 import Link from "next/link"
 
-import { BrandLogo } from "@/components/brand-logo"
-import { ThemeToggle } from "@/components/theme-toggle"
+import { SiteFooter } from "@/components/site-footer"
+import { SiteHeader } from "@/components/site-header"
 import { Button } from "@/components/ui/button"
+import { useLanguage } from "@/providers/language-provider"
 import { EducationListView } from "@/sections/education/view/education-list-view"
 
 export default function EducationPage() {
-  return (
-    <div className="min-h-svh gradient-mesh">
-      <header className="sticky top-0 z-50 border-b border-border/50 glass-panel">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-          <BrandLogo size="sm" />
-          <div className="flex items-center gap-2">
-            <ThemeToggle />
-            <Button variant="outline" render={<Link href="/" />}>
-              Home
-            </Button>
-          </div>
-        </div>
-      </header>
+  const { t } = useLanguage()
 
-      <div className="mx-auto max-w-6xl px-4 py-10">
-        <div className="mb-8">
-          <p className="text-sm font-semibold uppercase tracking-wider text-primary">
-            Learn
-          </p>
-          <h1 className="mt-2 text-3xl font-extrabold tracking-tight md:text-4xl">
-            Educational Resources
+  return (
+    <div className="flex min-h-svh flex-col gradient-mesh">
+      <SiteHeader showAuth={false}>
+        <Button variant="outline" className="rounded-full" render={<Link href="/" />}>
+          {t("header.home")}
+        </Button>
+      </SiteHeader>
+
+      <div className="mx-auto w-full max-w-6xl flex-1 px-4 py-12">
+        <div className="mb-10">
+          <p className="section-eyebrow">{t("education.eyebrow")}</p>
+          <h1 className="font-heading mt-2 text-3xl font-bold tracking-tight md:text-4xl">
+            {t("education.title")}
           </h1>
-          <p className="mt-2 max-w-2xl text-muted-foreground">
-            Trusted articles on women&apos;s health and wellness
+          <p className="mt-3 max-w-2xl text-muted-foreground">
+            {t("education.description")}
           </p>
         </div>
         <EducationListView publicMode />
       </div>
+
+      <SiteFooter />
     </div>
   )
 }

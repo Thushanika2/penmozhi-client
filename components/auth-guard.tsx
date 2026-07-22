@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation"
 import * as React from "react"
 
 import { useAuth } from "@/providers/auth-provider"
+import { useLanguage } from "@/providers/language-provider"
 import type { UserRole } from "@/types/user-profile"
 
 function getDashboardPath(role: UserRole) {
@@ -18,6 +19,7 @@ export function AuthenticatedRoute({
   allowedRoles?: UserRole[]
 }) {
   const { user, isLoading } = useAuth()
+  const { t } = useLanguage()
   const router = useRouter()
 
   React.useEffect(() => {
@@ -34,7 +36,7 @@ export function AuthenticatedRoute({
   if (isLoading) {
     return (
       <div className="flex min-h-[40vh] items-center justify-center text-muted-foreground">
-        Loading...
+        {t("common.loading")}
       </div>
     )
   }
@@ -47,6 +49,7 @@ export function AuthenticatedRoute({
 
 export function GuestRoute({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth()
+  const { t } = useLanguage()
   const router = useRouter()
 
   React.useEffect(() => {
@@ -57,7 +60,7 @@ export function GuestRoute({ children }: { children: React.ReactNode }) {
   if (isLoading) {
     return (
       <div className="flex min-h-[40vh] items-center justify-center text-muted-foreground">
-        Loading...
+        {t("common.loading")}
       </div>
     )
   }

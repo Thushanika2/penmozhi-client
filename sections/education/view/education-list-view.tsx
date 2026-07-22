@@ -6,7 +6,8 @@ import { toast } from "sonner"
 
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
-import { getApiErrorMessage } from "@/lib/api-client"
+import { getLocalizedApiError } from "@/lib/localize-api-error"
+import { useLanguage } from "@/providers/language-provider"
 import { getEducationResources } from "@/services/education"
 import type { EducationalResource } from "@/types/educational-resource"
 
@@ -17,6 +18,7 @@ export function EducationListView({
   publicMode?: boolean
   adminMode?: boolean
 }) {
+  const { t } = useLanguage()
   const [resources, setResources] = React.useState<EducationalResource[]>([])
   const [category, setCategory] = React.useState("")
   const [loading, setLoading] = React.useState(true)
@@ -27,22 +29,22 @@ export function EducationListView({
         const data = await getEducationResources(category || undefined)
         setResources(data.education_resources)
       } catch (error) {
-        toast.error(getApiErrorMessage(error))
+        toast.error(getLocalizedApiError(error, t))
       } finally {
         setLoading(false)
       }
     }
     load()
-  }, [category])
+  }, [category, t])
 
   if (loading) {
-    return <p className="text-muted-foreground">Loading articles...</p>
+    return <p className="text-muted-foreground">{t("education.loadingArticles")}</p>
   }
 
   return (
     <div className="space-y-4">
       <Input
-        placeholder="Filter by category..."
+        placeholder={t("education.filterPlaceholder")}
         value={category}
         onChange={(e) => setCategory(e.target.value)}
         className="max-w-sm rounded-full"
@@ -59,7 +61,7 @@ export function EducationListView({
                 <Badge variant="secondary">{resource.content_category}</Badge>
               </div>
               <p className="mt-1 text-xs text-muted-foreground">
-                Published {resource.publication_date}
+                {t("education.published", { date: resource.publication_date })}
               </p>
             </div>
             <div className="p-6">
@@ -74,14 +76,14 @@ export function EducationListView({
                 }
                 className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-primary underline-offset-4 hover:underline"
               >
-                {adminMode ? "Edit article" : "Read more"}
+                {adminMode ? t("education.editArticle") : t("education.readMore")}
               </Link>
             </div>
           </article>
         ))}
       </div>
       {!resources.length ? (
-        <p className="text-muted-foreground">No articles found.</p>
+        <p className="text-muted-foreground">{t("education.noArticles")}</p>
       ) : null}
       {publicMode ? null : null}
     </div>

@@ -45,3 +45,11 @@ export async function getProfile() {
   }>("/api/auth/profile")
   return data
 }
+
+export async function updateLanguagePreference(language_preference: "tamil" | "english") {
+  const { data } = await apiClient.patch<{
+    message: string
+    user: UserProfile
+  }>("/api/auth/profile", { language_preference })
+  return data
+}

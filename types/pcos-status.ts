@@ -9,5 +9,5 @@ export interface PCOSDisorderStatus {
 
 export interface PCOSStatusHistory {
   pcos_status: PCOSDisorderStatus
-  related_symptoms: import("./symptom-tracking-log").SymptomTrackingLog[]
+  history: PCOSDisorderStatus[]
 }

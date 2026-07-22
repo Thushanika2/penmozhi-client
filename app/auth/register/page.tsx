@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { useMemo } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { toast } from "sonner"
@@ -21,18 +22,9 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select } from "@/components/ui/select"
-import { getApiErrorMessage } from "@/lib/api-client"
+import { getLocalizedApiError } from "@/lib/localize-api-error"
 import { useAuth } from "@/providers/auth-provider"
-
-const schema = z.object({
-  fullName: z.string().min(2, "Full name is required"),
-  email: z.string().email("Enter a valid email"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-  dateOfBirth: z.string().min(1, "Date of birth is required"),
-  languagePreference: z.enum(["english", "tamil"]),
-})
-
-type FormValues = z.infer<typeof schema>
+import { useLanguage } from "@/providers/language-provider"
 
 export default function RegisterPage() {
   return (
@@ -44,7 +36,23 @@ export default function RegisterPage() {
 
 function RegisterForm() {
   const { register: registerUser } = useAuth()
+  const { t } = useLanguage()
   const router = useRouter()
+
+  const schema = useMemo(
+    () =>
+      z.object({
+        fullName: z.string().min(2, t("auth.validation.fullNameRequired")),
+        email: z.string().email(t("auth.validation.emailInvalid")),
+        password: z.string().min(6, t("auth.validation.passwordMin")),
+        dateOfBirth: z.string().min(1, t("auth.validation.dateOfBirthRequired")),
+        languagePreference: z.enum(["english", "tamil"]),
+      }),
+    [t],
+  )
+
+  type FormValues = z.infer<typeof schema>
+
   const {
     register,
     handleSubmit,
@@ -63,10 +71,10 @@ function RegisterForm() {
         date_of_birth: values.dateOfBirth,
         language_preference: values.languagePreference,
       })
-      toast.success("Account created successfully!")
+      toast.success(t("auth.register.accountCreated"))
       router.push("/dashboard")
     } catch (error) {
-      toast.error(getApiErrorMessage(error))
+      toast.error(getLocalizedApiError(error, t))
     }
   }
 
@@ -77,29 +85,27 @@ function RegisterForm() {
           <div className="lg:hidden">
             <BrandLogo href="/" size="md" />
           </div>
-          <CardTitle className="text-2xl">Create account</CardTitle>
-          <p className="text-sm text-muted-foreground">
-            Start tracking your health with Penmozhi
-          </p>
+          <CardTitle className="font-heading text-2xl">{t("auth.register.title")}</CardTitle>
+          <p className="text-sm text-muted-foreground">{t("auth.register.subtitle")}</p>
         </CardHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="fullName">Full name</Label>
+              <Label htmlFor="fullName">{t("auth.register.fullName")}</Label>
               <Input id="fullName" className="rounded-xl" {...register("fullName")} />
               {errors.fullName ? (
                 <p className="text-sm text-destructive">{errors.fullName.message}</p>
               ) : null}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t("auth.register.email")}</Label>
               <Input id="email" type="email" className="rounded-xl" {...register("email")} />
               {errors.email ? (
                 <p className="text-sm text-destructive">{errors.email.message}</p>
               ) : null}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">{t("auth.register.password")}</Label>
               <Input
                 id="password"
                 type="password"
@@ -111,7 +117,7 @@ function RegisterForm() {
               ) : null}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="dateOfBirth">Date of birth</Label>
+              <Label htmlFor="dateOfBirth">{t("auth.register.dateOfBirth")}</Label>
               <Input
                 id="dateOfBirth"
                 type="date"
@@ -125,25 +131,25 @@ function RegisterForm() {
               ) : null}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="languagePreference">Language</Label>
+              <Label htmlFor="languagePreference">{t("auth.register.language")}</Label>
               <Select
                 id="languagePreference"
                 className="rounded-xl"
                 {...register("languagePreference")}
               >
-                <option value="english">English</option>
-                <option value="tamil">Tamil (தமிழ்)</option>
+                <option value="english">{t("auth.register.languageEnglish")}</option>
+                <option value="tamil">{t("auth.register.languageTamil")}</option>
               </Select>
             </div>
           </CardContent>
           <CardFooter className="flex flex-col gap-3">
             <Button type="submit" className="w-full rounded-full" disabled={isSubmitting}>
-              {isSubmitting ? "Creating account..." : "Register"}
+              {isSubmitting ? t("auth.register.submitting") : t("auth.register.submit")}
             </Button>
             <p className="text-sm text-muted-foreground">
-              Already have an account?{" "}
+              {t("auth.register.alreadyHaveAccount")}{" "}
               <Link href="/auth/login" className="font-medium text-primary underline">
-                Sign in
+                {t("auth.register.signInLink")}
               </Link>
             </p>
           </CardFooter>

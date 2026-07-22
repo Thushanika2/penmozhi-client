@@ -6,6 +6,7 @@ import * as React from "react"
 import { toast } from "sonner"
 import { z } from "zod"
 
+import { LanguageSwitcher } from "@/components/language-switcher"
 import { PageHeader } from "@/components/page-header"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -19,12 +20,13 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { getApiErrorMessage } from "@/lib/api-client"
+import { getLocalizedApiError } from "@/lib/localize-api-error"
 import {
   getHealthProfileRisks,
   updateHealthProfile,
 } from "@/services/health-profile"
 import { useAuth } from "@/providers/auth-provider"
+import { useLanguage } from "@/providers/language-provider"
 import type { HealthProfileRisks } from "@/types/health-profile"
 
 const schema = z.object({
@@ -38,6 +40,7 @@ type FormValues = z.infer<typeof schema>
 
 export function ProfileView() {
   const { user, healthProfile, setHealthProfile } = useAuth()
+  const { t } = useLanguage()
   const [risks, setRisks] = React.useState<HealthProfileRisks | null>(null)
 
   const {
@@ -45,7 +48,9 @@ export function ProfileView() {
     handleSubmit,
     reset,
     formState: { isSubmitting },
-  } = useForm<FormValues>()
+  } = useForm<FormValues>({
+    resolver: zodResolver(schema),
+  })
 
   React.useEffect(() => {
     if (!healthProfile) return
@@ -61,11 +66,11 @@ export function ProfileView() {
         const data = await getHealthProfileRisks(healthProfile!.id)
         setRisks(data)
       } catch (error) {
-        toast.error(getApiErrorMessage(error))
+        toast.error(getLocalizedApiError(error, t))
       }
     }
     loadRisks()
-  }, [healthProfile, reset])
+  }, [healthProfile, reset, t])
 
   async function onSubmit(values: FormValues) {
     if (!healthProfile) return
@@ -79,37 +84,53 @@ export function ProfileView() {
       setHealthProfile(data.health_profile)
       const risksData = await getHealthProfileRisks(healthProfile.id)
       setRisks(risksData)
-      toast.success("Profile updated")
+      toast.success(t("profile.updated"))
     } catch (error) {
-      toast.error(getApiErrorMessage(error))
+      toast.error(getLocalizedApiError(error, t))
     }
   }
+
+  const languageLabel =
+    user?.language_preference === "tamil"
+      ? t("common.tamil")
+      : t("common.english")
 
   return (
     <div>
       <PageHeader
-        title="My Profile"
-        description="Manage your account and health profile details"
+        title={t("profile.title")}
+        description={t("profile.description")}
       />
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Account</CardTitle>
+            <CardTitle>{t("profile.account.title")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
             <p>
-              <span className="text-muted-foreground">Name:</span> {user?.full_name}
+              <span className="text-muted-foreground">
+                {t("profile.account.name")}:
+              </span>{" "}
+              {user?.full_name}
             </p>
             <p>
-              <span className="text-muted-foreground">Email:</span> {user?.email}
+              <span className="text-muted-foreground">
+                {t("profile.account.email")}:
+              </span>{" "}
+              {user?.email}
             </p>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-muted-foreground">
+                {t("profile.account.language")}:
+              </span>
+              <Badge variant="secondary">{languageLabel}</Badge>
+              <LanguageSwitcher />
+            </div>
             <p>
-              <span className="text-muted-foreground">Language:</span>{" "}
-              <Badge variant="secondary">{user?.language_preference}</Badge>
-            </p>
-            <p>
-              <span className="text-muted-foreground">Date of birth:</span>{" "}
+              <span className="text-muted-foreground">
+                {t("profile.account.dateOfBirth")}:
+              </span>{" "}
               {user?.date_of_birth}
             </p>
           </CardContent>
@@ -117,46 +138,52 @@ export function ProfileView() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Health risks summary</CardTitle>
-            <CardDescription>Calculated from your health profile</CardDescription>
+            <CardTitle>{t("profile.risks.title")}</CardTitle>
+            <CardDescription>{t("profile.risks.description")}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
             <p>
-              BMI:{" "}
+              {t("profile.risks.bmi")}:{" "}
               <strong>{risks?.calculated_bmi?.toFixed(1) ?? "—"}</strong>{" "}
               {risks?.bmi_category ? `(${risks.bmi_category})` : ""}
             </p>
-            <p>Nutritional needs: {risks?.nutritional_needs ?? "Not set"}</p>
-            <p>Health risks: {risks?.health_risks ?? "Not set"}</p>
+            <p>
+              {t("profile.risks.nutritionalNeeds")}:{" "}
+              {risks?.nutritional_needs ?? t("common.notSet")}
+            </p>
+            <p>
+              {t("profile.risks.healthRisks")}:{" "}
+              {risks?.health_risks ?? t("common.notSet")}
+            </p>
           </CardContent>
         </Card>
       </div>
 
       <Card className="mt-6">
         <CardHeader>
-          <CardTitle>Health profile</CardTitle>
+          <CardTitle>{t("profile.form.title")}</CardTitle>
         </CardHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
           <CardContent className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
-              <Label>Weight (kg)</Label>
+              <Label>{t("profile.form.weight")}</Label>
               <Input type="number" step="0.1" {...register("weight", { valueAsNumber: true })} />
             </div>
             <div className="space-y-2">
-              <Label>Height (cm)</Label>
+              <Label>{t("profile.form.height")}</Label>
               <Input type="number" step="0.1" {...register("height", { valueAsNumber: true })} />
             </div>
             <div className="space-y-2 md:col-span-2">
-              <Label>Nutritional needs</Label>
+              <Label>{t("profile.form.nutritionalNeeds")}</Label>
               <Textarea {...register("nutritionalNeeds")} />
             </div>
             <div className="space-y-2 md:col-span-2">
-              <Label>Health risks</Label>
+              <Label>{t("profile.form.healthRisks")}</Label>
               <Textarea {...register("healthRisks")} />
             </div>
             <div>
               <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Saving..." : "Save profile"}
+                {isSubmitting ? t("common.saving") : t("profile.form.save")}
               </Button>
             </div>
           </CardContent>

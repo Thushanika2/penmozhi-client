@@ -5,6 +5,7 @@ import { X } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { useLanguage } from "@/providers/language-provider"
 
 interface DialogContextValue {
   open: boolean
@@ -35,7 +36,6 @@ function Dialog({
 
 function DialogTrigger({
   children,
-  asChild,
 }: {
   children: React.ReactElement<{ onClick?: (event: React.MouseEvent) => void }>
   asChild?: boolean
@@ -60,6 +60,7 @@ function DialogContent({
   children: React.ReactNode
 }) {
   const context = React.useContext(DialogContext)
+  const { t } = useLanguage()
   if (!context?.open) return null
 
   return (
@@ -78,6 +79,7 @@ function DialogContent({
           variant="ghost"
           size="icon"
           className="absolute right-3 top-3"
+          aria-label={t("a11y.closeDialog")}
           onClick={() => context.setOpen(false)}
         >
           <X className="size-4" />

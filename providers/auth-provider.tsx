@@ -19,6 +19,7 @@ interface AuthContextValue {
   logout: () => Promise<void>
   refreshProfile: () => Promise<void>
   setHealthProfile: (profile: HealthProfile | null) => void
+  updateUser: (updater: (user: UserProfile) => UserProfile) => void
 }
 
 const AuthContext = React.createContext<AuthContextValue | undefined>(undefined)
@@ -46,10 +47,10 @@ function readStoredHealthProfile(): HealthProfile | null {
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  // Always start the same on server and client to avoid hydration mismatches.
+  // localStorage is only read after mount.
   const [user, setUser] = React.useState<UserProfile | null>(null)
-  const [healthProfile, setHealthProfileState] = React.useState<HealthProfile | null>(
-    null,
-  )
+  const [healthProfile, setHealthProfileState] = React.useState<HealthProfile | null>(null)
   const [isLoading, setIsLoading] = React.useState(true)
 
   const persistSession = React.useCallback(
@@ -89,20 +90,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [clearSession])
 
   React.useEffect(() => {
-    const token = localStorage.getItem(TOKEN_KEY)
-    const storedUser = readStoredUser()
-    const storedHealth = readStoredHealthProfile()
-    setUser(storedUser)
-    setHealthProfileState(storedHealth)
+    let cancelled = false
 
-    if (!token) {
-      setIsLoading(false)
-      return
+    async function bootstrapSession() {
+      // Yield so session restore setState runs after the effect, not synchronously in it.
+      await Promise.resolve()
+      if (cancelled) return
+
+      const token = localStorage.getItem(TOKEN_KEY)
+      if (!token) {
+        setIsLoading(false)
+        return
+      }
+
+      const storedUser = readStoredUser()
+      if (storedUser) setUser(storedUser)
+      const storedHealth = readStoredHealthProfile()
+      if (storedHealth) setHealthProfileState(storedHealth)
+
+      try {
+        await refreshProfile()
+      } catch {
+        clearSession()
+      } finally {
+        if (!cancelled) setIsLoading(false)
+      }
     }
 
-    refreshProfile()
-      .catch(() => clearSession())
-      .finally(() => setIsLoading(false))
+    void bootstrapSession()
+    return () => {
+      cancelled = true
+    }
   }, [clearSession, refreshProfile])
 
   const login = React.useCallback(
@@ -147,6 +165,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [])
 
+  const updateUser = React.useCallback((updater: (user: UserProfile) => UserProfile) => {
+    setUser((current) => {
+      if (!current) return current
+      const next = updater(current)
+      localStorage.setItem(USER_KEY, JSON.stringify(next))
+      return next
+    })
+  }, [])
+
   return (
     <AuthContext.Provider
       value={{
@@ -158,6 +185,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         logout,
         refreshProfile,
         setHealthProfile,
+        updateUser,
       }}
     >
       {children}

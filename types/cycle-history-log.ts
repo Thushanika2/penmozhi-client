@@ -11,6 +11,7 @@ export interface CycleHistoryLog {
 export interface CyclePrediction {
   predicted_next_period_date: string | null
   message?: string
+  message_code?: string
   based_on_cycles?: number
   latest_cycle?: CycleHistoryLog
 }

@@ -1,36 +1,42 @@
-import Link from "next/link"
+"use client"
 
-import { BrandLogo } from "@/components/brand-logo"
-import { ThemeToggle } from "@/components/theme-toggle"
+import Link from "next/link"
+import * as React from "react"
+
+import { SiteFooter } from "@/components/site-footer"
+import { SiteHeader } from "@/components/site-header"
 import { Button } from "@/components/ui/button"
+import { useLanguage } from "@/providers/language-provider"
 import { EducationDetailView } from "@/sections/education/view/education-detail-view"
 
-export default async function EducationDetailPage({
+export default function EducationDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>
 }) {
-  const { id } = await params
+  const { id } = React.use(params)
+  const { t } = useLanguage()
 
   return (
-    <div className="min-h-svh gradient-mesh">
-      <header className="sticky top-0 z-50 border-b border-border/50 glass-panel">
-        <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-3">
-          <BrandLogo size="sm" />
-          <ThemeToggle />
-        </div>
-      </header>
+    <div className="flex min-h-svh flex-col gradient-mesh">
+      <SiteHeader maxWidth="4xl" showAuth={false}>
+        <Button variant="outline" className="rounded-full" render={<Link href="/education" />}>
+          {t("education.allArticles")}
+        </Button>
+      </SiteHeader>
 
-      <div className="mx-auto max-w-4xl px-4 py-8">
+      <div className="mx-auto w-full max-w-4xl flex-1 px-4 py-8">
         <Button
-          variant="outline"
-          className="mb-6 rounded-full"
+          variant="ghost"
+          className="mb-6 -ml-2 rounded-full text-muted-foreground"
           render={<Link href="/education" />}
         >
-          Back to articles
+          {t("education.backToArticles")}
         </Button>
         <EducationDetailView id={Number(id)} />
       </div>
+
+      <SiteFooter />
     </div>
   )
 }

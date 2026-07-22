@@ -1,22 +1,28 @@
 "use client"
 
 import { Moon, Sun } from "lucide-react"
-import { useTheme } from "next-themes"
 import * as React from "react"
 
+import { useTheme } from "@/components/theme-provider"
 import { Button } from "@/components/ui/button"
+import { useLanguage } from "@/providers/language-provider"
+
+function useIsMounted() {
+  return React.useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  )
+}
 
 export function ThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme()
-  const [mounted, setMounted] = React.useState(false)
-
-  React.useEffect(() => {
-    setMounted(true)
-  }, [])
+  const { t } = useLanguage()
+  const mounted = useIsMounted()
 
   if (!mounted) {
     return (
-      <Button variant="outline" size="icon" aria-label="Toggle theme">
+      <Button variant="outline" size="icon" aria-label={t("themeToggle.toggleTheme")}>
         <Sun className="size-4" />
       </Button>
     )
@@ -28,7 +34,7 @@ export function ThemeToggle() {
     <Button
       variant="outline"
       size="icon"
-      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+      aria-label={isDark ? t("themeToggle.switchToLight") : t("themeToggle.switchToDark")}
       onClick={() => setTheme(isDark ? "light" : "dark")}
     >
       {isDark ? <Sun className="size-4" /> : <Moon className="size-4" />}
