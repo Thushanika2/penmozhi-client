@@ -1,26 +1,24 @@
 "use client"
 
+import { Droplet } from "lucide-react"
+
 import type { CycleInsights, CyclePhaseRanges } from "@/types/cycle-history-log"
 
 const RING = 132
-const DOT_RING = 96
+const DOT_RING = 108
 const CX = 200
 const CY = 200
 
-const PHASE_COLORS = {
-  menstrual: "#f429a0",
-  follicular: "#7ec8e3",
-  ovulation: "#f76dbe",
-  luteal: "#f98fcd",
-  pms: "#f54baf",
-  default: "rgba(255,255,255,0.22)",
-} as const
+const TRACK_COLOR = "rgba(255,255,255,0.1)"
+const PERIOD_COLOR = "#f429a0"
+const PERIOD_DOT_COLOR = "#f54baf"
+const INNER_DOT = "rgba(255,255,255,0.22)"
+const INNER_DOT_PASSED = "rgba(255,255,255,0.45)"
 
 interface CycleWheelProps {
   insights: CycleInsights
   todayLabel: string
   statusLabel: string
-  phaseLabel?: string
   dayMarkerLabel: string
 }
 
@@ -77,34 +75,10 @@ function buildSchedule(
   }
 }
 
-function dayPhase(day: number, schedule: CyclePhaseRanges): keyof typeof PHASE_COLORS {
-  if (day >= schedule.menstrual.start_day && day <= schedule.menstrual.end_day) {
-    return "menstrual"
-  }
-  if (
-    schedule.follicular &&
-    day >= schedule.follicular.start_day &&
-    day <= schedule.follicular.end_day
-  ) {
-    return "follicular"
-  }
-  if (day >= schedule.ovulation.start_day && day <= schedule.ovulation.end_day) {
-    return "ovulation"
-  }
-  if (day >= schedule.pms.start_day && day <= schedule.pms.end_day) {
-    return "pms"
-  }
-  if (schedule.luteal && day >= schedule.luteal.start_day && day <= schedule.luteal.end_day) {
-    return "luteal"
-  }
-  return "default"
-}
-
 export function CycleWheel({
   insights,
   todayLabel,
   statusLabel,
-  phaseLabel,
   dayMarkerLabel,
 }: CycleWheelProps) {
   const totalDays = insights.average_cycle_length || 28
@@ -112,79 +86,42 @@ export function CycleWheel({
   const cycleDay = Math.min(Math.max(insights.cycle_day ?? 1, 1), totalDays)
   const schedule = buildSchedule(totalDays, periodDays, insights.phase_ranges)
 
-  const arcs: Array<{
-    start: number
-    end: number
-    color: string
-    width: number
-    opacity?: number
-  }> = [
-    {
-      start: schedule.menstrual.start_day,
-      end: schedule.menstrual.end_day,
-      color: PHASE_COLORS.menstrual,
-      width: 28,
-    },
-  ]
-
-  if (schedule.follicular) {
-    arcs.push({
-      start: schedule.follicular.start_day,
-      end: schedule.follicular.end_day,
-      color: PHASE_COLORS.follicular,
-      width: 24,
-      opacity: 0.95,
-    })
-  }
-
-  arcs.push({
-    start: schedule.ovulation.start_day,
-    end: schedule.ovulation.end_day,
-    color: PHASE_COLORS.ovulation,
-    width: 28,
-  })
-
-  if (schedule.luteal) {
-    const pmsStart = schedule.pms.start_day
-    if (schedule.luteal.end_day >= pmsStart) {
-      arcs.push({
-        start: schedule.luteal.start_day,
-        end: pmsStart - 1,
-        color: PHASE_COLORS.luteal,
-        width: 22,
-        opacity: 0.75,
-      })
-    }
-    arcs.push({
-      start: pmsStart,
-      end: schedule.pms.end_day,
-      color: PHASE_COLORS.pms,
-      width: 20,
-      opacity: 0.9,
-    })
-  }
+  const periodEndDay = schedule.menstrual.end_day
+  const predictedStart = Math.max(periodEndDay + 1, totalDays - periodDays + 1)
 
   const markerAngle = dayToAngle(cycleDay, totalDays)
-  const marker = polarToCartesian(CX, CY, RING + 18, markerAngle)
-  const periodIcon = polarToCartesian(CX, CY, RING + 4, dayToAngle(1, totalDays))
-  const ovulationIcon = polarToCartesian(
+  const marker = polarToCartesian(CX, CY, RING + 22, markerAngle)
+  const periodStart = polarToCartesian(CX, CY, RING, dayToAngle(1, totalDays))
+  const ovulationPoint = polarToCartesian(
     CX,
     CY,
-    RING + 4,
+    RING,
     dayToAngle(schedule.ovulation_peak_day, totalDays),
   )
 
-  const dots = Array.from({ length: totalDays }, (_, index) => {
+  const innerDots = Array.from({ length: totalDays }, (_, index) => {
     const day = index + 1
-    const angle = dayToAngle(day, totalDays)
-    const point = polarToCartesian(CX, CY, DOT_RING, angle)
-    const phase = dayPhase(day, schedule)
+    const point = polarToCartesian(CX, CY, DOT_RING, dayToAngle(day, totalDays))
     const isToday = day === cycleDay
-    let fill: string = PHASE_COLORS.default
-    if (phase !== "default") fill = PHASE_COLORS[phase]
-    if (isToday) fill = "#ffffff"
-    return { day, point, fill, isToday }
+    const isPassed = day <= cycleDay
+    return {
+      day,
+      point,
+      fill: isToday ? "#ffffff" : isPassed ? INNER_DOT_PASSED : INNER_DOT,
+      radius: isToday ? 4.5 : 2.5,
+    }
   })
+
+  const predictedDots = Array.from(
+    { length: Math.max(0, totalDays - predictedStart + 1) },
+    (_, index) => {
+      const day = predictedStart + index
+      return polarToCartesian(CX, CY, RING, dayToAngle(day, totalDays))
+    },
+  )
+
+  const periodArcEnd = dayToAngle(periodEndDay, totalDays)
+  const periodArcStart = dayToAngle(1, totalDays)
 
   return (
     <div className="relative mx-auto w-full max-w-[380px]">
@@ -194,82 +131,75 @@ export function CycleWheel({
           cy={CY}
           r={RING}
           fill="none"
-          stroke="rgba(255,255,255,0.12)"
-          strokeWidth={28}
+          stroke={TRACK_COLOR}
+          strokeWidth={34}
+          strokeLinecap="round"
         />
 
-        {arcs.map((arc) => {
-          if (arc.end < arc.start) return null
-          const startAngle = dayToAngle(arc.start, totalDays)
-          const endAngle = dayToAngle(arc.end, totalDays)
-          return (
-            <path
-              key={`${arc.start}-${arc.end}-${arc.color}`}
-              d={describeArc(CX, CY, RING, startAngle, endAngle)}
-              fill="none"
-              stroke={arc.color}
-              strokeWidth={arc.width}
-              strokeLinecap="round"
-              opacity={arc.opacity ?? 1}
-            />
-          )
-        })}
+        {periodEndDay >= 1 ? (
+          <path
+            d={describeArc(CX, CY, RING, periodArcStart, periodArcEnd)}
+            fill="none"
+            stroke={PERIOD_COLOR}
+            strokeWidth={34}
+            strokeLinecap="round"
+          />
+        ) : null}
 
-        {dots.map(({ day, point, fill, isToday }) => (
+        {predictedDots.map((point, index) => (
           <circle
-            key={day}
+            key={`predicted-${index}`}
             cx={point.x}
             cy={point.y}
-            r={isToday ? 4.5 : 3}
-            fill={fill}
-            opacity={isToday ? 1 : 0.9}
+            r={5}
+            fill={PERIOD_DOT_COLOR}
           />
         ))}
 
-        <circle
-          cx={periodIcon.x}
-          cy={periodIcon.y}
-          r={9}
-          fill={PHASE_COLORS.menstrual}
-          stroke="#ffffff"
-          strokeWidth={2}
-        />
-        <circle
-          cx={periodIcon.x}
-          cy={periodIcon.y + 1}
-          r={2.5}
-          fill="#ffffff"
-          opacity={0.9}
-        />
-
-        <circle
-          cx={ovulationIcon.x}
-          cy={ovulationIcon.y}
-          r={7}
-          fill={PHASE_COLORS.ovulation}
-          stroke="#ffffff"
-          strokeWidth={2}
-        />
+        {innerDots.map(({ day, point, fill, radius }) => (
+          <circle key={day} cx={point.x} cy={point.y} r={radius} fill={fill} />
+        ))}
 
         <foreignObject
-          x={marker.x - 42}
+          x={periodStart.x - 14}
+          y={periodStart.y - 14}
+          width={28}
+          height={28}
+          className="overflow-visible"
+        >
+          <div className="flex size-7 items-center justify-center rounded-full bg-[#f429a0] shadow-sm">
+            <Droplet className="size-3.5 fill-white text-white" strokeWidth={0} />
+          </div>
+        </foreignObject>
+
+        <circle
+          cx={ovulationPoint.x}
+          cy={ovulationPoint.y}
+          r={10}
+          fill="none"
+          stroke="#ffffff"
+          strokeWidth={2}
+        />
+        <circle cx={ovulationPoint.x} cy={ovulationPoint.y} r={3} fill="#ffffff" opacity={0.85} />
+
+        <foreignObject
+          x={marker.x - 44}
           y={marker.y - 16}
-          width={84}
+          width={88}
           height={32}
           className="overflow-visible"
         >
-          <div className="flex items-center justify-center rounded-full border border-white/20 bg-[#1a1020]/95 px-3 py-1 text-xs font-semibold text-white shadow-lg backdrop-blur-sm">
+          <div className="flex items-center justify-center rounded-full bg-[#2a2a2e] px-3 py-1.5 text-xs font-semibold text-white shadow-lg">
             {dayMarkerLabel}
           </div>
         </foreignObject>
       </svg>
 
-      <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-8 text-center">
-        <p className="text-sm font-medium text-white/70">{todayLabel}</p>
-        <p className="mt-3 text-xl font-bold leading-snug text-white md:text-2xl">{statusLabel}</p>
-        {phaseLabel ? (
-          <p className="mt-2 text-sm font-medium text-[#f98fcd]">{phaseLabel}</p>
-        ) : null}
+      <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-10 text-center">
+        <p className="text-sm font-medium text-white/75">{todayLabel}</p>
+        <p className="mt-4 text-xl font-bold leading-snug tracking-tight text-white md:text-[1.65rem]">
+          {statusLabel}
+        </p>
       </div>
     </div>
   )

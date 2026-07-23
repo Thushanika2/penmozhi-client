@@ -369,12 +369,14 @@
     "cycleWheel": {
       "title": "இன்றைய சுழற்சி",
       "description": "உங்கள் தற்போதைய சுழற்சியில் நீங்கள் எங்குள்ளீர்கள் என்பதைக் காணுங்கள்.",
+      "currentCycle": "தற்போதைய சுழற்சி",
       "cycleDay": "சுழற்சி நாள்",
       "today": "இன்று, {date}",
       "dayMarker": "நாள் {day}",
+      "nextPeriodDue": "அடுத்த மாதவிடாய் {date} அன்று வரும்",
       "daysUntilPeriod": "அடுத்த மாதவிடாய் வர {days} நாட்கள்",
       "daysUntilPeriodOne": "அடுத்த மாதவிடாய் வர 1 நாள்",
-      "periodStartingToday": "மாதவிடாய் இன்று தொடங்கலாம்",
+      "periodStartingToday": "அடுத்த மாதவிடாய் இன்று வரும்",
       "learnAboutCycle": "உங்கள் சுழற்சியைப் பற்றி அறியுங்கள்",
       "tagline": "புள்ளிகளை இணைக்கிறோம்.",
       "subtitle": "உங்கள் சுழற்சி, விளக்கப்பட்டது."

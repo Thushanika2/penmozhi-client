@@ -46,29 +46,27 @@ function formatDate(value: string | null | undefined, locale: string) {
 }
 
 function formatTodayLabel(locale: string) {
-  const date = new Date()
-  const formatted = date.toLocaleDateString(locale === "ta" ? "ta-IN" : "en-CA")
-  return formatted
+  return new Date().toLocaleDateString(locale === "ta" ? "ta-IN" : "en-US", {
+    month: "short",
+    day: "numeric",
+  })
 }
 
 function cycleStatusLabel(
+  nextPeriodDate: string | null | undefined,
   daysUntil: number | null | undefined,
+  locale: string,
   t: (key: string, params?: Record<string, string>) => string,
 ) {
-  if (daysUntil == null) return t("dashboard.description")
-  if (daysUntil <= 0) return t("dashboard.cycleWheel.periodStartingToday")
+  if (daysUntil == null && !nextPeriodDate) return t("dashboard.description")
+  if (daysUntil != null && daysUntil <= 0) return t("dashboard.cycleWheel.periodStartingToday")
+  if (nextPeriodDate) {
+    return t("dashboard.cycleWheel.nextPeriodDue", {
+      date: formatDate(nextPeriodDate, locale),
+    })
+  }
   if (daysUntil === 1) return t("dashboard.cycleWheel.daysUntilPeriodOne")
-  return t("dashboard.cycleWheel.daysUntilPeriod", { days: String(daysUntil) })
-}
-
-function phaseLabel(
-  phase: string | null | undefined,
-  t: (key: string) => string,
-) {
-  if (!phase) return undefined
-  const key = `dashboard.phases.${phase}`
-  const label = t(key)
-  return label === key ? undefined : label
+  return t("dashboard.cycleWheel.daysUntilPeriod", { days: String(daysUntil ?? "—") })
 }
 
 export function DashboardHomeView() {
@@ -90,16 +88,21 @@ export function DashboardHomeView() {
           <>
             <MotionCard delay={0.05}>
               <div className="clue-cycle-panel mb-8 overflow-hidden rounded-3xl px-4 py-8 md:px-8 md:py-10">
-                <div className="mb-6 text-center">
-                  <p className="text-lg font-semibold text-white">{t("dashboard.cycleWheel.tagline")}</p>
-                  <p className="text-sm text-[#f98fcd]">{t("dashboard.cycleWheel.subtitle")}</p>
+                <div className="mb-2 text-center">
+                  <p className="text-base font-semibold text-white">
+                    {t("dashboard.cycleWheel.currentCycle")}
+                  </p>
                 </div>
 
                 <CycleWheel
                   insights={insights}
                   todayLabel={t("dashboard.cycleWheel.today", { date: formatTodayLabel(locale) })}
-                  statusLabel={cycleStatusLabel(insights.days_until_next_period, t)}
-                  phaseLabel={phaseLabel(insights.current_phase, t)}
+                  statusLabel={cycleStatusLabel(
+                    insights.next_period_date,
+                    insights.days_until_next_period,
+                    locale,
+                    t,
+                  )}
                   dayMarkerLabel={t("dashboard.cycleWheel.dayMarker", {
                     day: String(insights.cycle_day ?? 1),
                   })}

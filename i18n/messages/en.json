@@ -369,12 +369,14 @@
     "cycleWheel": {
       "title": "Your cycle today",
       "description": "Track where you are in your current cycle.",
+      "currentCycle": "Current cycle",
       "cycleDay": "Cycle day",
       "today": "Today, {date}",
       "dayMarker": "Day {day}",
+      "nextPeriodDue": "Your next period is due {date}",
       "daysUntilPeriod": "{days} more days until next period",
       "daysUntilPeriodOne": "1 more day until next period",
-      "periodStartingToday": "Period may start today",
+      "periodStartingToday": "Your next period is due today",
       "learnAboutCycle": "Learn about your cycle",
       "tagline": "Connecting the dots.",
       "subtitle": "Your cycle, decoded."
