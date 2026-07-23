@@ -831,9 +831,13 @@
     }
   },
   "admin": {
+    "nav": {
+      "users": "பயனர்கள்"
+    },
     "dashboard": {
       "title": "நிர்வாக முகப்புப் பலகை",
-      "description": "உள்ளடக்கம் மற்றும் சமூகத்தை நிர்வகிக்கவும்",
+      "description": "தள புள்ளிவிவரங்கள், பயனர் நிர்வாகம் மற்றும் ஏற்றுமதி",
+      "manageUsers": "பயனர்களை நிர்வகி",
       "educationTitle": "கல்வி",
       "educationDescription": "கல்விக் கட்டுரைகளை நிர்வகிக்கவும்",
       "manageArticles": "கட்டுரைகளை நிர்வகி",
@@ -841,6 +845,53 @@
       "forumTitle": "மன்றம்",
       "forumDescription": "சமூகப் பதிவுகளை மேற்பார்வை செய்யவும்",
       "openModeration": "மேற்பார்வையைத் திற"
+    },
+    "analytics": {
+      "totalUsers": "மொத்த பயனர்கள்",
+      "onboardingRate": "Onboarding முடிவு",
+      "activeUsers": "செயலில் உள்ள பயனர்கள் (30 நாட்கள்)",
+      "pcosUsers": "PCOS உள்ள பயனர்கள்",
+      "cycles": "சுழற்சி பதிவுகள்",
+      "symptoms": "அறிகுறி பதிவுகள்",
+      "dailyLogs": "தினசரி பதிவுகள்",
+      "forumPosts": "மன்றப் பதிவுகள்",
+      "registrationsTitle": "புதிய பதிவுகள்",
+      "registrationsDescription": "கடந்த 30 நாட்களில் பயனர் பதிவுகள்",
+      "registrationsLabel": "பதிவுகள்",
+      "activityTitle": "தினசரி செயல்பாடு",
+      "activityDescription": "ஒவ்வொரு நாளும் பதிவான சுழற்சிகள், அறிகுறிகள், தினசரி பதிவுகள்",
+      "languageSplit": "மொழி விருப்பம்",
+      "noData": "தரவு இல்லை",
+      "exportTitle": "அறிக்கைகளை ஏற்றுமதி செய்",
+      "exportDescription": "பகுப்பாய்வு அல்லது காப்புப் பிரதிக்காக CSV அறிக்கைகளைப் பதிவிறக்கவும்",
+      "exportSuccess": "அறிக்கை பதிவிறக்கப்பட்டது",
+      "export": {
+        "summary": "தளச் சுருக்கம்",
+        "users": "பயனர்கள்",
+        "cycles": "சுழற்சிகள்",
+        "symptoms": "அறிகுறிகள்",
+        "daily_logs": "தினசரி பதிவுகள்"
+      }
+    },
+    "users": {
+      "title": "பயனர்களை நிர்வகி",
+      "description": "{count} பதிவு செய்யப்பட்ட பயனர்கள்",
+      "searchTitle": "பயனர்களைத் தேடு",
+      "searchPlaceholder": "பெயர் அல்லது மின்னஞ்சல் மூலம் தேடு",
+      "search": "தேடு",
+      "columns": {
+        "name": "பெயர்",
+        "email": "மின்னஞ்சல்",
+        "language": "மொழி",
+        "country": "நாடு",
+        "onboarding": "Onboarding",
+        "registered": "பதிவு தேதி"
+      },
+      "onboardingComplete": "முடிந்தது",
+      "onboardingPending": "நிலுவையில்",
+      "pageInfo": "பக்கம் {page} / {pages}",
+      "previous": "முந்தைய",
+      "next": "அடுத்த"
     }
   },
   "profile": {

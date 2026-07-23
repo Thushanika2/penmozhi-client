@@ -831,9 +831,13 @@
     }
   },
   "admin": {
+    "nav": {
+      "users": "Users"
+    },
     "dashboard": {
       "title": "Admin Dashboard",
-      "description": "Manage content and community",
+      "description": "Platform analytics, user management, and exports",
+      "manageUsers": "Manage users",
       "educationTitle": "Education",
       "educationDescription": "Manage educational articles",
       "manageArticles": "Manage articles",
@@ -841,6 +845,53 @@
       "forumTitle": "Forum",
       "forumDescription": "Moderate community posts",
       "openModeration": "Open moderation"
+    },
+    "analytics": {
+      "totalUsers": "Total users",
+      "onboardingRate": "Onboarding completion",
+      "activeUsers": "Active users (30d)",
+      "pcosUsers": "Users with PCOS",
+      "cycles": "Cycle logs",
+      "symptoms": "Symptom logs",
+      "dailyLogs": "Daily logs",
+      "forumPosts": "Forum posts",
+      "registrationsTitle": "New registrations",
+      "registrationsDescription": "User sign-ups over the last 30 days",
+      "registrationsLabel": "Registrations",
+      "activityTitle": "Daily activity",
+      "activityDescription": "Cycles, symptoms, and daily logs logged per day",
+      "languageSplit": "Language preference",
+      "noData": "No data yet",
+      "exportTitle": "Export reports",
+      "exportDescription": "Download CSV reports for analysis or backup",
+      "exportSuccess": "Report downloaded",
+      "export": {
+        "summary": "Platform summary",
+        "users": "Users",
+        "cycles": "Cycles",
+        "symptoms": "Symptoms",
+        "daily_logs": "Daily logs"
+      }
+    },
+    "users": {
+      "title": "Manage users",
+      "description": "{count} registered users",
+      "searchTitle": "Search users",
+      "searchPlaceholder": "Search by name or email",
+      "search": "Search",
+      "columns": {
+        "name": "Name",
+        "email": "Email",
+        "language": "Language",
+        "country": "Country",
+        "onboarding": "Onboarding",
+        "registered": "Registered"
+      },
+      "onboardingComplete": "Complete",
+      "onboardingPending": "Pending",
+      "pageInfo": "Page {page} of {pages}",
+      "previous": "Previous",
+      "next": "Next"
     }
   },
   "profile": {

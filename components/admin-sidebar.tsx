@@ -8,6 +8,7 @@ import {
   LogOut,
   Menu,
   Shield,
+  Users,
   X,
 } from "lucide-react"
 import * as React from "react"
@@ -22,6 +23,7 @@ import { useLanguage } from "@/providers/language-provider"
 
 const navItems = [
   { href: "/admin/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard },
+  { href: "/admin/users", labelKey: "admin.nav.users", icon: Users },
   { href: "/admin/education", labelKey: "nav.education", icon: BookOpen },
   { href: "/admin/forum/moderation", labelKey: "nav.forumModeration", icon: Shield },
 ]
