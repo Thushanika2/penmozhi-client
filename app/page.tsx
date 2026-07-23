@@ -5,14 +5,15 @@ import {
   ArrowRight,
   BookOpen,
   CalendarDays,
-  HeartPulse,
+  Heart,
   Languages,
+  LineChart,
+  Lock,
   Shield,
   Sparkles,
-  Users,
+  TrendingUp,
 } from "lucide-react"
 
-import { BrandLogo } from "@/components/brand-logo"
 import { SiteFooter } from "@/components/site-footer"
 import { SiteHeader } from "@/components/site-header"
 import { Button } from "@/components/ui/button"
@@ -22,90 +23,54 @@ import { useLanguage } from "@/providers/language-provider"
 export default function LandingPage() {
   const { t } = useLanguage()
 
-  const features = [
-    {
-      icon: CalendarDays,
-      title: t("landing.features.cycleTrackingTitle"),
-      description: t("landing.features.cycleTrackingDesc"),
-      color: "from-primary/15 to-primary/5",
-    },
-    {
-      icon: HeartPulse,
-      title: t("landing.features.symptomTrendsTitle"),
-      description: t("landing.features.symptomTrendsDesc"),
-      color: "from-[var(--brand-light)]/15 to-[var(--brand-soft)]/10",
-    },
-    {
-      icon: Sparkles,
-      title: t("landing.features.aiAssistantTitle"),
-      description: t("landing.features.aiAssistantDesc"),
-      color: "from-[var(--brand-deep)]/15 to-primary/5",
-    },
-    {
-      icon: BookOpen,
-      title: t("landing.features.educationHubTitle"),
-      description: t("landing.features.educationHubDesc"),
-      color: "from-[var(--brand-soft)]/20 to-secondary",
-    },
-  ]
-
   const stats = [
-    {
-      label: t("landing.stats.bilingualLabel"),
-      value: t("landing.stats.bilingualValue"),
-      icon: Languages,
-    },
-    {
-      label: t("landing.stats.forumLabel"),
-      value: t("landing.stats.forumValue"),
-      icon: Users,
-    },
-    {
-      label: t("landing.stats.secureLabel"),
-      value: t("landing.stats.secureValue"),
-      icon: Shield,
-    },
+    { label: t("landing.stats.bilingualLabel"), value: t("landing.stats.bilingualValue"), icon: Languages },
+    { label: t("landing.stats.scienceLabel"), value: t("landing.stats.scienceValue"), icon: TrendingUp },
+    { label: t("landing.stats.secureLabel"), value: t("landing.stats.secureValue"), icon: Shield },
   ]
 
   const steps = [
-    {
-      step: "01",
-      title: t("landing.howItWorks.step1Title"),
-      desc: t("landing.howItWorks.step1Desc"),
-    },
-    {
-      step: "02",
-      title: t("landing.howItWorks.step2Title"),
-      desc: t("landing.howItWorks.step2Desc"),
-    },
-    {
-      step: "03",
-      title: t("landing.howItWorks.step3Title"),
-      desc: t("landing.howItWorks.step3Desc"),
-    },
+    { step: "01", title: t("landing.howItWorks.step1Title"), desc: t("landing.howItWorks.step1Desc") },
+    { step: "02", title: t("landing.howItWorks.step2Title"), desc: t("landing.howItWorks.step2Desc") },
+    { step: "03", title: t("landing.howItWorks.step3Title"), desc: t("landing.howItWorks.step3Desc") },
+  ]
+
+  const features = [
+    { icon: CalendarDays, title: t("landing.features.cycleTrackingTitle"), description: t("landing.features.cycleTrackingDesc") },
+    { icon: Heart, title: t("landing.features.symptomTrendsTitle"), description: t("landing.features.symptomTrendsDesc") },
+    { icon: Sparkles, title: t("landing.features.predictionsTitle"), description: t("landing.features.predictionsDesc") },
+    { icon: TrendingUp, title: t("landing.features.fertilityTitle"), description: t("landing.features.fertilityDesc") },
+    { icon: LineChart, title: t("landing.features.insightsTitle"), description: t("landing.features.insightsDesc") },
+    { icon: BookOpen, title: t("landing.features.educationHubTitle"), description: t("landing.features.educationHubDesc") },
+  ]
+
+  const privacyPoints = [
+    { title: t("landing.privacy.points.noSellingTitle"), desc: t("landing.privacy.points.noSellingDesc"), icon: Lock },
+    { title: t("landing.privacy.points.youControlTitle"), desc: t("landing.privacy.points.youControlDesc"), icon: Shield },
+    { title: t("landing.privacy.points.secureTitle"), desc: t("landing.privacy.points.secureDesc"), icon: Shield },
+  ]
+
+  const testimonials = [
+    t("landing.testimonials.quote1"),
+    t("landing.testimonials.quote2"),
+    t("landing.testimonials.quote3"),
   ]
 
   return (
     <div className="relative min-h-svh overflow-hidden gradient-mesh">
-      <div className="moon-glow -left-32 top-16 size-96 opacity-70" />
-      <div className="moon-glow -right-20 top-1/3 size-80 opacity-50" />
-
       <SiteHeader />
 
       <main className="mx-auto max-w-6xl px-4 pb-8 pt-12 md:pt-20">
-        {/* Hero */}
+        {/* Hero — Clue-style */}
         <section className="grid items-center gap-14 lg:grid-cols-[1.05fr_0.95fr]">
           <div className="space-y-7">
-            <div className="flex flex-wrap items-center gap-2">
-              <Badge className="rounded-full px-3 py-1" variant="secondary">
-                {t("landing.badge")}
-              </Badge>
-              <span className="font-tamil text-sm font-medium text-primary">{t("brand.tamilMark")}</span>
-            </div>
+            <Badge className="rounded-full px-3 py-1" variant="secondary">
+              {t("landing.badge")}
+            </Badge>
 
-            <h1 className="font-heading text-4xl font-bold leading-[1.1] tracking-tight md:text-5xl lg:text-[3.5rem]">
+            <h1 className="text-4xl font-bold leading-[1.08] tracking-tight md:text-5xl lg:text-[3.25rem]">
               {t("landing.heroTitle")}{" "}
-              <span className="brand-gradient-text">{t("landing.heroTitleHighlight")}</span>
+              <span className="text-primary">{t("landing.heroTitleHighlight")}</span>
             </h1>
 
             <p className="max-w-xl text-lg leading-relaxed text-muted-foreground">
@@ -117,12 +82,7 @@ export default function LandingPage() {
                 {t("landing.createFreeAccount")}
                 <ArrowRight className="size-4" />
               </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="rounded-full px-7"
-                render={<Link href="/education" />}
-              >
+              <Button size="lg" variant="outline" className="rounded-full px-7" render={<Link href="/education" />}>
                 {t("landing.exploreEducation")}
               </Button>
             </div>
@@ -141,93 +101,110 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div className="relative mx-auto w-full max-w-md lg:max-w-none">
-            <div className="absolute -inset-4 rounded-[2.5rem] bg-gradient-to-br from-primary/25 via-[var(--brand-light)]/15 to-transparent blur-2xl" />
-            <div className="relative overflow-hidden rounded-[2rem] border border-border/50 bg-card/90 p-8 shadow-2xl shadow-primary/10 backdrop-blur-md">
-              <div className="absolute -right-8 -top-8 size-32 rounded-full bg-primary/10 blur-2xl" />
-              <BrandLogo href="/" size="xl" showTagline />
-              <p className="relative mt-6 text-sm leading-relaxed text-muted-foreground">
-                {t("landing.cardDescription")}
-              </p>
-              <div className="relative mt-6 flex flex-wrap gap-2">
-                <Badge variant="outline" className="rounded-full">
-                  {t("landing.cardBadges.cycleAi")}
-                </Badge>
-                <Badge variant="outline" className="rounded-full">
-                  {t("landing.cardBadges.pcosTracking")}
-                </Badge>
-                <Badge variant="outline" className="rounded-full">
-                  {t("landing.cardBadges.reminders")}
-                </Badge>
+          {/* Cycle wheel mockup */}
+          <div className="relative mx-auto flex w-full max-w-sm flex-col items-center">
+            <div className="relative flex size-72 items-center justify-center rounded-full p-3 shadow-xl shadow-primary/10">
+              <div className="clue-hero-ring absolute inset-0 rounded-full" />
+              <div className="relative flex size-44 flex-col items-center justify-center rounded-full bg-card text-center shadow-inner">
+                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                  {t("dashboard.cycleWheel.cycleDay")}
+                </p>
+                <p className="text-5xl font-bold text-primary">14</p>
+                <p className="mt-1 text-sm text-muted-foreground">{t("dashboard.phases.follicular")}</p>
+              </div>
+              <div className="absolute -right-2 top-8 rounded-2xl border border-border bg-card px-4 py-2 text-sm shadow-md">
+                {t("dashboard.cards.nextPeriod")}
+              </div>
+              <div className="absolute -left-2 bottom-8 rounded-2xl border border-border bg-card px-4 py-2 text-sm shadow-md">
+                {t("landing.features.predictionsTitle")}
               </div>
             </div>
+            <p className="mt-6 max-w-xs text-center text-sm text-muted-foreground">
+              {t("landing.cardDescription")}
+            </p>
           </div>
         </section>
 
         {/* How it works */}
         <section className="mt-24">
           <p className="section-eyebrow">{t("landing.howItWorks.eyebrow")}</p>
-          <h2 className="font-heading mt-2 text-3xl font-bold tracking-tight md:text-4xl">
+          <h2 className="mt-2 text-3xl font-bold tracking-tight md:text-4xl">
             {t("landing.howItWorks.title")}
           </h2>
           <div className="mt-10 grid gap-4 md:grid-cols-3">
             {steps.map((item) => (
               <div key={item.step} className="bento-card">
-                <span className="font-heading text-3xl font-bold text-primary/30">{item.step}</span>
-                <h3 className="mt-3 font-heading text-lg font-semibold">{item.title}</h3>
+                <span className="text-3xl font-bold text-primary/25">{item.step}</span>
+                <h3 className="mt-3 text-lg font-semibold">{item.title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.desc}</p>
               </div>
             ))}
           </div>
         </section>
 
-        {/* Features */}
+        {/* Features grid */}
         <section className="mt-24">
-          <div className="mb-10 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-            <div>
-              <p className="section-eyebrow">{t("landing.features.eyebrow")}</p>
-              <h2 className="font-heading mt-2 text-3xl font-bold tracking-tight md:text-4xl">
-                {t("landing.features.title")}
-              </h2>
-            </div>
-            <p className="max-w-md text-muted-foreground">
-              {t("landing.features.description")}
-            </p>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2">
+          <p className="section-eyebrow">{t("landing.features.eyebrow")}</p>
+          <h2 className="mt-2 text-3xl font-bold tracking-tight md:text-4xl">
+            {t("landing.features.title")}
+          </h2>
+          <p className="mt-3 max-w-2xl text-muted-foreground">{t("landing.features.description")}</p>
+          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((feature) => {
               const Icon = feature.icon
               return (
-                <article key={feature.title} className="group bento-card">
-                  <div className={`absolute inset-0 bg-gradient-to-br ${feature.color} opacity-0 transition-opacity duration-300 group-hover:opacity-100`} />
-                  <div className="relative">
-                    <div className="bento-icon">
-                      <Icon className="size-5" />
-                    </div>
-                    <h3 className="mt-4 font-heading text-xl font-semibold">{feature.title}</h3>
-                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                      {feature.description}
-                    </p>
+                <article key={feature.title} className="bento-card">
+                  <div className="bento-icon">
+                    <Icon className="size-5" />
                   </div>
+                  <h3 className="mt-4 text-lg font-semibold">{feature.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{feature.description}</p>
                 </article>
               )
             })}
           </div>
         </section>
 
+        {/* Privacy section — Clue-style */}
+        <section className="mt-24 rounded-3xl border border-border bg-muted/40 p-8 md:p-12">
+          <p className="section-eyebrow">{t("landing.privacy.eyebrow")}</p>
+          <h2 className="mt-2 text-3xl font-bold tracking-tight md:text-4xl">
+            {t("landing.privacy.title")}
+          </h2>
+          <p className="mt-4 max-w-2xl text-muted-foreground">{t("landing.privacy.description")}</p>
+          <div className="mt-10 grid gap-4 md:grid-cols-3">
+            {privacyPoints.map((point) => {
+              const Icon = point.icon
+              return (
+                <div key={point.title} className="rounded-2xl border border-border bg-card p-5">
+                  <Icon className="mb-3 size-5 text-primary" />
+                  <h3 className="font-semibold">{point.title}</h3>
+                  <p className="mt-2 text-sm text-muted-foreground">{point.desc}</p>
+                </div>
+              )
+            })}
+          </div>
+        </section>
+
+        {/* Testimonials */}
+        <section className="mt-24">
+          <p className="section-eyebrow">{t("landing.testimonials.eyebrow")}</p>
+          <h2 className="mt-2 text-3xl font-bold tracking-tight">{t("landing.testimonials.title")}</h2>
+          <div className="mt-10 grid gap-4 md:grid-cols-3">
+            {testimonials.map((quote) => (
+              <blockquote key={quote} className="bento-card text-sm leading-relaxed text-muted-foreground">
+                &ldquo;{quote}&rdquo;
+              </blockquote>
+            ))}
+          </div>
+        </section>
+
         {/* CTA */}
-        <section className="relative mt-24 overflow-hidden rounded-3xl border border-primary/20 p-8 md:p-14">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-[var(--brand-light)]/8 to-[var(--brand-soft)]/10" />
-          <div className="moon-glow right-0 top-0 size-64 opacity-40" />
+        <section className="relative mt-24 overflow-hidden rounded-3xl border border-primary/15 bg-accent p-8 md:p-14">
           <div className="relative text-center">
             <p className="font-tamil text-lg font-medium text-primary">{t("brand.tamilMark")}</p>
-            <h2 className="font-heading mt-2 text-2xl font-bold md:text-4xl">
-              {t("landing.cta.title")}
-            </h2>
-            <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
-              {t("landing.cta.description")}
-            </p>
+            <h2 className="mt-2 text-2xl font-bold md:text-4xl">{t("landing.cta.title")}</h2>
+            <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">{t("landing.cta.description")}</p>
             <Button size="lg" className="mt-8 rounded-full px-10" render={<Link href="/auth/register" />}>
               {t("landing.cta.button")}
               <ArrowRight className="size-4" />

@@ -10,7 +10,8 @@
     "lint": "eslint",
     "i18n:audit": "node ./_i18n_audit.js",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "verify:api": "node ./scripts/verify-api-connection.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",

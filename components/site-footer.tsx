@@ -16,8 +16,9 @@ export function SiteFooter() {
 
   const featureItems = [
     t("footer.featureItems.cycleTracking"),
-    t("footer.featureItems.aiAssistant"),
-    t("footer.featureItems.privateForum"),
+    t("footer.featureItems.predictions"),
+    t("footer.featureItems.symptomLogging"),
+    t("footer.featureItems.privacy"),
   ]
 
   return (

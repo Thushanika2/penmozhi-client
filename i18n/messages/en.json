@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "title": "Penmozhi — Women's Health",
-    "description": "Track cycles, symptoms, and wellness with bilingual support for Tamil and English."
+    "title": "Penmozhi — Period & Cycle Tracker",
+    "description": "Science-based, privacy-first period and cycle tracking with predictions and daily logging — in Tamil and English."
   },
   "brand": {
     "tamilMark": "பெண்மொழி"
@@ -45,9 +45,9 @@
     "home": "Home"
   },
   "nav": {
-    "dashboard": "Dashboard",
-    "cycleTracking": "Cycle Tracking",
-    "dailyLog": "Daily Log",
+    "dashboard": "Today",
+    "cycleTracking": "Calendar",
+    "dailyLog": "Log",
     "symptoms": "Symptoms",
     "insights": "Insights",
     "reminders": "Reminders",
@@ -55,6 +55,7 @@
     "pcosStatus": "PCOS Status",
     "forum": "Forum",
     "profile": "Profile",
+    "more": "More",
     "education": "Education",
     "logout": "Log out",
     "forumModeration": "Forum Moderation",
@@ -62,57 +63,82 @@
     "adminPanel": "Admin panel"
   },
   "landing": {
-    "badge": "Bilingual women's health",
-    "heroTitle": "Understand your cycle, in",
-    "heroTitleHighlight": "your own language",
-    "heroDescription": "Penmozhi helps you track periods, symptoms, and PCOS with AI-powered insights — fully available in Tamil and English.",
-    "createFreeAccount": "Create free account",
-    "exploreEducation": "Explore education",
-    "cardDescription": "A personal health companion for cycle prediction, symptom trends, PCOS tracking, and evidence-based education.",
+    "badge": "Period & cycle tracker",
+    "heroTitle": "Understand your body",
+    "heroTitleHighlight": "like never before",
+    "heroDescription": "Science-based, privacy-first period and cycle tracking — fully available in Tamil and English. For everyone with a cycle.",
+    "createFreeAccount": "Get started free",
+    "exploreEducation": "Learn more",
+    "startTracking": "Start tracking today",
+    "cardDescription": "Track your cycle, log symptoms in seconds, and see when your period, PMS, and ovulation days are coming.",
     "cardBadges": {
-      "cycleAi": "Cycle AI",
-      "pcosTracking": "PCOS tracking",
-      "reminders": "Reminders"
+      "cycleAi": "Cycle predictions",
+      "pcosTracking": "Symptom patterns",
+      "reminders": "Daily logging"
     },
     "stats": {
       "bilingualLabel": "Tamil & English",
       "bilingualValue": "Fully bilingual",
-      "forumLabel": "Anonymous community",
-      "forumValue": "Private forum",
-      "secureLabel": "Your data stays yours",
-      "secureValue": "Secure & private"
+      "scienceLabel": "Science-based",
+      "scienceValue": "Evidence-driven",
+      "secureLabel": "Privacy-first",
+      "secureValue": "Your data stays yours"
     },
     "howItWorks": {
-      "eyebrow": "How it works",
-      "title": "Three simple steps",
-      "step1Title": "Create your profile",
-      "step1Desc": "Register with your language preference and set up your health profile.",
-      "step2Title": "Log cycles & symptoms",
-      "step2Desc": "Track periods, pain, mood, and sleep in just a few taps.",
-      "step3Title": "Get insights",
-      "step3Desc": "See predictions, trends, and AI recommendations tailored to you."
+      "eyebrow": "Get smarter every cycle",
+      "title": "Track, predict, understand",
+      "step1Title": "Track in seconds",
+      "step1Desc": "Log your period, mood, pain, and symptoms with just a few taps each day.",
+      "step2Title": "See what's coming",
+      "step2Desc": "Know when your period, PMS, and ovulation days are predicted to arrive.",
+      "step3Title": "Spot your patterns",
+      "step3Desc": "Turn daily logs into insights — see how your cycle affects mood, energy, and symptoms."
     },
     "features": {
-      "eyebrow": "Features",
-      "title": "Everything you need",
-      "description": "From cycle prediction to a private community — designed for women's health, in your language.",
-      "cycleTrackingTitle": "Cycle tracking",
-      "cycleTrackingDesc": "Log periods and get next-period predictions based on your history.",
-      "symptomTrendsTitle": "Symptom trends",
-      "symptomTrendsDesc": "Visualize pain, mood, and sleep patterns over time.",
-      "aiAssistantTitle": "AI health assistant",
-      "aiAssistantDesc": "Ask questions and receive personalized wellness recommendations.",
-      "educationHubTitle": "Education hub",
-      "educationHubDesc": "Browse trusted articles on menstrual health, PCOS, and wellness."
+      "eyebrow": "Everything you need",
+      "title": "Your complete cycle companion",
+      "description": "From first period to perimenopause — track, predict, and understand your body at every stage.",
+      "cycleTrackingTitle": "Period & cycle tracking",
+      "cycleTrackingDesc": "Log periods and get next-period predictions based on your personal history.",
+      "symptomTrendsTitle": "Symptom & mood logging",
+      "symptomTrendsDesc": "Track how you feel each day and anticipate symptoms before they show up.",
+      "predictionsTitle": "Smart predictions",
+      "predictionsDesc": "See predicted period, ovulation, fertile window, and PMS days on your calendar.",
+      "fertilityTitle": "Fertility insights",
+      "fertilityDesc": "Know your fertile window and ovulation day when you're trying to conceive.",
+      "insightsTitle": "Pattern analysis",
+      "insightsDesc": "Charts and trends reveal how your cycle length, pain, and mood change over time.",
+      "educationHubTitle": "Expert education",
+      "educationHubDesc": "Browse trusted articles on menstrual health, PCOS, and wellness in your language."
+    },
+    "privacy": {
+      "eyebrow": "Your data is safe with us",
+      "title": "Privacy is non-negotiable",
+      "description": "We never sell your health data. Your cycle logs, symptoms, and personal information stay private and under your control.",
+      "points": {
+        "noSellingTitle": "We never sell your data",
+        "noSellingDesc": "Your health information is never sold to advertisers or third parties.",
+        "youControlTitle": "You control your data",
+        "youControlDesc": "Export, update, or delete your account and data whenever you choose.",
+        "secureTitle": "Secure by design",
+        "secureDesc": "Encrypted connections and strict access controls protect your information."
+      }
+    },
+    "testimonials": {
+      "eyebrow": "Trusted by users",
+      "title": "Real stories, real impact",
+      "quote1": "Tracking my symptoms gave me the confidence to talk to my doctor with actual data.",
+      "quote2": "I finally understand my cycle patterns. The predictions are surprisingly accurate.",
+      "quote3": "Having it in Tamil makes it so much easier for my family to use together."
     },
     "cta": {
-      "title": "Start your health journey today",
-      "description": "Join Penmozhi and take control of your cycle, symptoms, and wellbeing — in Tamil or English.",
-      "button": "Get started free"
+      "title": "Start your cycle journey today",
+      "description": "Join Penmozhi and take control of your period, symptoms, and wellbeing — in Tamil or English.",
+      "button": "Create free account"
     }
   },
   "footer": {
-    "description": "Bilingual women's health tracking with cycle prediction, symptom trends, and a private community.",
+    "description": "Science-based period and cycle tracking with predictions, symptom logging, and privacy-first design — in Tamil and English.",
     "explore": "Explore",
     "features": "Features",
     "links": {
@@ -121,25 +147,26 @@
       "register": "Register"
     },
     "featureItems": {
-      "cycleTracking": "Cycle tracking",
-      "aiAssistant": "AI assistant",
-      "privateForum": "Private forum"
+      "cycleTracking": "Period tracking",
+      "predictions": "Cycle predictions",
+      "symptomLogging": "Symptom logging",
+      "privacy": "Privacy-first"
     },
     "copyright": "© {year} Penmozhi. All rights reserved.",
-    "privacyNote": "Your health data stays private."
+    "privacyNote": "We never sell your health data."
   },
   "authShell": {
-    "title": "Your health, your language.",
-    "description": "Track cycles, symptoms, and wellness with support in Tamil and English.",
+    "title": "Track your cycle with confidence.",
+    "description": "Science-based period tracking with predictions, daily logging, and insights — in Tamil and English.",
     "highlights": {
-      "cycleTrackingTitle": "Cycle tracking",
-      "cycleTrackingDesc": "Predictions from your history",
-      "bilingualTitle": "Bilingual",
-      "bilingualDesc": "Tamil and English support",
-      "privateForumTitle": "Private forum",
-      "privateForumDesc": "Anonymous community",
-      "aiInsightsTitle": "AI insights",
-      "aiInsightsDesc": "Personalized recommendations"
+      "cycleTrackingTitle": "Cycle predictions",
+      "cycleTrackingDesc": "Period, ovulation & PMS forecasts",
+      "bilingualTitle": "Tamil & English",
+      "bilingualDesc": "Fully bilingual experience",
+      "privacyTitle": "Privacy-first",
+      "privacyDesc": "Your data stays yours",
+      "insightsTitle": "Pattern insights",
+      "insightsDesc": "Charts from your daily logs"
     }
   },
   "auth": {
@@ -306,13 +333,16 @@
     }
   },
   "dashboard": {
-    "eyebrow": "Overview",
-    "welcome": "Welcome back, {name}",
-    "welcomeFallbackName": "friend",
-    "description": "Here's a snapshot of your health tracking.",
-    "yourModules": "Your modules",
+    "eyebrow": "Today",
+    "welcome": "Hi, {name}",
+    "welcomeFallbackName": "there",
+    "description": "Your cycle at a glance.",
+    "periodInDays": "Period in {days} days",
+    "periodToday": "Period may start today",
+    "periodOverdue": "Period may be late",
+    "yourModules": "More tools",
     "quickActions": "Quick actions",
-    "noCycleData": "Complete onboarding or log a period to see cycle predictions.",
+    "noCycleData": "Log your first period to unlock predictions and your cycle wheel.",
     "cycleWheel": {
       "title": "Your cycle today",
       "description": "Track where you are in your current cycle.",

@@ -3,12 +3,12 @@
 import type { CycleInsights, CyclePhase } from "@/types/cycle-history-log"
 
 const PHASE_COLORS: Record<CyclePhase, string> = {
-  menstrual: "#f429a0",
-  follicular: "#f98fcd",
-  fertile: "#9b59b6",
-  ovulation: "#7c3aed",
-  luteal: "#e8b4d4",
-  pms: "#f76dbe",
+  menstrual: "var(--cycle-menstrual)",
+  follicular: "var(--cycle-follicular)",
+  fertile: "var(--cycle-fertile)",
+  ovulation: "var(--cycle-ovulation)",
+  luteal: "var(--cycle-luteal)",
+  pms: "var(--cycle-pms)",
 }
 
 interface CycleWheelProps {
@@ -83,7 +83,7 @@ export function CycleWheel({ insights, phaseLabel, cycleDayLabel }: CycleWheelPr
             />
           )
         })}
-        <circle cx={marker.x} cy={marker.y} r="8" fill="white" stroke="#f429a0" strokeWidth="3" />
+        <circle cx={marker.x} cy={marker.y} r="8" fill="white" stroke="var(--cycle-menstrual)" strokeWidth="3" />
         <circle cx="120" cy="120" r="58" fill="var(--card)" opacity="0.92" />
       </svg>
       <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center">

@@ -29,7 +29,36 @@ npm install
 npm run dev
 ```
 
+4. Verify the client can reach the API:
+
+```bash
+npm run verify:api
+```
+
 Open [http://localhost:3000](http://localhost:3000).
+
+### Connect API + client locally
+
+**Terminal 1 — API**
+
+```bash
+cd penmozhi-api
+python scripts/apply_manual_migrations.py   # first time / after schema updates
+python run.py
+```
+
+**Terminal 2 — Client**
+
+```bash
+cd penmozhi-client
+cp .env.example .env.local   # if not done yet
+npm run dev
+npm run verify:api
+```
+
+Browser requests go to `/backend/*` and Next.js proxies them to `http://127.0.0.1:5000`.
+
+**Demo login:** `user@penmozhi.com` / `User123!` (run `python manage_db.py seed` in the API if needed).
 
 ## Environment
 

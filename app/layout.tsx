@@ -32,8 +32,8 @@ const fontMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "Penmozhi",
-  description: "Penmozhi app",
+  title: "Penmozhi — Period & Cycle Tracker",
+  description: "Science-based, privacy-first period and cycle tracking in Tamil and English.",
 }
 
 export default function RootLayout({

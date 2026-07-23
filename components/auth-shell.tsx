@@ -18,12 +18,12 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
       desc: t("authShell.highlights.bilingualDesc"),
     },
     {
-      title: t("authShell.highlights.privateForumTitle"),
-      desc: t("authShell.highlights.privateForumDesc"),
+      title: t("authShell.highlights.privacyTitle"),
+      desc: t("authShell.highlights.privacyDesc"),
     },
     {
-      title: t("authShell.highlights.aiInsightsTitle"),
-      desc: t("authShell.highlights.aiInsightsDesc"),
+      title: t("authShell.highlights.insightsTitle"),
+      desc: t("authShell.highlights.insightsDesc"),
     },
   ]
 
