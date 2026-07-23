@@ -73,10 +73,29 @@ export async function getProfile() {
   return data
 }
 
-export async function updateLanguagePreference(language_preference: "tamil" | "english") {
+export interface UpdateProfilePayload {
+  full_name?: string
+  country?: string | null
+  timezone?: string
+  date_of_birth?: string
+  language_preference?: "tamil" | "english"
+}
+
+export async function updateProfile(payload: UpdateProfilePayload) {
   const { data } = await apiClient.patch<{
     message: string
     user: UserProfile
-  }>("/api/auth/profile", { language_preference })
+  }>("/api/auth/profile", payload)
+  return data
+}
+
+export async function updateLanguagePreference(language_preference: "tamil" | "english") {
+  return updateProfile({ language_preference })
+}
+
+export async function deleteAccount(password: string) {
+  const { data } = await apiClient.delete<{ message: string }>("/api/auth/account", {
+    data: { password },
+  })
   return data
 }

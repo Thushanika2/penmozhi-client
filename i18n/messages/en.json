@@ -270,6 +270,7 @@
       "high": "High"
     },
     "birthControl": {
+      "none": "None",
       "pill": "Pill",
       "iud": "IUD",
       "implant": "Implant",
@@ -844,29 +845,93 @@
   },
   "profile": {
     "title": "Profile & Health",
-    "description": "Your account and health profile",
-    "updated": "Profile updated",
+    "description": "Manage your account, health information, and preferences",
+    "updated": "Health profile updated",
     "account": {
       "title": "Account",
+      "description": "Update your personal details and preferences",
       "name": "Name",
       "email": "Email",
       "language": "Language",
-      "dateOfBirth": "Date of birth"
+      "dateOfBirth": "Date of birth",
+      "country": "Country",
+      "timezone": "Timezone",
+      "save": "Save account",
+      "saved": "Account updated"
+    },
+    "appearance": {
+      "title": "Appearance"
     },
     "risks": {
       "title": "Health summary",
       "description": "BMI and risk indicators from your health profile",
       "bmi": "BMI",
       "nutritionalNeeds": "Nutritional needs",
-      "healthRisks": "Health risks"
+      "healthRisks": "Health risks",
+      "categories": {
+        "underweight": "Underweight",
+        "normal": "Normal",
+        "overweight": "Overweight",
+        "obese": "Obese"
+      }
+    },
+    "health": {
+      "title": "Cycle & body",
+      "description": "Update menstrual baseline and body metrics",
+      "menarcheAge": "Age at first period",
+      "lastPeriodStart": "Last period start",
+      "averageCycleLength": "Average cycle length (days)",
+      "averagePeriodLength": "Average period length (days)",
+      "typicalFlow": "Typical flow",
+      "cycleRegularity": "Cycle regularity",
+      "regular": "Regular",
+      "irregular": "Irregular"
+    },
+    "symptoms": {
+      "title": "Common symptoms"
+    },
+    "conditions": {
+      "title": "Health conditions"
+    },
+    "lifestyle": {
+      "title": "Lifestyle",
+      "sleepHours": "Sleep (hours/night)",
+      "waterIntake": "Water intake (L/day)",
+      "exercise": "Exercise frequency",
+      "stress": "Stress level",
+      "smoking": "Smoking",
+      "alcohol": "Alcohol",
+      "tryingToConceive": "Trying to conceive",
+      "isPregnant": "Currently pregnant",
+      "isBreastfeeding": "Breastfeeding",
+      "usingBirthControl": "Using birth control",
+      "birthControlType": "Birth control type"
+    },
+    "notifications": {
+      "title": "Notification preferences",
+      "period": "Period reminders",
+      "ovulation": "Ovulation reminders",
+      "medication": "Medication reminders",
+      "dailyHealth": "Daily health reminders"
     },
     "form": {
-      "title": "Update health profile",
+      "title": "Notes & risks",
       "weight": "Weight (kg)",
-      "height": "Height (m)",
+      "height": "Height (cm)",
       "nutritionalNeeds": "Nutritional needs",
       "healthRisks": "Health risks",
-      "save": "Save changes"
+      "save": "Save health profile"
+    },
+    "delete": {
+      "title": "Delete account",
+      "description": "Permanently remove your account and all associated health data.",
+      "button": "Delete my account",
+      "dialogTitle": "Delete your account?",
+      "dialogDescription": "This action cannot be undone. Enter your password to confirm.",
+      "passwordLabel": "Password",
+      "confirm": "Delete permanently",
+      "deleting": "Deleting...",
+      "success": "Your account has been deleted"
     }
   },
   "api": {
