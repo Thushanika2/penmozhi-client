@@ -7,6 +7,9 @@ export interface UserProfile {
   date_of_birth: string
   email: string
   language_preference: LanguagePreference
+  country: string | null
+  timezone: string
+  onboarding_completed: boolean
   role: UserRole
   registration_date: string | null
 }

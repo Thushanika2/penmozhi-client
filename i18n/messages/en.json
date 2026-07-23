@@ -47,7 +47,9 @@
   "nav": {
     "dashboard": "Dashboard",
     "cycleTracking": "Cycle Tracking",
+    "dailyLog": "Daily Log",
     "symptoms": "Symptoms",
+    "insights": "Insights",
     "reminders": "Reminders",
     "aiAssistant": "AI Assistant",
     "pcosStatus": "PCOS Status",
@@ -150,7 +152,26 @@
       "submitting": "Signing in...",
       "noAccount": "Don't have an account?",
       "registerLink": "Register",
-      "welcomeBack": "Welcome back!"
+      "welcomeBack": "Welcome back!",
+      "forgotPassword": "Forgot password?"
+    },
+    "forgotPassword": {
+      "title": "Reset your password",
+      "submit": "Send reset link",
+      "submitting": "Sending...",
+      "success": "If an account exists, reset instructions were sent.",
+      "devToken": "Dev reset token: {token}",
+      "backToLogin": "Back to sign in"
+    },
+    "resetPassword": {
+      "title": "Choose a new password",
+      "token": "Reset token",
+      "password": "New password",
+      "confirmPassword": "Confirm password",
+      "submit": "Reset password",
+      "submitting": "Resetting...",
+      "success": "Password updated. You can sign in now.",
+      "backToLogin": "Back to sign in"
     },
     "register": {
       "title": "Create your account",
@@ -172,7 +193,115 @@
       "fullNameRequired": "Please enter your full name",
       "emailInvalid": "Please enter a valid email address",
       "passwordMin": "Password must be at least 6 characters",
-      "dateOfBirthRequired": "Please select your date of birth"
+      "dateOfBirthRequired": "Please select your date of birth",
+      "tokenRequired": "Reset token is required",
+      "passwordMismatch": "Passwords do not match"
+    }
+  },
+  "onboarding": {
+    "progress": "Step {current} of {total}",
+    "next": "Continue",
+    "finish": "Finish setup",
+    "finishing": "Saving...",
+    "completeSuccess": "Your health profile is ready!",
+    "steps": {
+      "0": { "title": "Basic information", "description": "Tell us a little about yourself." },
+      "1": { "title": "Menstrual information", "description": "Help us understand your cycle baseline." },
+      "2": { "title": "Symptoms", "description": "Select symptoms you commonly experience." },
+      "3": { "title": "Health conditions", "description": "Select any conditions that apply to you." },
+      "4": { "title": "Lifestyle", "description": "Share your daily habits." },
+      "5": { "title": "Pregnancy & birth control", "description": "Optional reproductive health details." },
+      "6": { "title": "Notifications", "description": "Choose the reminders you want." },
+      "7": { "title": "Summary", "description": "Review your information before finishing." }
+    },
+    "fields": {
+      "fullName": "Full name",
+      "dateOfBirth": "Date of birth",
+      "age": "Age",
+      "country": "Country",
+      "height": "Height (cm)",
+      "weight": "Weight (kg)",
+      "bmi": "BMI",
+      "language": "Language",
+      "timezone": "Timezone",
+      "menarcheAge": "Age at first period",
+      "cycleLength": "Average cycle length (days)",
+      "periodLength": "Average period length (days)",
+      "lastPeriodStart": "Last period start date",
+      "typicalFlow": "Typical flow",
+      "cycleRegularity": "Cycle regularity",
+      "sleepHours": "Sleep hours per night",
+      "waterIntake": "Water intake (liters/day)",
+      "exerciseFrequency": "Exercise frequency",
+      "stressLevel": "Stress level",
+      "smoking": "Do you smoke?",
+      "alcohol": "Do you drink alcohol?",
+      "tryingToConceive": "Trying to conceive?",
+      "pregnant": "Currently pregnant?",
+      "breastfeeding": "Currently breastfeeding?",
+      "usingBirthControl": "Using birth control?",
+      "birthControlType": "Birth control type",
+      "notifyPeriod": "Period reminder",
+      "notifyOvulation": "Ovulation reminder",
+      "notifyMedication": "Medication reminder",
+      "notifyDailyHealth": "Daily health reminder",
+      "symptoms": "Symptoms",
+      "conditions": "Conditions"
+    },
+    "flow": {
+      "light": "Light",
+      "medium": "Medium",
+      "heavy": "Heavy",
+      "very_heavy": "Very heavy"
+    },
+    "regularity": {
+      "regular": "Regular",
+      "irregular": "Irregular"
+    },
+    "exercise": {
+      "never": "Never",
+      "rarely": "Rarely",
+      "weekly": "Weekly",
+      "daily": "Daily"
+    },
+    "stress": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High"
+    },
+    "birthControl": {
+      "pill": "Pill",
+      "iud": "IUD",
+      "implant": "Implant",
+      "injection": "Injection",
+      "condom": "Condom",
+      "other": "Other"
+    },
+    "symptoms": {
+      "cramps": "Cramps",
+      "headache": "Headache",
+      "acne": "Acne",
+      "back_pain": "Back pain",
+      "mood_swings": "Mood swings",
+      "tender_breasts": "Tender breasts",
+      "fatigue": "Fatigue",
+      "bloating": "Bloating",
+      "nausea": "Nausea",
+      "cravings": "Cravings",
+      "no_symptoms": "No symptoms"
+    },
+    "conditions": {
+      "pcos": "PCOS",
+      "endometriosis": "Endometriosis",
+      "fibroids": "Fibroids",
+      "anemia": "Anemia",
+      "thyroid": "Thyroid disorder",
+      "diabetes": "Diabetes",
+      "hypertension": "Hypertension",
+      "migraine": "Migraine",
+      "depression": "Depression",
+      "anxiety": "Anxiety",
+      "none": "None"
     }
   },
   "dashboard": {
@@ -181,12 +310,68 @@
     "welcomeFallbackName": "friend",
     "description": "Here's a snapshot of your health tracking.",
     "yourModules": "Your modules",
+    "quickActions": "Quick actions",
+    "noCycleData": "Complete onboarding or log a period to see cycle predictions.",
+    "cycleWheel": {
+      "title": "Your cycle today",
+      "description": "Track where you are in your current cycle.",
+      "cycleDay": "Cycle day"
+    },
+    "cards": {
+      "nextPeriod": "Next predicted period",
+      "ovulation": "Predicted ovulation",
+      "fertileWindow": "Fertile window",
+      "pmsWindow": "PMS window",
+      "daysUntil": "{days} days away",
+      "ovulationHint": "Estimated 14 days before your next period",
+      "fertileHint": "6-day fertile window ending on ovulation day",
+      "pmsHint": "7 days before your next period"
+    },
+    "phases": {
+      "menstrual": "Menstrual phase",
+      "follicular": "Follicular phase",
+      "fertile": "Fertile window",
+      "ovulation": "Ovulation day",
+      "luteal": "Luteal phase",
+      "pms": "PMS window",
+      "unknown": "Cycle phase"
+    },
+    "widgets": {
+      "todaySymptoms": "Today's symptoms",
+      "noSymptomsToday": "No symptoms logged today.",
+      "pain": "Pain",
+      "water": "Water intake",
+      "addWater": "+ 250ml",
+      "reminders": "Medication reminders",
+      "noReminders": "No reminders scheduled.",
+      "healthTip": "Health tip"
+    },
+    "actions": {
+      "logPeriod": "Log period",
+      "logSymptom": "Log symptom",
+      "viewReminders": "View reminders",
+      "dailyLog": "Daily log",
+      "viewInsights": "View insights"
+    },
+    "tips": {
+      "default": "Stay hydrated and listen to your body each day.",
+      "menstrual": "Rest when you need to. Warm fluids and gentle movement may ease cramps.",
+      "follicular": "Energy often rises after your period. A good time for new routines.",
+      "fertile": "You are in your fertile window. Track symptoms if you are planning or preventing pregnancy.",
+      "ovulation": "Ovulation day — peak fertility. Note any mittelschmerz or energy shifts.",
+      "luteal": "Progesterone rises. Prioritize sleep and balanced meals.",
+      "pms": "PMS window — mood and bloating are common. Be gentle with yourself."
+    },
     "stats": {
       "currentBmi": "Current BMI",
       "languagePreference": "Language preference",
       "languageReady": "Interface ready in your language",
       "aiInsights": "AI insights",
-      "aiInsightsHint": "Ask the assistant for personalized tips"
+      "aiInsightsHint": "Ask the assistant for personalized tips",
+      "avgCycle": "Avg. cycle (days)",
+      "avgPeriod": "Avg. period (days)",
+      "longestCycle": "Longest cycle",
+      "shortestCycle": "Shortest cycle"
     },
     "modules": {
       "cycleTracking": {
@@ -196,6 +381,10 @@
       "symptoms": {
         "title": "Symptoms",
         "description": "Track pain, mood, and sleep"
+      },
+      "insights": {
+        "title": "Insights",
+        "description": "Charts for cycles, symptoms, and mood"
       },
       "pcosStatus": {
         "title": "PCOS Status",
@@ -224,6 +413,7 @@
     "description": "Log your periods and view predictions",
     "prediction": {
       "title": "Next period prediction",
+      "nextPeriod": "Predicted next period",
       "basedOnHistory": "Based on your cycle history",
       "basedOnCycles": "Based on {count} logged cycles"
     },
@@ -237,28 +427,182 @@
       "startDate": "Start date",
       "endDate": "End date",
       "flowIntensity": "Flow intensity",
+      "notes": "Notes",
       "submit": "Log cycle",
       "submitting": "Logging..."
+    },
+    "calendar": {
+      "title": "Period calendar",
+      "description": "Tap a day to select it. Colors show period, fertile window, ovulation, and PMS.",
+      "selectedDate": "Selected: {date}",
+      "legend": {
+        "period": "Period",
+        "predicted": "Predicted period",
+        "fertile": "Fertile window",
+        "ovulation": "Ovulation",
+        "pms": "PMS",
+        "logged": "Daily log"
+      }
     },
     "flow": {
       "light": "Light",
       "medium": "Medium",
-      "heavy": "Heavy"
+      "heavy": "Heavy",
+      "veryHeavy": "Very heavy"
     },
     "history": {
       "title": "Cycle history",
       "start": "Start",
       "end": "End",
       "flow": "Flow",
+      "notes": "Notes",
+      "actions": "Actions",
+      "edit": "Edit",
+      "delete": "Delete",
+      "save": "Save changes",
+      "editTitle": "Edit period",
       "predictedNext": "Predicted next"
     },
     "toast": {
-      "logged": "Cycle logged"
+      "logged": "Cycle logged",
+      "updated": "Cycle updated",
+      "deleted": "Cycle deleted"
     },
     "validation": {
       "startDateRequired": "Start date is required",
       "endDateRequired": "End date is required",
       "flowIntensityRequired": "Flow intensity is required"
+    }
+  },
+  "dailyLog": {
+    "title": "Daily Log",
+    "description": "Track flow, mood, sleep, and body signals for each day.",
+    "form": {
+      "title": "Log today",
+      "submit": "Save daily log",
+      "submitting": "Saving..."
+    },
+    "fields": {
+      "date": "Date",
+      "flow": "Flow",
+      "pain": "Pain level",
+      "mood": "Mood",
+      "energy": "Energy",
+      "sleep": "Sleep (hours)",
+      "exercise": "Exercise",
+      "weight": "Weight (kg)",
+      "basalTemp": "Basal body temperature (°C)",
+      "discharge": "Cervical fluid",
+      "sexualActivity": "Sexual activity",
+      "notes": "Notes"
+    },
+    "flow": {
+      "none": "None",
+      "spotting": "Spotting",
+      "light": "Light",
+      "medium": "Medium",
+      "heavy": "Heavy"
+    },
+    "pain": {
+      "none": "None",
+      "mild": "Mild",
+      "moderate": "Moderate",
+      "severe": "Severe"
+    },
+    "energy": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High"
+    },
+    "exercise": {
+      "none": "None",
+      "light": "Light",
+      "moderate": "Moderate",
+      "intense": "Intense"
+    },
+    "discharge": {
+      "dry": "Dry",
+      "sticky": "Sticky",
+      "creamy": "Creamy",
+      "egg_white": "Egg white"
+    },
+    "recent": {
+      "title": "Recent logs",
+      "empty": "No daily logs yet."
+    },
+    "toast": {
+      "saved": "Daily log saved"
+    },
+    "validation": {
+      "dateRequired": "Date is required"
+    }
+  },
+  "insights": {
+    "title": "Health Insights",
+    "description": "Visualize your cycle patterns, symptoms, daily logs, and mood over time.",
+    "range": {
+      "months": "Last {count} months"
+    },
+    "sections": {
+      "cycleStats": "Cycle statistics",
+      "symptoms": "Symptom trends",
+      "dailyLogs": "Daily log trends",
+      "mood": "Mood trends"
+    },
+    "stats": {
+      "avgCycle": "Average cycle (days)",
+      "avgPeriod": "Average period (days)",
+      "longestCycle": "Longest cycle",
+      "shortestCycle": "Shortest cycle"
+    },
+    "charts": {
+      "cycleLength": {
+        "title": "Cycle length trend",
+        "description": "Days between period starts over time",
+        "label": "Cycle length",
+        "empty": "Log at least two periods to see cycle length trends."
+      },
+      "periodLength": {
+        "title": "Period length",
+        "description": "How long each logged period lasted",
+        "label": "Period days",
+        "empty": "Log periods to see period length trends."
+      },
+      "symptomPain": {
+        "title": "Symptom pain trend",
+        "label": "Average pain",
+        "empty": "Log symptoms to see pain trends."
+      },
+      "symptomCategory": {
+        "title": "Symptoms by category",
+        "label": "Entries",
+        "empty": "Log symptoms to see category breakdown."
+      },
+      "dailyPain": {
+        "title": "Daily pain level",
+        "label": "Pain score",
+        "empty": "Save daily logs with pain levels to see this chart."
+      },
+      "sleep": {
+        "title": "Sleep hours",
+        "label": "Hours",
+        "empty": "Save daily logs with sleep hours to see this chart."
+      },
+      "energy": {
+        "title": "Energy level",
+        "label": "Energy score",
+        "empty": "Save daily logs with energy levels to see this chart."
+      },
+      "moodFrequency": {
+        "title": "Most logged moods",
+        "label": "Entries",
+        "empty": "Add mood in daily logs or symptoms to see mood patterns."
+      },
+      "moodTimeline": {
+        "title": "Mood entries over time",
+        "label": "Mood entries",
+        "empty": "Add mood in daily logs or symptoms to see mood over time."
+      }
     }
   },
   "symptoms": {

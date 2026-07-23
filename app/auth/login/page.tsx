@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { getPostAuthPath } from "@/lib/auth-redirect"
 import { getLocalizedApiError } from "@/lib/localize-api-error"
 import { useAuth } from "@/providers/auth-provider"
 import { useLanguage } from "@/providers/language-provider"
@@ -59,7 +60,7 @@ function LoginForm() {
     try {
       const user = await login(values.email, values.password)
       toast.success(t("auth.login.welcomeBack"))
-      router.push(user.role === "admin" ? "/admin/dashboard" : "/dashboard")
+      router.push(getPostAuthPath(user))
     } catch (error) {
       toast.error(getLocalizedApiError(error, t))
     }
@@ -96,6 +97,11 @@ function LoginForm() {
                 <p className="text-sm text-destructive">{errors.password.message}</p>
               ) : null}
             </div>
+            <p className="text-right text-sm">
+              <Link href="/auth/forgot-password" className="font-medium text-primary underline">
+                {t("auth.login.forgotPassword")}
+              </Link>
+            </p>
           </CardContent>
           <CardFooter className="flex flex-col gap-3">
             <Button type="submit" className="w-full rounded-full" disabled={isSubmitting}>

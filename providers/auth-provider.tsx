@@ -7,6 +7,7 @@ import type { HealthProfile } from "@/types/health-profile"
 import type { UserProfile } from "@/types/user-profile"
 
 const TOKEN_KEY = "access_token"
+const REFRESH_TOKEN_KEY = "refresh_token"
 const USER_KEY = "user"
 const HEALTH_PROFILE_KEY = "health_profile"
 
@@ -54,8 +55,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = React.useState(true)
 
   const persistSession = React.useCallback(
-    (nextUser: UserProfile, token: string, nextHealth?: HealthProfile | null) => {
+    (
+      nextUser: UserProfile,
+      token: string,
+      nextHealth?: HealthProfile | null,
+      refreshToken?: string,
+    ) => {
       localStorage.setItem(TOKEN_KEY, token)
+      if (refreshToken) localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken)
       localStorage.setItem(USER_KEY, JSON.stringify(nextUser))
       setUser(nextUser)
       if (nextHealth) {
@@ -68,6 +75,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const clearSession = React.useCallback(() => {
     localStorage.removeItem(TOKEN_KEY)
+    localStorage.removeItem(REFRESH_TOKEN_KEY)
     localStorage.removeItem(USER_KEY)
     localStorage.removeItem(HEALTH_PROFILE_KEY)
     setUser(null)
@@ -126,7 +134,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = React.useCallback(
     async (email: string, password: string) => {
       const data = await loginService.login({ email, password })
-      persistSession(data.user, data.access_token)
+      persistSession(data.user, data.access_token, undefined, data.refresh_token)
       await refreshProfile()
       return data.user
     },
@@ -140,7 +148,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         email: payload.email,
         password: payload.password,
       })
-      persistSession(loginData.user, loginData.access_token, data.health_profile)
+      persistSession(loginData.user, loginData.access_token, data.health_profile, loginData.refresh_token)
       return loginData.user
     },
     [persistSession],

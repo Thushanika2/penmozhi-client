@@ -15,6 +15,13 @@ export interface LoginPayload {
   password: string
 }
 
+export interface AuthTokenResponse {
+  message: string
+  access_token: string
+  refresh_token: string
+  user: UserProfile
+}
+
 export async function register(payload: RegisterPayload) {
   const { data } = await apiClient.post<{
     message: string
@@ -25,11 +32,31 @@ export async function register(payload: RegisterPayload) {
 }
 
 export async function login(payload: LoginPayload) {
+  const { data } = await apiClient.post<AuthTokenResponse>("/api/auth/login", payload)
+  return data
+}
+
+export async function refreshToken(refresh_token: string) {
+  const { data } = await apiClient.post<AuthTokenResponse>("/api/auth/refresh", {
+    refresh_token,
+  })
+  return data
+}
+
+export async function forgotPassword(email: string) {
   const { data } = await apiClient.post<{
     message: string
-    access_token: string
-    user: UserProfile
-  }>("/api/auth/login", payload)
+    message_code?: string
+    reset_token?: string
+  }>("/api/auth/forgot-password", { email })
+  return data
+}
+
+export async function resetPassword(token: string, password: string) {
+  const { data } = await apiClient.post<{ message: string }>("/api/auth/reset-password", {
+    token,
+    password,
+  })
   return data
 }
 

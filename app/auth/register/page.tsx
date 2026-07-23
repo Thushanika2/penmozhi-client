@@ -22,6 +22,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select } from "@/components/ui/select"
+import { getPostAuthPath } from "@/lib/auth-redirect"
 import { getLocalizedApiError } from "@/lib/localize-api-error"
 import { useAuth } from "@/providers/auth-provider"
 import { useLanguage } from "@/providers/language-provider"
@@ -72,7 +73,7 @@ function RegisterForm() {
         language_preference: values.languagePreference,
       })
       toast.success(t("auth.register.accountCreated"))
-      router.push("/dashboard")
+      router.push("/onboarding")
     } catch (error) {
       toast.error(getLocalizedApiError(error, t))
     }
