@@ -383,10 +383,14 @@
       "nextPeriod": "Next predicted period",
       "ovulation": "Predicted ovulation",
       "fertileWindow": "Fertile window",
+      "follicularPhase": "Follicular phase",
+      "lutealPhase": "Luteal phase",
       "pmsWindow": "PMS window",
       "daysUntil": "{days} days away",
-      "ovulationHint": "Estimated 14 days before your next period",
-      "fertileHint": "6-day fertile window ending on ovulation day",
+      "ovulationHint": "Peak fertility ~14 days before your next period",
+      "fertileHint": "3-day ovulation window when conception is most likely",
+      "follicularHint": "After your period, before ovulation — estrogen rises",
+      "lutealHint": "After ovulation until your next period — progesterone phase",
       "pmsHint": "7 days before your next period"
     },
     "phases": {

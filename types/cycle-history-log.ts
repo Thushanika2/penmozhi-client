@@ -14,6 +14,20 @@ export interface CycleStatistics {
   logged_cycles: number
 }
 
+export interface CyclePhaseDayRange {
+  start_day: number
+  end_day: number
+}
+
+export interface CyclePhaseRanges {
+  menstrual: CyclePhaseDayRange
+  follicular: CyclePhaseDayRange | null
+  ovulation: CyclePhaseDayRange
+  luteal: CyclePhaseDayRange | null
+  pms: CyclePhaseDayRange
+  ovulation_peak_day: number
+}
+
 export interface CycleInsights {
   has_data: boolean
   cycle_day: number | null
@@ -25,9 +39,14 @@ export interface CycleInsights {
   fertile_window_end: string | null
   pms_window_start: string | null
   pms_window_end: string | null
+  follicular_start_date?: string | null
+  follicular_end_date?: string | null
+  luteal_start_date?: string | null
+  luteal_end_date?: string | null
   days_until_next_period: number | null
   average_cycle_length: number
   average_period_length: number
+  phase_ranges?: CyclePhaseRanges | null
   statistics: CycleStatistics
 }
 

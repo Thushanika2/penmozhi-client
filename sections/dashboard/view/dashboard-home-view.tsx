@@ -61,6 +61,16 @@ function cycleStatusLabel(
   return t("dashboard.cycleWheel.daysUntilPeriod", { days: String(daysUntil) })
 }
 
+function phaseLabel(
+  phase: string | null | undefined,
+  t: (key: string) => string,
+) {
+  if (!phase) return undefined
+  const key = `dashboard.phases.${phase}`
+  const label = t(key)
+  return label === key ? undefined : label
+}
+
 export function DashboardHomeView() {
   const { t, locale } = useLanguage()
   const { data: summary, isLoading, isError, error } = useDashboardSummary()
@@ -89,6 +99,7 @@ export function DashboardHomeView() {
                   insights={insights}
                   todayLabel={t("dashboard.cycleWheel.today", { date: formatTodayLabel(locale) })}
                   statusLabel={cycleStatusLabel(insights.days_until_next_period, t)}
+                  phaseLabel={phaseLabel(insights.current_phase, t)}
                   dayMarkerLabel={t("dashboard.cycleWheel.dayMarker", {
                     day: String(insights.cycle_day ?? 1),
                   })}
@@ -129,9 +140,14 @@ export function DashboardHomeView() {
                 hint={t("dashboard.cards.fertileHint")}
               />
               <InsightCard
-                title={t("dashboard.cards.pmsWindow")}
-                value={`${formatDate(insights.pms_window_start, locale)} – ${formatDate(insights.pms_window_end, locale)}`}
-                hint={t("dashboard.cards.pmsHint")}
+                title={t("dashboard.cards.follicularPhase")}
+                value={`${formatDate(insights.follicular_start_date, locale)} – ${formatDate(insights.follicular_end_date, locale)}`}
+                hint={t("dashboard.cards.follicularHint")}
+              />
+              <InsightCard
+                title={t("dashboard.cards.lutealPhase")}
+                value={`${formatDate(insights.luteal_start_date, locale)} – ${formatDate(insights.luteal_end_date, locale)}`}
+                hint={t("dashboard.cards.lutealHint")}
               />
             </div>
 
