@@ -44,7 +44,6 @@ import { useLanguage } from "@/providers/language-provider"
 import {
   createSymptom,
 } from "@/services/symptom"
-import type { SymptomTrackingLog } from "@/types/symptom-tracking-log"
 
 function buildSchema(t: (key: string) => string) {
   return z.object({

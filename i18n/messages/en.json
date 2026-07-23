@@ -232,8 +232,8 @@
     "finishing": "Saving...",
     "completeSuccess": "Your health profile is ready!",
     "steps": {
-      "0": { "title": "Basic information", "description": "Tell us a little about yourself." },
-      "1": { "title": "Menstrual information", "description": "Help us understand your cycle baseline." },
+      "0": { "title": "Basic information", "description": "Your date of birth, country, height, and weight." },
+      "1": { "title": "Menstrual baseline", "description": "Your cycle length and recent period history." },
       "2": { "title": "Symptoms", "description": "Select symptoms you commonly experience." },
       "3": { "title": "Health conditions", "description": "Select any conditions that apply to you." },
       "4": { "title": "Lifestyle", "description": "Share your daily habits." },
@@ -273,7 +273,23 @@
       "notifyMedication": "Medication reminder",
       "notifyDailyHealth": "Daily health reminder",
       "symptoms": "Symptoms",
-      "conditions": "Conditions"
+      "conditions": "Conditions",
+      "periodHistoryMode": "Period history",
+      "knowsLastThreeMonths": "I know my last 3 periods",
+      "knowsLastMonthOnly": "I only know my most recent period"
+    },
+    "periodMonths": {
+      "0": "Most recent period",
+      "1": "Previous month",
+      "2": "Two months ago"
+    },
+    "validation": {
+      "dateOfBirthRequired": "Please enter your date of birth.",
+      "countryRequired": "Please select your country.",
+      "heightRequired": "Please enter a valid height.",
+      "weightRequired": "Please enter a valid weight.",
+      "cycleLengthRequired": "Please enter your average cycle length.",
+      "periodStartRequired": "Please enter the period start date for month {month}."
     },
     "flow": {
       "light": "Light",

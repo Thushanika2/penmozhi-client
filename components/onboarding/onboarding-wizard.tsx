@@ -21,10 +21,14 @@ import { getLocalizedApiError } from "@/lib/localize-api-error"
 import { useAuth } from "@/providers/auth-provider"
 import { useLanguage } from "@/providers/language-provider"
 import * as onboardingService from "@/services/onboarding"
+import { COUNTRIES } from "@/lib/countries"
+import type { UserProfile } from "@/types/user-profile"
 import type {
   BirthControlType,
+  FlowLevel,
   HealthConditionOption,
   OnboardingPayload,
+  PeriodHistoryEntry,
   SymptomOption,
 } from "@/types/onboarding"
 
@@ -58,6 +62,14 @@ const CONDITION_OPTIONS: HealthConditionOption[] = [
 
 const TOTAL_STEPS = 8
 
+function emptyPeriodEntry(): PeriodHistoryEntry {
+  return { period_start: "", flow: "medium" }
+}
+
+function periodHistoryForMode(knowsThree: boolean): PeriodHistoryEntry[] {
+  return Array.from({ length: knowsThree ? 3 : 1 }, emptyPeriodEntry)
+}
+
 function calculateAge(dateOfBirth: string) {
   if (!dateOfBirth) return null
   const dob = new Date(dateOfBirth)
@@ -74,7 +86,7 @@ function calculateBmi(weight: number, height: number) {
   return Math.round((weight / (heightM * heightM)) * 10) / 10
 }
 
-function defaultForm(user: ReturnType<typeof useAuth>["user"]): OnboardingPayload {
+function defaultForm(user: UserProfile | null): OnboardingPayload {
   return {
     full_name: user?.full_name ?? "",
     date_of_birth: user?.date_of_birth ?? "",
@@ -83,7 +95,8 @@ function defaultForm(user: ReturnType<typeof useAuth>["user"]): OnboardingPayloa
     weight: 55,
     language_preference: user?.language_preference ?? "english",
     timezone: user?.timezone ?? "Asia/Kolkata",
-    menarche_age: 13,
+    knows_last_three_months: true,
+    period_history: periodHistoryForMode(true),
     average_cycle_length: 28,
     average_period_length: 5,
     last_period_start: "",
@@ -110,16 +123,18 @@ function defaultForm(user: ReturnType<typeof useAuth>["user"]): OnboardingPayloa
 }
 
 export function OnboardingWizard() {
-  const { user, refreshProfile, setHealthProfile, updateUser } = useAuth()
+  const { user } = useAuth()
+  if (!user) return null
+  return <OnboardingWizardForm key={user.id} user={user} />
+}
+
+function OnboardingWizardForm({ user }: { user: UserProfile }) {
+  const { setHealthProfile, updateUser } = useAuth()
   const { t } = useLanguage()
   const router = useRouter()
   const [step, setStep] = React.useState(0)
   const [submitting, setSubmitting] = React.useState(false)
   const [form, setForm] = React.useState<OnboardingPayload>(() => defaultForm(user))
-
-  React.useEffect(() => {
-    if (user) setForm((current) => ({ ...current, ...defaultForm(user) }))
-  }, [user])
 
   function updateField<K extends keyof OnboardingPayload>(key: K, value: OnboardingPayload[K]) {
     setForm((current) => ({ ...current, [key]: value }))
@@ -149,10 +164,83 @@ export function OnboardingWizard() {
     })
   }
 
+  function updatePeriodHistory(
+    index: number,
+    key: keyof PeriodHistoryEntry,
+    value: string,
+  ) {
+    setForm((current) => {
+      const next = [...current.period_history]
+      next[index] = { ...next[index], [key]: value }
+      return { ...current, period_history: next }
+    })
+  }
+
+  function setKnowsLastThreeMonths(knows: boolean) {
+    setForm((current) => ({
+      ...current,
+      knows_last_three_months: knows,
+      period_history: periodHistoryForMode(knows),
+    }))
+  }
+
+  function validateStep(currentStep: number): boolean {
+    if (currentStep === 0) {
+      if (!form.date_of_birth) {
+        toast.error(t("onboarding.validation.dateOfBirthRequired"))
+        return false
+      }
+      if (!form.country) {
+        toast.error(t("onboarding.validation.countryRequired"))
+        return false
+      }
+      if (!form.height || form.height < 50) {
+        toast.error(t("onboarding.validation.heightRequired"))
+        return false
+      }
+      if (!form.weight || form.weight < 20) {
+        toast.error(t("onboarding.validation.weightRequired"))
+        return false
+      }
+    }
+
+    if (currentStep === 1) {
+      if (!form.average_cycle_length) {
+        toast.error(t("onboarding.validation.cycleLengthRequired"))
+        return false
+      }
+      for (const [index, entry] of form.period_history.entries()) {
+        if (!entry.period_start) {
+          toast.error(t("onboarding.validation.periodStartRequired", { month: String(index + 1) }))
+          return false
+        }
+      }
+    }
+
+    return true
+  }
+
+  function goNext() {
+    if (!validateStep(step)) return
+    setStep((current) => Math.min(TOTAL_STEPS - 1, current + 1))
+  }
+
   async function finishSetup() {
+    if (!validateStep(0) || !validateStep(1)) return
+
+    const sortedHistory = [...form.period_history].sort(
+      (a, b) => new Date(b.period_start).getTime() - new Date(a.period_start).getTime(),
+    )
+    const payload: OnboardingPayload = {
+      ...form,
+      period_history: sortedHistory,
+      last_period_start: sortedHistory[0]?.period_start ?? "",
+      typical_flow: sortedHistory[0]?.flow ?? "medium",
+    }
+
     setSubmitting(true)
     try {
-      const data = await onboardingService.completeOnboarding(form)
+      const data = await onboardingService.completeOnboarding(payload)
       updateUser(() => data.user)
       setHealthProfile(data.health_profile)
       toast.success(t("onboarding.completeSuccess"))
@@ -189,13 +277,6 @@ export function OnboardingWizard() {
         <CardContent className="space-y-4">
           {step === 0 ? (
             <>
-              <Field label={t("onboarding.fields.fullName")}>
-                <Input
-                  className="rounded-xl"
-                  value={form.full_name}
-                  onChange={(e) => updateField("full_name", e.target.value)}
-                />
-              </Field>
               <Field label={t("onboarding.fields.dateOfBirth")}>
                 <Input
                   type="date"
@@ -208,11 +289,17 @@ export function OnboardingWizard() {
                 <Input className="rounded-xl" readOnly value={age ?? ""} />
               </Field>
               <Field label={t("onboarding.fields.country")}>
-                <Input
+                <Select
                   className="rounded-xl"
                   value={form.country}
                   onChange={(e) => updateField("country", e.target.value)}
-                />
+                >
+                  {COUNTRIES.map((country) => (
+                    <option key={country} value={country}>
+                      {country}
+                    </option>
+                  ))}
+                </Select>
               </Field>
               <div className="grid gap-4 sm:grid-cols-2">
                 <Field label={t("onboarding.fields.height")}>
@@ -235,89 +322,77 @@ export function OnboardingWizard() {
               <Field label={t("onboarding.fields.bmi")}>
                 <Input className="rounded-xl" readOnly value={bmi ?? ""} />
               </Field>
-              <Field label={t("onboarding.fields.language")}>
-                <Select
-                  className="rounded-xl"
-                  value={form.language_preference}
-                  onChange={(e) =>
-                    updateField("language_preference", e.target.value as "english" | "tamil")
-                  }
-                >
-                  <option value="english">{t("common.english")}</option>
-                  <option value="tamil">{t("common.tamil")}</option>
-                </Select>
-              </Field>
-              <Field label={t("onboarding.fields.timezone")}>
-                <Input
-                  className="rounded-xl"
-                  value={form.timezone}
-                  onChange={(e) => updateField("timezone", e.target.value)}
-                />
-              </Field>
             </>
           ) : null}
 
           {step === 1 ? (
             <>
-              <Field label={t("onboarding.fields.menarcheAge")}>
+              <Field label={t("onboarding.fields.cycleLength")}>
                 <Input
                   type="number"
                   className="rounded-xl"
-                  value={form.menarche_age}
-                  onChange={(e) => updateField("menarche_age", Number(e.target.value))}
+                  value={form.average_cycle_length}
+                  onChange={(e) => updateField("average_cycle_length", Number(e.target.value))}
                 />
               </Field>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <Field label={t("onboarding.fields.cycleLength")}>
-                  <Input
-                    type="number"
-                    className="rounded-xl"
-                    value={form.average_cycle_length}
-                    onChange={(e) => updateField("average_cycle_length", Number(e.target.value))}
+
+              <div className="space-y-3 rounded-xl border border-border/60 p-4">
+                <p className="text-sm font-medium">{t("onboarding.fields.periodHistoryMode")}</p>
+                <label className="flex cursor-pointer items-center gap-3 text-sm">
+                  <input
+                    type="radio"
+                    name="periodHistoryMode"
+                    checked={form.knows_last_three_months}
+                    onChange={() => setKnowsLastThreeMonths(true)}
                   />
-                </Field>
-                <Field label={t("onboarding.fields.periodLength")}>
-                  <Input
-                    type="number"
-                    className="rounded-xl"
-                    value={form.average_period_length}
-                    onChange={(e) => updateField("average_period_length", Number(e.target.value))}
+                  {t("onboarding.fields.knowsLastThreeMonths")}
+                </label>
+                <label className="flex cursor-pointer items-center gap-3 text-sm">
+                  <input
+                    type="radio"
+                    name="periodHistoryMode"
+                    checked={!form.knows_last_three_months}
+                    onChange={() => setKnowsLastThreeMonths(false)}
                   />
-                </Field>
+                  {t("onboarding.fields.knowsLastMonthOnly")}
+                </label>
               </div>
-              <Field label={t("onboarding.fields.lastPeriodStart")}>
-                <Input
-                  type="date"
-                  className="rounded-xl"
-                  value={form.last_period_start}
-                  onChange={(e) => updateField("last_period_start", e.target.value)}
-                />
-              </Field>
-              <Field label={t("onboarding.fields.typicalFlow")}>
-                <Select
-                  className="rounded-xl"
-                  value={form.typical_flow}
-                  onChange={(e) => updateField("typical_flow", e.target.value as OnboardingPayload["typical_flow"])}
+
+              {form.period_history.map((entry, index) => (
+                <div
+                  key={`period-${index}`}
+                  className="space-y-3 rounded-xl border border-border/60 p-4"
                 >
-                  {(["light", "medium", "heavy", "very_heavy"] as const).map((flow) => (
-                    <option key={flow} value={flow}>
-                      {t(`onboarding.flow.${flow}`)}
-                    </option>
-                  ))}
-                </Select>
-              </Field>
-              <Field label={t("onboarding.fields.cycleRegularity")}>
-                <Select
-                  className="rounded-xl"
-                  value={form.cycle_regularity}
-                  onChange={(e) =>
-                    updateField("cycle_regularity", e.target.value as OnboardingPayload["cycle_regularity"])
-                  }
-                >
-                  <option value="regular">{t("onboarding.regularity.regular")}</option>
-                  <option value="irregular">{t("onboarding.regularity.irregular")}</option>
-                </Select>
-              </Field>
+                  <p className="text-sm font-medium">
+                    {form.knows_last_three_months
+                      ? t(`onboarding.periodMonths.${index}`)
+                      : t("onboarding.fields.lastPeriodStart")}
+                  </p>
+                  <Field label={t("onboarding.fields.lastPeriodStart")}>
+                    <Input
+                      type="date"
+                      className="rounded-xl"
+                      value={entry.period_start}
+                      onChange={(e) => updatePeriodHistory(index, "period_start", e.target.value)}
+                    />
+                  </Field>
+                  <Field label={t("onboarding.fields.typicalFlow")}>
+                    <Select
+                      className="rounded-xl"
+                      value={entry.flow}
+                      onChange={(e) =>
+                        updatePeriodHistory(index, "flow", e.target.value as FlowLevel)
+                      }
+                    >
+                      {(["light", "medium", "heavy", "very_heavy"] as const).map((flow) => (
+                        <option key={flow} value={flow}>
+                          {t(`onboarding.flow.${flow}`)}
+                        </option>
+                      ))}
+                    </Select>
+                  </Field>
+                </div>
+              ))}
             </>
           ) : null}
 
@@ -475,15 +550,20 @@ export function OnboardingWizard() {
 
           {step === 7 ? (
             <div className="space-y-3 text-sm">
-              <SummaryRow label={t("onboarding.fields.fullName")} value={form.full_name} />
+              <SummaryRow label={t("onboarding.fields.dateOfBirth")} value={form.date_of_birth} />
+              <SummaryRow
+                label={t("onboarding.fields.age")}
+                value={age != null ? String(age) : ""}
+              />
               <SummaryRow label={t("onboarding.fields.country")} value={form.country} />
+              <SummaryRow label={t("onboarding.fields.bmi")} value={bmi != null ? String(bmi) : ""} />
               <SummaryRow
                 label={t("onboarding.fields.cycleLength")}
                 value={String(form.average_cycle_length)}
               />
               <SummaryRow
                 label={t("onboarding.fields.lastPeriodStart")}
-                value={form.last_period_start}
+                value={form.period_history[0]?.period_start ?? ""}
               />
               <SummaryRow
                 label={t("onboarding.fields.symptoms")}
@@ -507,11 +587,7 @@ export function OnboardingWizard() {
             {t("common.back")}
           </Button>
           {step < TOTAL_STEPS - 1 ? (
-            <Button
-              type="button"
-              className="rounded-full"
-              onClick={() => setStep((current) => Math.min(TOTAL_STEPS - 1, current + 1))}
-            >
+            <Button type="button" className="rounded-full" onClick={goNext}>
               {t("onboarding.next")}
             </Button>
           ) : (

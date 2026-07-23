@@ -1,5 +1,6 @@
 "use client"
 
+import { useQuery } from "@tanstack/react-query"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as React from "react"
@@ -14,9 +15,9 @@ import { Label } from "@/components/ui/label"
 import { Select } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { getLocalizedApiError } from "@/lib/localize-api-error"
+import { queryKeys } from "@/lib/query-keys"
 import { useLanguage } from "@/providers/language-provider"
 import { getMyDailyLogs, upsertDailyLog } from "@/services/daily-log"
-import type { DailyLog } from "@/types/daily-log"
 
 function optionalNumber() {
   return z.number().optional()
@@ -43,9 +44,14 @@ type FormValues = z.infer<ReturnType<typeof buildSchema>>
 
 export function DailyLogView() {
   const { t } = useLanguage()
-  const [logs, setLogs] = React.useState<DailyLog[]>([])
-  const [loading, setLoading] = React.useState(true)
   const schema = React.useMemo(() => buildSchema(t), [t])
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: queryKeys.dailyLogs.list,
+    queryFn: () => getMyDailyLogs(),
+  })
+
+  const logs = data?.daily_logs ?? []
+  const loading = isLoading
 
   const {
     register,
@@ -63,19 +69,8 @@ export function DailyLogView() {
   })
 
   async function loadLogs() {
-    try {
-      const data = await getMyDailyLogs()
-      setLogs(data.daily_logs)
-    } catch (error) {
-      toast.error(getLocalizedApiError(error, t))
-    } finally {
-      setLoading(false)
-    }
+    await refetch()
   }
-
-  React.useEffect(() => {
-    void loadLogs()
-  }, [])
 
   async function onSubmit(values: FormValues) {
     try {

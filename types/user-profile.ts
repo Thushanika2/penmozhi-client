@@ -4,7 +4,7 @@ export type UserRole = "user" | "admin"
 export interface UserProfile {
   id: number
   full_name: string
-  date_of_birth: string
+  date_of_birth: string | null
   email: string
   language_preference: LanguagePreference
   country: string | null

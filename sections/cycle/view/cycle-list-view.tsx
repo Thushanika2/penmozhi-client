@@ -1,8 +1,9 @@
 "use client"
 
+import * as React from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import * as React from "react"
+import { useQuery } from "@tanstack/react-query"
 import { toast } from "sonner"
 import { z } from "zod"
 
@@ -37,6 +38,7 @@ import {
 } from "@/components/ui/table"
 import { Textarea } from "@/components/ui/textarea"
 import { getLocalizedApiError } from "@/lib/localize-api-error"
+import { queryKeys } from "@/lib/query-keys"
 import { useLanguage } from "@/providers/language-provider"
 import { getCycleCalendar } from "@/services/daily-log"
 import {
@@ -46,8 +48,7 @@ import {
   predictNextPeriod,
   updateCycle,
 } from "@/services/cycle"
-import type { CycleCalendarData } from "@/types/daily-log"
-import type { CycleHistoryLog, CyclePrediction } from "@/types/cycle-history-log"
+import type { CycleHistoryLog } from "@/types/cycle-history-log"
 
 const FLOW_LABEL_KEYS: Record<string, string> = {
   light: "cycle.flow.light",
@@ -72,12 +73,38 @@ export function CycleListView() {
   const today = new Date()
   const [viewYear, setViewYear] = React.useState(today.getFullYear())
   const [viewMonth, setViewMonth] = React.useState(today.getMonth() + 1)
-  const [calendar, setCalendar] = React.useState<CycleCalendarData | null>(null)
   const [selectedDate, setSelectedDate] = React.useState<string | null>(null)
-  const [cycles, setCycles] = React.useState<CycleHistoryLog[]>([])
-  const [prediction, setPrediction] = React.useState<CyclePrediction | null>(null)
-  const [loading, setLoading] = React.useState(true)
   const [editingCycle, setEditingCycle] = React.useState<CycleHistoryLog | null>(null)
+
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: [...queryKeys.cycles.list, viewYear, viewMonth],
+    queryFn: async () => {
+      try {
+        const [cyclesData, predictionData, calendarData] = await Promise.all([
+          getMyCycles(),
+          predictNextPeriod(),
+          getCycleCalendar(viewYear, viewMonth),
+        ])
+        return {
+          cycles: cyclesData.cycles,
+          prediction: predictionData,
+          calendar: calendarData,
+        }
+      } catch (error) {
+        toast.error(getLocalizedApiError(error, t))
+        throw error
+      }
+    },
+  })
+
+  const cycles = data?.cycles ?? []
+  const prediction = data?.prediction ?? null
+  const calendar = data?.calendar ?? null
+  const loading = isLoading
+
+  async function loadData() {
+    await refetch()
+  }
 
   const schema = React.useMemo(() => buildSchema(t), [t])
   const {
@@ -88,27 +115,6 @@ export function CycleListView() {
   } = useForm<FormValues>({ resolver: zodResolver(schema), defaultValues: { flowIntensity: "medium" } })
 
   const editForm = useForm<FormValues>({ resolver: zodResolver(schema) })
-
-  async function loadData(year = viewYear, month = viewMonth) {
-    try {
-      const [cyclesData, predictionData, calendarData] = await Promise.all([
-        getMyCycles(),
-        predictNextPeriod(),
-        getCycleCalendar(year, month),
-      ])
-      setCycles(cyclesData.cycles)
-      setPrediction(predictionData)
-      setCalendar(calendarData)
-    } catch (error) {
-      toast.error(getLocalizedApiError(error, t))
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  React.useEffect(() => {
-    void loadData()
-  }, [viewYear, viewMonth])
 
   async function onSubmit(values: FormValues) {
     try {

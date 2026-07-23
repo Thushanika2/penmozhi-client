@@ -6,7 +6,6 @@ export interface RegisterPayload {
   full_name: string
   email: string
   password: string
-  date_of_birth: string
   language_preference: "tamil" | "english"
 }
 

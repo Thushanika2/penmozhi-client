@@ -1,5 +1,6 @@
 "use client"
 
+import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
 import * as React from "react"
 import { toast } from "sonner"
@@ -28,6 +29,7 @@ import { Label } from "@/components/ui/label"
 import { Select } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { getLocalizedApiError } from "@/lib/localize-api-error"
+import { queryKeys } from "@/lib/query-keys"
 import { deleteAccount, updateProfile } from "@/services/auth"
 import {
   getHealthProfileRisks,
@@ -40,7 +42,8 @@ import type {
   HealthConditionOption,
   SymptomOption,
 } from "@/types/onboarding"
-import type { HealthProfile, HealthProfileRisks } from "@/types/health-profile"
+import type { HealthProfile } from "@/types/health-profile"
+import type { UserProfile } from "@/types/user-profile"
 
 const SYMPTOM_OPTIONS: SymptomOption[] = [
   "cramps",
@@ -87,116 +90,133 @@ function ToggleRow({
   )
 }
 
+function buildAccountForm(user: UserProfile) {
+  return {
+    fullName: user.full_name ?? "",
+    country: user.country ?? "",
+    timezone: user.timezone ?? "Asia/Kolkata",
+    dateOfBirth: user.date_of_birth ?? "",
+  }
+}
+
+function buildHealthForm(healthProfile: HealthProfile) {
+  return {
+    weight: healthProfile.weight != null ? String(healthProfile.weight) : "",
+    height: healthProfile.height != null ? String(healthProfile.height) : "",
+    menarcheAge: healthProfile.menarche_age != null ? String(healthProfile.menarche_age) : "",
+    averageCycleLength:
+      healthProfile.average_cycle_length != null
+        ? String(healthProfile.average_cycle_length)
+        : "",
+    averagePeriodLength:
+      healthProfile.average_period_length != null
+        ? String(healthProfile.average_period_length)
+        : "",
+    lastPeriodStart: healthProfile.last_period_start ?? "",
+    typicalFlow: healthProfile.typical_flow ?? "medium",
+    cycleRegularity: healthProfile.cycle_regularity ?? "regular",
+    commonSymptoms: healthProfile.common_symptoms ?? [],
+    healthConditions: healthProfile.health_conditions ?? [],
+    nutritionalNeeds: healthProfile.nutritional_needs ?? "",
+    healthRisks: healthProfile.health_risks ?? "",
+    sleepHours: healthProfile.sleep_hours != null ? String(healthProfile.sleep_hours) : "",
+    waterIntakeLiters:
+      healthProfile.water_intake_liters != null
+        ? String(healthProfile.water_intake_liters)
+        : "",
+    exerciseFrequency: healthProfile.exercise_frequency ?? "weekly",
+    stressLevel: healthProfile.stress_level ?? "medium",
+    smoking: healthProfile.smoking,
+    alcohol: healthProfile.alcohol,
+    tryingToConceive: healthProfile.trying_to_conceive,
+    isPregnant: healthProfile.is_pregnant,
+    isBreastfeeding: healthProfile.is_breastfeeding,
+    usingBirthControl: healthProfile.using_birth_control,
+    birthControlType: healthProfile.birth_control_type ?? "none",
+    notifyPeriod: healthProfile.notify_period,
+    notifyOvulation: healthProfile.notify_ovulation,
+    notifyMedication: healthProfile.notify_medication,
+    notifyDailyHealth: healthProfile.notify_daily_health,
+  }
+}
+
 export function ProfileView() {
+  const auth = useAuth()
+  const { user, healthProfile } = auth
+  if (!user) return null
+
+  return (
+    <ProfileViewContent
+      key={`${user.id}-${healthProfile?.id ?? 0}-${healthProfile?.updated_at ?? ""}`}
+      user={user}
+      healthProfile={healthProfile}
+      setHealthProfile={auth.setHealthProfile}
+      updateUser={auth.updateUser}
+      logout={auth.logout}
+    />
+  )
+}
+
+function ProfileViewContent({
+  user,
+  healthProfile,
+  setHealthProfile,
+  updateUser,
+  logout,
+}: {
+  user: UserProfile
+  healthProfile: HealthProfile | null
+  setHealthProfile: ReturnType<typeof useAuth>["setHealthProfile"]
+  updateUser: ReturnType<typeof useAuth>["updateUser"]
+  logout: ReturnType<typeof useAuth>["logout"]
+}) {
   const router = useRouter()
-  const { user, healthProfile, setHealthProfile, logout, updateUser } = useAuth()
   const { t } = useLanguage()
-  const [risks, setRisks] = React.useState<HealthProfileRisks | null>(null)
+  const queryClient = useQueryClient()
+  const { data: risks = null } = useQuery({
+    queryKey: queryKeys.profile.risks(healthProfile?.id ?? 0),
+    queryFn: () => getHealthProfileRisks(healthProfile!.id),
+    enabled: Boolean(healthProfile?.id),
+  })
   const [savingAccount, setSavingAccount] = React.useState(false)
   const [savingHealth, setSavingHealth] = React.useState(false)
   const [deleteOpen, setDeleteOpen] = React.useState(false)
   const [deletePassword, setDeletePassword] = React.useState("")
   const [deleting, setDeleting] = React.useState(false)
 
-  const [accountForm, setAccountForm] = React.useState({
-    fullName: "",
-    country: "",
-    timezone: "",
-    dateOfBirth: "",
-  })
+  const [accountForm, setAccountForm] = React.useState(() => buildAccountForm(user))
 
-  const [healthForm, setHealthForm] = React.useState({
-    weight: "",
-    height: "",
-    menarcheAge: "",
-    averageCycleLength: "",
-    averagePeriodLength: "",
-    lastPeriodStart: "",
-    typicalFlow: "medium",
-    cycleRegularity: "regular",
-    commonSymptoms: [] as SymptomOption[],
-    healthConditions: [] as HealthConditionOption[],
-    nutritionalNeeds: "",
-    healthRisks: "",
-    sleepHours: "",
-    waterIntakeLiters: "",
-    exerciseFrequency: "weekly",
-    stressLevel: "medium",
-    smoking: false,
-    alcohol: false,
-    tryingToConceive: false,
-    isPregnant: false,
-    isBreastfeeding: false,
-    usingBirthControl: false,
-    birthControlType: "none" as BirthControlType,
-    notifyPeriod: true,
-    notifyOvulation: true,
-    notifyMedication: true,
-    notifyDailyHealth: true,
-  })
-
-  React.useEffect(() => {
-    if (!user) return
-    setAccountForm({
-      fullName: user.full_name ?? "",
-      country: user.country ?? "",
-      timezone: user.timezone ?? "Asia/Kolkata",
-      dateOfBirth: user.date_of_birth ?? "",
-    })
-  }, [user])
-
-  React.useEffect(() => {
-    if (!healthProfile) return
-    const profileId = healthProfile.id
-    setHealthForm({
-      weight: healthProfile.weight != null ? String(healthProfile.weight) : "",
-      height: healthProfile.height != null ? String(healthProfile.height) : "",
-      menarcheAge: healthProfile.menarche_age != null ? String(healthProfile.menarche_age) : "",
-      averageCycleLength:
-        healthProfile.average_cycle_length != null
-          ? String(healthProfile.average_cycle_length)
-          : "",
-      averagePeriodLength:
-        healthProfile.average_period_length != null
-          ? String(healthProfile.average_period_length)
-          : "",
-      lastPeriodStart: healthProfile.last_period_start ?? "",
-      typicalFlow: healthProfile.typical_flow ?? "medium",
-      cycleRegularity: healthProfile.cycle_regularity ?? "regular",
-      commonSymptoms: healthProfile.common_symptoms ?? [],
-      healthConditions: healthProfile.health_conditions ?? [],
-      nutritionalNeeds: healthProfile.nutritional_needs ?? "",
-      healthRisks: healthProfile.health_risks ?? "",
-      sleepHours: healthProfile.sleep_hours != null ? String(healthProfile.sleep_hours) : "",
-      waterIntakeLiters:
-        healthProfile.water_intake_liters != null
-          ? String(healthProfile.water_intake_liters)
-          : "",
-      exerciseFrequency: healthProfile.exercise_frequency ?? "weekly",
-      stressLevel: healthProfile.stress_level ?? "medium",
-      smoking: healthProfile.smoking,
-      alcohol: healthProfile.alcohol,
-      tryingToConceive: healthProfile.trying_to_conceive,
-      isPregnant: healthProfile.is_pregnant,
-      isBreastfeeding: healthProfile.is_breastfeeding,
-      usingBirthControl: healthProfile.using_birth_control,
-      birthControlType: healthProfile.birth_control_type ?? "none",
-      notifyPeriod: healthProfile.notify_period,
-      notifyOvulation: healthProfile.notify_ovulation,
-      notifyMedication: healthProfile.notify_medication,
-      notifyDailyHealth: healthProfile.notify_daily_health,
-    })
-
-    async function loadRisks() {
-      try {
-        const data = await getHealthProfileRisks(profileId)
-        setRisks(data)
-      } catch (error) {
-        toast.error(getLocalizedApiError(error, t))
-      }
-    }
-    void loadRisks()
-  }, [healthProfile, t])
+  const [healthForm, setHealthForm] = React.useState(() =>
+    healthProfile ? buildHealthForm(healthProfile) : {
+      weight: "",
+      height: "",
+      menarcheAge: "",
+      averageCycleLength: "",
+      averagePeriodLength: "",
+      lastPeriodStart: "",
+      typicalFlow: "medium",
+      cycleRegularity: "regular",
+      commonSymptoms: [] as SymptomOption[],
+      healthConditions: [] as HealthConditionOption[],
+      nutritionalNeeds: "",
+      healthRisks: "",
+      sleepHours: "",
+      waterIntakeLiters: "",
+      exerciseFrequency: "weekly",
+      stressLevel: "medium",
+      smoking: false,
+      alcohol: false,
+      tryingToConceive: false,
+      isPregnant: false,
+      isBreastfeeding: false,
+      usingBirthControl: false,
+      birthControlType: "none" as BirthControlType,
+      notifyPeriod: true,
+      notifyOvulation: true,
+      notifyMedication: true,
+      notifyDailyHealth: true,
+    },
+  )
 
   function toggleSymptom(option: SymptomOption) {
     setHealthForm((current) => {
@@ -278,8 +298,9 @@ export function ProfileView() {
         notify_daily_health: healthForm.notifyDailyHealth,
       })
       setHealthProfile(result.health_profile)
-      const risksData = await getHealthProfileRisks(healthProfile.id)
-      setRisks(risksData)
+      await queryClient.invalidateQueries({
+        queryKey: queryKeys.profile.risks(healthProfile.id),
+      })
       toast.success(t("profile.updated"))
     } catch (error) {
       toast.error(getLocalizedApiError(error, t))

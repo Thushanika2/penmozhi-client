@@ -22,7 +22,6 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select } from "@/components/ui/select"
-import { getPostAuthPath } from "@/lib/auth-redirect"
 import { getLocalizedApiError } from "@/lib/localize-api-error"
 import { useAuth } from "@/providers/auth-provider"
 import { useLanguage } from "@/providers/language-provider"
@@ -46,7 +45,6 @@ function RegisterForm() {
         fullName: z.string().min(2, t("auth.validation.fullNameRequired")),
         email: z.string().email(t("auth.validation.emailInvalid")),
         password: z.string().min(6, t("auth.validation.passwordMin")),
-        dateOfBirth: z.string().min(1, t("auth.validation.dateOfBirthRequired")),
         languagePreference: z.enum(["english", "tamil"]),
       }),
     [t],
@@ -69,7 +67,6 @@ function RegisterForm() {
         full_name: values.fullName,
         email: values.email,
         password: values.password,
-        date_of_birth: values.dateOfBirth,
         language_preference: values.languagePreference,
       })
       toast.success(t("auth.register.accountCreated"))
@@ -115,20 +112,6 @@ function RegisterForm() {
               />
               {errors.password ? (
                 <p className="text-sm text-destructive">{errors.password.message}</p>
-              ) : null}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="dateOfBirth">{t("auth.register.dateOfBirth")}</Label>
-              <Input
-                id="dateOfBirth"
-                type="date"
-                className="rounded-xl"
-                {...register("dateOfBirth")}
-              />
-              {errors.dateOfBirth ? (
-                <p className="text-sm text-destructive">
-                  {errors.dateOfBirth.message}
-                </p>
               ) : null}
             </div>
             <div className="space-y-2">

@@ -8,7 +8,6 @@ import {
   CalendarDays,
   ClipboardList,
   HeartPulse,
-  LineChart,
   MessageSquare,
   Sparkles,
   User,

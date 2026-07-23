@@ -7,8 +7,6 @@ import type {
   StressLevel,
   SymptomOption,
 } from "@/types/onboarding"
-import type { LanguagePreference } from "@/types/user-profile"
-
 export interface HealthProfile {
   id: number
   profile_id: number
