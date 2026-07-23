@@ -19,7 +19,9 @@
     "notSet": "Not set",
     "saving": "Saving...",
     "selectLanguage": "Select language",
-    "tamil": "தமிழ்"
+    "tamil": "தமிழ்",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password"
   },
   "a11y": {
     "closeDialog": "Close dialog",
@@ -218,8 +220,12 @@
     },
     "validation": {
       "fullNameRequired": "Please enter your full name",
+      "fullNameMax": "Full name must be 255 characters or fewer",
+      "emailRequired": "Please enter your email address",
       "emailInvalid": "Please enter a valid email address",
+      "passwordRequired": "Please enter your password",
       "passwordMin": "Password must be at least 6 characters",
+      "passwordMax": "Password must be 128 characters or fewer",
       "dateOfBirthRequired": "Please select your date of birth",
       "tokenRequired": "Reset token is required",
       "passwordMismatch": "Passwords do not match"
@@ -1036,6 +1042,7 @@
       "dialogTitle": "Delete your account?",
       "dialogDescription": "This action cannot be undone. Enter your password to confirm.",
       "passwordLabel": "Password",
+      "passwordRequired": "Please enter your password to confirm",
       "confirm": "Delete permanently",
       "deleting": "Deleting...",
       "success": "Your account has been deleted"

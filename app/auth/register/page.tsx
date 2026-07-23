@@ -21,8 +21,10 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { PasswordInput } from "@/components/ui/password-input"
 import { Select } from "@/components/ui/select"
 import { getLocalizedApiError } from "@/lib/localize-api-error"
+import { emailField, fullNameField, passwordField } from "@/lib/validation/auth"
 import { useAuth } from "@/providers/auth-provider"
 import { useLanguage } from "@/providers/language-provider"
 
@@ -42,9 +44,9 @@ function RegisterForm() {
   const schema = useMemo(
     () =>
       z.object({
-        fullName: z.string().min(2, t("auth.validation.fullNameRequired")),
-        email: z.string().email(t("auth.validation.emailInvalid")),
-        password: z.string().min(6, t("auth.validation.passwordMin")),
+        fullName: fullNameField(t),
+        email: emailField(t),
+        password: passwordField(t),
         languagePreference: z.enum(["english", "tamil"]),
       }),
     [t],
@@ -58,6 +60,8 @@ function RegisterForm() {
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
+    mode: "onBlur",
+    reValidateMode: "onChange",
     defaultValues: { languagePreference: "english" },
   })
 
@@ -86,28 +90,41 @@ function RegisterForm() {
           <CardTitle className="font-heading text-2xl">{t("auth.register.title")}</CardTitle>
           <p className="text-sm text-muted-foreground">{t("auth.register.subtitle")}</p>
         </CardHeader>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form noValidate onSubmit={handleSubmit(onSubmit)}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="fullName">{t("auth.register.fullName")}</Label>
-              <Input id="fullName" className="rounded-xl" {...register("fullName")} />
+              <Input
+                id="fullName"
+                autoComplete="name"
+                className="rounded-xl"
+                aria-invalid={Boolean(errors.fullName)}
+                {...register("fullName")}
+              />
               {errors.fullName ? (
                 <p className="text-sm text-destructive">{errors.fullName.message}</p>
               ) : null}
             </div>
             <div className="space-y-2">
               <Label htmlFor="email">{t("auth.register.email")}</Label>
-              <Input id="email" type="email" className="rounded-xl" {...register("email")} />
+              <Input
+                id="email"
+                type="email"
+                autoComplete="email"
+                className="rounded-xl"
+                aria-invalid={Boolean(errors.email)}
+                {...register("email")}
+              />
               {errors.email ? (
                 <p className="text-sm text-destructive">{errors.email.message}</p>
               ) : null}
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">{t("auth.register.password")}</Label>
-              <Input
+              <PasswordInput
                 id="password"
-                type="password"
-                className="rounded-xl"
+                autoComplete="new-password"
+                aria-invalid={Boolean(errors.password)}
                 {...register("password")}
               />
               {errors.password ? (

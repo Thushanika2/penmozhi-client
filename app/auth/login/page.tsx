@@ -21,8 +21,10 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { PasswordInput } from "@/components/ui/password-input"
 import { getPostAuthPath } from "@/lib/auth-redirect"
 import { getLocalizedApiError } from "@/lib/localize-api-error"
+import { emailField, loginPasswordField } from "@/lib/validation/auth"
 import { useAuth } from "@/providers/auth-provider"
 import { useLanguage } from "@/providers/language-provider"
 
@@ -42,8 +44,8 @@ function LoginForm() {
   const schema = useMemo(
     () =>
       z.object({
-        email: z.string().email(t("auth.validation.emailInvalid")),
-        password: z.string().min(6, t("auth.validation.passwordMin")),
+        email: emailField(t),
+        password: loginPasswordField(t),
       }),
     [t],
   )
@@ -54,7 +56,11 @@ function LoginForm() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<FormValues>({ resolver: zodResolver(schema) })
+  } = useForm<FormValues>({
+    resolver: zodResolver(schema),
+    mode: "onBlur",
+    reValidateMode: "onChange",
+  })
 
   async function onSubmit(values: FormValues) {
     try {
@@ -76,21 +82,28 @@ function LoginForm() {
           <CardTitle className="font-heading text-2xl">{t("auth.login.title")}</CardTitle>
           <p className="text-sm text-muted-foreground">{t("auth.login.subtitle")}</p>
         </CardHeader>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form noValidate onSubmit={handleSubmit(onSubmit)}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">{t("auth.login.email")}</Label>
-              <Input id="email" type="email" className="rounded-xl" {...register("email")} />
+              <Input
+                id="email"
+                type="email"
+                autoComplete="email"
+                className="rounded-xl"
+                aria-invalid={Boolean(errors.email)}
+                {...register("email")}
+              />
               {errors.email ? (
                 <p className="text-sm text-destructive">{errors.email.message}</p>
               ) : null}
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">{t("auth.login.password")}</Label>
-              <Input
+              <PasswordInput
                 id="password"
-                type="password"
-                className="rounded-xl"
+                autoComplete="current-password"
+                aria-invalid={Boolean(errors.password)}
                 {...register("password")}
               />
               {errors.password ? (

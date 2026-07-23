@@ -14,7 +14,9 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { PasswordInput } from "@/components/ui/password-input"
 import { getLocalizedApiError } from "@/lib/localize-api-error"
+import { passwordField, resetTokenField } from "@/lib/validation/auth"
 import { useLanguage } from "@/providers/language-provider"
 import * as authService from "@/services/auth"
 
@@ -38,9 +40,9 @@ function ResetPasswordForm() {
     () =>
       z
         .object({
-          token: z.string().min(10, t("auth.validation.tokenRequired")),
-          password: z.string().min(6, t("auth.validation.passwordMin")),
-          confirmPassword: z.string().min(6, t("auth.validation.passwordMin")),
+          token: resetTokenField(t),
+          password: passwordField(t),
+          confirmPassword: passwordField(t),
         })
         .refine((data) => data.password === data.confirmPassword, {
           message: t("auth.validation.passwordMismatch"),
@@ -55,6 +57,8 @@ function ResetPasswordForm() {
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
+    mode: "onBlur",
+    reValidateMode: "onChange",
     defaultValues: { token: tokenFromUrl },
   })
 
@@ -74,26 +78,36 @@ function ResetPasswordForm() {
         <CardHeader>
           <CardTitle className="font-heading text-2xl">{t("auth.resetPassword.title")}</CardTitle>
         </CardHeader>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form noValidate onSubmit={handleSubmit(onSubmit)}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="token">{t("auth.resetPassword.token")}</Label>
-              <Input id="token" className="rounded-xl" {...register("token")} />
+              <Input
+                id="token"
+                className="rounded-xl"
+                aria-invalid={Boolean(errors.token)}
+                {...register("token")}
+              />
               {errors.token ? <p className="text-sm text-destructive">{errors.token.message}</p> : null}
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">{t("auth.resetPassword.password")}</Label>
-              <Input id="password" type="password" className="rounded-xl" {...register("password")} />
+              <PasswordInput
+                id="password"
+                autoComplete="new-password"
+                aria-invalid={Boolean(errors.password)}
+                {...register("password")}
+              />
               {errors.password ? (
                 <p className="text-sm text-destructive">{errors.password.message}</p>
               ) : null}
             </div>
             <div className="space-y-2">
               <Label htmlFor="confirmPassword">{t("auth.resetPassword.confirmPassword")}</Label>
-              <Input
+              <PasswordInput
                 id="confirmPassword"
-                type="password"
-                className="rounded-xl"
+                autoComplete="new-password"
+                aria-invalid={Boolean(errors.confirmPassword)}
                 {...register("confirmPassword")}
               />
               {errors.confirmPassword ? (

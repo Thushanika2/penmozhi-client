@@ -14,6 +14,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { getLocalizedApiError } from "@/lib/localize-api-error"
+import { emailField } from "@/lib/validation/auth"
 import { useLanguage } from "@/providers/language-provider"
 import * as authService from "@/services/auth"
 
@@ -27,16 +28,17 @@ export default function ForgotPasswordPage() {
 
 function ForgotPasswordForm() {
   const { t } = useLanguage()
-  const schema = useMemo(
-    () => z.object({ email: z.string().email(t("auth.validation.emailInvalid")) }),
-    [t],
-  )
+  const schema = useMemo(() => z.object({ email: emailField(t) }), [t])
   type FormValues = z.infer<typeof schema>
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<FormValues>({ resolver: zodResolver(schema) })
+  } = useForm<FormValues>({
+    resolver: zodResolver(schema),
+    mode: "onBlur",
+    reValidateMode: "onChange",
+  })
 
   async function onSubmit(values: FormValues) {
     try {
@@ -56,11 +58,18 @@ function ForgotPasswordForm() {
         <CardHeader>
           <CardTitle className="font-heading text-2xl">{t("auth.forgotPassword.title")}</CardTitle>
         </CardHeader>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form noValidate onSubmit={handleSubmit(onSubmit)}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">{t("auth.login.email")}</Label>
-              <Input id="email" type="email" className="rounded-xl" {...register("email")} />
+              <Input
+                id="email"
+                type="email"
+                autoComplete="email"
+                className="rounded-xl"
+                aria-invalid={Boolean(errors.email)}
+                {...register("email")}
+              />
               {errors.email ? <p className="text-sm text-destructive">{errors.email.message}</p> : null}
             </div>
           </CardContent>

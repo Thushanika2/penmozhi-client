@@ -25,6 +25,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
+import { PasswordInput } from "@/components/ui/password-input"
 import { Label } from "@/components/ui/label"
 import { Select } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
@@ -183,6 +184,7 @@ function ProfileViewContent({
   const [savingHealth, setSavingHealth] = React.useState(false)
   const [deleteOpen, setDeleteOpen] = React.useState(false)
   const [deletePassword, setDeletePassword] = React.useState("")
+  const [deletePasswordError, setDeletePasswordError] = React.useState<string | null>(null)
   const [deleting, setDeleting] = React.useState(false)
 
   const [accountForm, setAccountForm] = React.useState(() => buildAccountForm(user))
@@ -313,7 +315,11 @@ function ProfileViewContent({
   }
 
   async function confirmDeleteAccount() {
-    if (!deletePassword.trim()) return
+    if (!deletePassword.trim()) {
+      setDeletePasswordError(t("profile.delete.passwordRequired"))
+      return
+    }
+    setDeletePasswordError(null)
     setDeleting(true)
     try {
       await deleteAccount(deletePassword)
@@ -726,18 +732,33 @@ function ProfileViewContent({
         </CardContent>
       </Card>
 
-      <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+      <Dialog
+        open={deleteOpen}
+        onOpenChange={(open) => {
+          setDeleteOpen(open)
+          if (!open) {
+            setDeletePassword("")
+            setDeletePasswordError(null)
+          }
+        }}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{t("profile.delete.dialogTitle")}</DialogTitle>
           </DialogHeader>
           <p className="text-sm text-muted-foreground">{t("profile.delete.dialogDescription")}</p>
           <Field label={t("profile.delete.passwordLabel")}>
-            <Input
-              type="password"
+            <PasswordInput
               value={deletePassword}
-              onChange={(event) => setDeletePassword(event.target.value)}
+              aria-invalid={Boolean(deletePasswordError)}
+              onChange={(event) => {
+                setDeletePassword(event.target.value)
+                if (deletePasswordError) setDeletePasswordError(null)
+              }}
             />
+            {deletePasswordError ? (
+              <p className="text-sm text-destructive">{deletePasswordError}</p>
+            ) : null}
           </Field>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDeleteOpen(false)}>
