@@ -1,8 +1,5 @@
 "use client"
 
-import Link from "next/link"
-import { ChevronDown } from "lucide-react"
-
 import type { CycleInsights, CyclePhaseRanges } from "@/types/cycle-history-log"
 
 const RING = 132
@@ -25,8 +22,6 @@ interface CycleWheelProps {
   statusLabel: string
   phaseLabel?: string
   dayMarkerLabel: string
-  learnAboutCycleLabel: string
-  learnAboutCycleHref?: string
 }
 
 function polarToCartesian(cx: number, cy: number, radius: number, angleDeg: number) {
@@ -111,8 +106,6 @@ export function CycleWheel({
   statusLabel,
   phaseLabel,
   dayMarkerLabel,
-  learnAboutCycleLabel,
-  learnAboutCycleHref = "/dashboard/insights",
 }: CycleWheelProps) {
   const totalDays = insights.average_cycle_length || 28
   const periodDays = insights.average_period_length || 5
@@ -277,13 +270,6 @@ export function CycleWheel({
         {phaseLabel ? (
           <p className="mt-2 text-sm font-medium text-[#f98fcd]">{phaseLabel}</p>
         ) : null}
-        <Link
-          href={learnAboutCycleHref}
-          className="pointer-events-auto mt-4 inline-flex items-center gap-1 text-sm font-medium text-[#f98fcd] transition-colors hover:text-white"
-        >
-          {learnAboutCycleLabel}
-          <ChevronDown className="size-4 rotate-[-90deg]" />
-        </Link>
       </div>
     </div>
   )

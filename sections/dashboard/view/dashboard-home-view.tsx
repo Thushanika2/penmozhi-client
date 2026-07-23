@@ -103,7 +103,6 @@ export function DashboardHomeView() {
                   dayMarkerLabel={t("dashboard.cycleWheel.dayMarker", {
                     day: String(insights.cycle_day ?? 1),
                   })}
-                  learnAboutCycleLabel={t("dashboard.cycleWheel.learnAboutCycle")}
                 />
 
                 <div className="mt-8 flex flex-wrap justify-center gap-3">
