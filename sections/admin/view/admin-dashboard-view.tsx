@@ -24,6 +24,7 @@ import {
   Users,
 } from "lucide-react"
 
+import { FadeIn } from "@/components/motion-card"
 import { PageHeader } from "@/components/page-header"
 import { Button } from "@/components/ui/button"
 import {
@@ -34,9 +35,10 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { getLocalizedApiError } from "@/lib/localize-api-error"
+import { useAdminAnalytics } from "@/hooks/use-queries"
 import { useLanguage } from "@/providers/language-provider"
-import { downloadAdminExport, getAdminAnalytics } from "@/services/admin"
-import type { AdminAnalytics, AdminExportType } from "@/types/admin"
+import { downloadAdminExport } from "@/services/admin"
+import type { AdminExportType } from "@/types/admin"
 
 const EXPORT_TYPES: AdminExportType[] = [
   "summary",
@@ -77,27 +79,12 @@ function StatCard({
 
 export function AdminDashboardView() {
   const { t, locale } = useLanguage()
-  const [analytics, setAnalytics] = React.useState<AdminAnalytics | null>(null)
-  const [loading, setLoading] = React.useState(true)
+  const { data: analytics, isLoading, isError, error } = useAdminAnalytics(30)
   const [exporting, setExporting] = React.useState<AdminExportType | null>(null)
 
   React.useEffect(() => {
-    let cancelled = false
-    async function load() {
-      try {
-        const data = await getAdminAnalytics(30)
-        if (!cancelled) setAnalytics(data)
-      } catch (error) {
-        if (!cancelled) toast.error(getLocalizedApiError(error, t))
-      } finally {
-        if (!cancelled) setLoading(false)
-      }
-    }
-    void load()
-    return () => {
-      cancelled = true
-    }
-  }, [t])
+    if (isError) toast.error(getLocalizedApiError(error, t))
+  }, [isError, error, t])
 
   async function handleExport(type: AdminExportType) {
     setExporting(type)
@@ -125,6 +112,7 @@ export function AdminDashboardView() {
 
   return (
     <div>
+      <FadeIn>
       <PageHeader
         title={t("admin.dashboard.title")}
         description={t("admin.dashboard.description")}
@@ -136,7 +124,7 @@ export function AdminDashboardView() {
         }
       />
 
-      {loading ? (
+      {isLoading ? (
         <p className="text-muted-foreground">{t("common.loading")}</p>
       ) : (
         <div className="space-y-8">
@@ -292,6 +280,7 @@ export function AdminDashboardView() {
           </div>
         </div>
       )}
+      </FadeIn>
     </div>
   )
 }

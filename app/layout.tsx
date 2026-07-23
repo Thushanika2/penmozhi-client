@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils"
 import { themeInitScript } from "@/lib/theme-script"
 import { AuthProvider } from "@/providers/auth-provider"
 import { LanguageProvider } from "@/providers/language-provider"
+import { QueryProvider } from "@/providers/query-provider"
 
 import "./globals.css"
 
@@ -58,13 +59,15 @@ export default function RootLayout({
       </head>
       <body>
         <ThemeProvider>
-          <AuthProvider>
-            <LanguageProvider>
-              <DocumentLocale />
-              {children}
-              <Toaster richColors position="top-right" />
-            </LanguageProvider>
-          </AuthProvider>
+          <QueryProvider>
+            <AuthProvider>
+              <LanguageProvider>
+                <DocumentLocale />
+                {children}
+                <Toaster richColors position="top-right" />
+              </LanguageProvider>
+            </AuthProvider>
+          </QueryProvider>
         </ThemeProvider>
       </body>
     </html>

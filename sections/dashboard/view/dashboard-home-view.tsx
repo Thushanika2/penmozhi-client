@@ -17,6 +17,7 @@ import * as React from "react"
 import { toast } from "sonner"
 
 import { CycleWheel } from "@/components/cycle/cycle-wheel"
+import { FadeIn, MotionCard } from "@/components/motion-card"
 import { PageHeader } from "@/components/page-header"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -28,10 +29,9 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { getLocalizedApiError } from "@/lib/localize-api-error"
+import { useDashboardSummary } from "@/hooks/use-queries"
 import { useAuth } from "@/providers/auth-provider"
 import { useLanguage } from "@/providers/language-provider"
-import { getDashboardSummary } from "@/services/dashboard"
-import type { DashboardSummary } from "@/types/dashboard"
 import type { CyclePhase } from "@/types/cycle-history-log"
 
 const modules = [
@@ -60,27 +60,12 @@ function phaseLabelKey(phase: CyclePhase | null | undefined) {
 export function DashboardHomeView() {
   const { user } = useAuth()
   const { t, locale } = useLanguage()
-  const [summary, setSummary] = React.useState<DashboardSummary | null>(null)
-  const [loading, setLoading] = React.useState(true)
+  const { data: summary, isLoading, isError, error } = useDashboardSummary()
   const [waterGlasses, setWaterGlasses] = React.useState(0)
 
   React.useEffect(() => {
-    let cancelled = false
-    async function load() {
-      try {
-        const data = await getDashboardSummary()
-        if (!cancelled) setSummary(data)
-      } catch (error) {
-        if (!cancelled) toast.error(getLocalizedApiError(error, t))
-      } finally {
-        if (!cancelled) setLoading(false)
-      }
-    }
-    void load()
-    return () => {
-      cancelled = true
-    }
-  }, [t])
+    if (isError) toast.error(getLocalizedApiError(error, t))
+  }, [isError, error, t])
 
   const insights = summary?.cycle_insights
   const waterGoal = summary?.water_intake_goal_liters ?? 2
@@ -88,17 +73,19 @@ export function DashboardHomeView() {
 
   return (
     <div>
+      <FadeIn>
       <PageHeader
         eyebrow={t("dashboard.eyebrow")}
         title={t("dashboard.welcome", { name: user?.full_name ?? t("dashboard.welcomeFallbackName") })}
         description={t("dashboard.description")}
       />
 
-      {loading ? (
+      {isLoading ? (
         <p className="text-muted-foreground">{t("common.loading")}</p>
       ) : insights?.has_data ? (
         <>
           <div className="mb-8 grid gap-6 lg:grid-cols-[320px_1fr]">
+            <MotionCard delay={0.05}>
             <Card className="glass-panel rounded-3xl border-border/60">
               <CardHeader>
                 <CardTitle className="font-heading text-lg">{t("dashboard.cycleWheel.title")}</CardTitle>
@@ -112,6 +99,7 @@ export function DashboardHomeView() {
                 />
               </CardContent>
             </Card>
+            </MotionCard>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <InsightCard title={t("dashboard.cards.nextPeriod")} value={formatDate(insights.next_period_date, locale)} hint={t("dashboard.cards.daysUntil", { days: String(insights.days_until_next_period ?? "—") })} />
@@ -246,6 +234,7 @@ export function DashboardHomeView() {
           )
         })}
       </div>
+      </FadeIn>
     </div>
   )
 }

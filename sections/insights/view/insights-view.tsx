@@ -14,13 +14,13 @@ import {
   YAxis,
 } from "recharts"
 
+import { FadeIn } from "@/components/motion-card"
 import { PageHeader } from "@/components/page-header"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select } from "@/components/ui/select"
 import { getLocalizedApiError } from "@/lib/localize-api-error"
+import { useHealthInsights } from "@/hooks/use-queries"
 import { useLanguage } from "@/providers/language-provider"
-import { getHealthInsights } from "@/services/insights"
-import type { HealthInsights } from "@/types/insights"
 
 const RANGE_OPTIONS = [3, 6, 12] as const
 
@@ -71,27 +71,11 @@ function ChartCard({
 export function InsightsView() {
   const { t, locale } = useLanguage()
   const [months, setMonths] = React.useState<(typeof RANGE_OPTIONS)[number]>(6)
-  const [insights, setInsights] = React.useState<HealthInsights | null>(null)
-  const [loading, setLoading] = React.useState(true)
+  const { data: insights, isLoading, isError, error } = useHealthInsights(months)
 
   React.useEffect(() => {
-    let cancelled = false
-    async function load() {
-      setLoading(true)
-      try {
-        const data = await getHealthInsights(months)
-        if (!cancelled) setInsights(data)
-      } catch (error) {
-        if (!cancelled) toast.error(getLocalizedApiError(error, t))
-      } finally {
-        if (!cancelled) setLoading(false)
-      }
-    }
-    void load()
-    return () => {
-      cancelled = true
-    }
-  }, [months, t])
+    if (isError) toast.error(getLocalizedApiError(error, t))
+  }, [isError, error, t])
 
   const stats = insights?.cycle_statistics
   const cycleTrendData =
@@ -132,6 +116,7 @@ export function InsightsView() {
 
   return (
     <div>
+      <FadeIn>
       <PageHeader
         title={t("insights.title")}
         description={t("insights.description")}
@@ -150,7 +135,7 @@ export function InsightsView() {
         }
       />
 
-      {loading ? (
+      {isLoading ? (
         <p className="text-muted-foreground">{t("common.loading")}</p>
       ) : (
         <div className="space-y-8">
@@ -386,6 +371,7 @@ export function InsightsView() {
           </section>
         </div>
       )}
+      </FadeIn>
     </div>
   )
 }

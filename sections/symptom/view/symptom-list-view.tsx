@@ -2,6 +2,7 @@
 
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useQueryClient } from "@tanstack/react-query"
 import * as React from "react"
 import { toast } from "sonner"
 import { z } from "zod"
@@ -37,13 +38,13 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { getLocalizedApiError } from "@/lib/localize-api-error"
+import { queryKeys } from "@/lib/query-keys"
+import { useSymptomsData } from "@/hooks/use-queries"
 import { useLanguage } from "@/providers/language-provider"
 import {
   createSymptom,
-  getMySymptoms,
-  getSymptomTrends,
 } from "@/services/symptom"
-import type { SymptomTrackingLog, SymptomTrends } from "@/types/symptom-tracking-log"
+import type { SymptomTrackingLog } from "@/types/symptom-tracking-log"
 
 function buildSchema(t: (key: string) => string) {
   return z.object({
@@ -58,15 +59,17 @@ type FormValues = z.infer<ReturnType<typeof buildSchema>>
 
 export function SymptomListView() {
   const { t } = useLanguage()
+  const queryClient = useQueryClient()
+  const { data, isLoading, isError, error } = useSymptomsData()
+
   function translateApiMessage(code: string, fallback?: string | null) {
     const key = `api.messages.${code}`
     const translated = t(key)
     return translated === key ? (fallback ?? key) : translated
   }
 
-  const [symptoms, setSymptoms] = React.useState<SymptomTrackingLog[]>([])
-  const [trends, setTrends] = React.useState<SymptomTrends | null>(null)
-  const [loading, setLoading] = React.useState(true)
+  const symptoms = data?.symptoms ?? []
+  const trends = data?.trends ?? null
 
   const schema = React.useMemo(() => buildSchema(t), [t])
 
@@ -81,42 +84,8 @@ export function SymptomListView() {
   })
 
   React.useEffect(() => {
-    let cancelled = false
-    async function load() {
-      try {
-        const [symptomsData, trendsData] = await Promise.all([
-          getMySymptoms(),
-          getSymptomTrends(),
-        ])
-        if (cancelled) return
-        setSymptoms(symptomsData.symptoms)
-        setTrends(trendsData)
-      } catch (error) {
-        if (!cancelled) toast.error(getLocalizedApiError(error, t))
-      } finally {
-        if (!cancelled) setLoading(false)
-      }
-    }
-    void load()
-    return () => {
-      cancelled = true
-    }
-  }, [t])
-
-  async function loadData() {
-    try {
-      const [symptomsData, trendsData] = await Promise.all([
-        getMySymptoms(),
-        getSymptomTrends(),
-      ])
-      setSymptoms(symptomsData.symptoms)
-      setTrends(trendsData)
-    } catch (error) {
-      toast.error(getLocalizedApiError(error, t))
-    } finally {
-      setLoading(false)
-    }
-  }
+    if (isError) toast.error(getLocalizedApiError(error, t))
+  }, [isError, error, t])
 
   async function onSubmit(values: FormValues) {
     try {
@@ -135,7 +104,7 @@ export function SymptomListView() {
         )
       }
       reset({ painSeverity: 3 })
-      await loadData()
+      await queryClient.invalidateQueries({ queryKey: queryKeys.symptoms.list })
     } catch (error) {
       toast.error(getLocalizedApiError(error, t))
     }
@@ -261,7 +230,7 @@ export function SymptomListView() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {loading ? (
+          {isLoading ? (
             <p className="text-muted-foreground">{t("common.loading")}</p>
           ) : (
             <Table>

@@ -3,6 +3,7 @@
 import * as React from "react"
 import { toast } from "sonner"
 
+import { FadeIn } from "@/components/motion-card"
 import { PageHeader } from "@/components/page-header"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -17,41 +18,20 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { getLocalizedApiError } from "@/lib/localize-api-error"
+import { useAdminUsers } from "@/hooks/use-queries"
 import { useLanguage } from "@/providers/language-provider"
-import { getAdminUsers } from "@/services/admin"
-import type { UserProfile } from "@/types/user-profile"
 
 export function AdminUsersView() {
   const { t, locale } = useLanguage()
-  const [users, setUsers] = React.useState<UserProfile[]>([])
   const [search, setSearch] = React.useState("")
   const [query, setQuery] = React.useState("")
   const [page, setPage] = React.useState(1)
-  const [pages, setPages] = React.useState(1)
-  const [total, setTotal] = React.useState(0)
-  const [loading, setLoading] = React.useState(true)
+
+  const { data, isLoading, isError, error } = useAdminUsers(page, query)
 
   React.useEffect(() => {
-    let cancelled = false
-    async function load() {
-      setLoading(true)
-      try {
-        const data = await getAdminUsers(page, query)
-        if (cancelled) return
-        setUsers(data.users)
-        setPages(data.pagination.pages)
-        setTotal(data.pagination.total)
-      } catch (error) {
-        if (!cancelled) toast.error(getLocalizedApiError(error, t))
-      } finally {
-        if (!cancelled) setLoading(false)
-      }
-    }
-    void load()
-    return () => {
-      cancelled = true
-    }
-  }, [page, query, t])
+    if (isError) toast.error(getLocalizedApiError(error, t))
+  }, [isError, error, t])
 
   function handleSearch(event: React.FormEvent) {
     event.preventDefault()
@@ -68,8 +48,13 @@ export function AdminUsersView() {
     })
   }
 
+  const users = data?.users ?? []
+  const pages = data?.pagination.pages ?? 1
+  const total = data?.pagination.total ?? 0
+
   return (
     <div>
+      <FadeIn>
       <PageHeader
         title={t("admin.users.title")}
         description={t("admin.users.description", { count: String(total) })}
@@ -95,7 +80,7 @@ export function AdminUsersView() {
 
       <Card className="rounded-3xl">
         <CardContent className="pt-6">
-          {loading ? (
+          {isLoading ? (
             <p className="text-muted-foreground">{t("common.loading")}</p>
           ) : (
             <>
@@ -164,6 +149,7 @@ export function AdminUsersView() {
           )}
         </CardContent>
       </Card>
+      </FadeIn>
     </div>
   )
 }
