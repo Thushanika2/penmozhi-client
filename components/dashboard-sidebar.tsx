@@ -8,7 +8,9 @@ import {
   BookOpen,
   CalendarDays,
   HeartPulse,
+  ClipboardList,
   LayoutDashboard,
+  LineChart,
   LogOut,
   Menu,
   MessageSquare,
@@ -29,6 +31,8 @@ import { useLanguage } from "@/providers/language-provider"
 const navItems = [
   { href: "/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard },
   { href: "/dashboard/cycle", labelKey: "nav.cycleTracking", icon: CalendarDays },
+  { href: "/dashboard/daily-log", labelKey: "nav.dailyLog", icon: ClipboardList },
+  { href: "/dashboard/insights", labelKey: "nav.insights", icon: LineChart },
   { href: "/dashboard/symptoms", labelKey: "nav.symptoms", icon: Activity },
   { href: "/dashboard/reminders", labelKey: "nav.reminders", icon: Bell },
   { href: "/dashboard/ai-assistant", labelKey: "nav.aiAssistant", icon: Sparkles },
