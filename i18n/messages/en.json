@@ -346,7 +346,15 @@
     "cycleWheel": {
       "title": "Your cycle today",
       "description": "Track where you are in your current cycle.",
-      "cycleDay": "Cycle day"
+      "cycleDay": "Cycle day",
+      "today": "Today, {date}",
+      "dayMarker": "Day {day}",
+      "daysUntilPeriod": "{days} more days until next period",
+      "daysUntilPeriodOne": "1 more day until next period",
+      "periodStartingToday": "Period may start today",
+      "learnAboutCycle": "Learn about your cycle",
+      "tagline": "Connecting the dots.",
+      "subtitle": "Your cycle, decoded."
     },
     "cards": {
       "nextPeriod": "Next predicted period",

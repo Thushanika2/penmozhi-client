@@ -260,6 +260,12 @@
     @apply text-muted-foreground;
   }
 
+  .clue-cycle-panel {
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 0%, rgb(244 41 160 / 16%), transparent 55%),
+      linear-gradient(180deg, #1a1020 0%, #2d0a1e 55%, #1a1020 100%);
+  }
+
   .clue-hero-ring {
     background: conic-gradient(
       from 0deg,

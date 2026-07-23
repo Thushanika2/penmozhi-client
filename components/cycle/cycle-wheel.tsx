@@ -1,20 +1,22 @@
 "use client"
 
-import type { CycleInsights, CyclePhase } from "@/types/cycle-history-log"
+import Link from "next/link"
+import { ChevronDown } from "lucide-react"
 
-const PHASE_COLORS: Record<CyclePhase, string> = {
-  menstrual: "var(--cycle-menstrual)",
-  follicular: "var(--cycle-follicular)",
-  fertile: "var(--cycle-fertile)",
-  ovulation: "var(--cycle-ovulation)",
-  luteal: "var(--cycle-luteal)",
-  pms: "var(--cycle-pms)",
-}
+import type { CycleInsights } from "@/types/cycle-history-log"
+
+const RING = 132
+const DOT_RING = 96
+const CX = 200
+const CY = 200
 
 interface CycleWheelProps {
   insights: CycleInsights
-  phaseLabel: string
-  cycleDayLabel: string
+  todayLabel: string
+  statusLabel: string
+  dayMarkerLabel: string
+  learnAboutCycleLabel: string
+  learnAboutCycleHref?: string
 }
 
 function polarToCartesian(cx: number, cy: number, radius: number, angleDeg: number) {
@@ -39,57 +41,146 @@ function describeArc(
 }
 
 function dayToAngle(day: number, totalDays: number) {
-  return (day / totalDays) * 360
+  return ((day - 0.5) / totalDays) * 360
 }
 
-export function CycleWheel({ insights, phaseLabel, cycleDayLabel }: CycleWheelProps) {
+function dayPhase(
+  day: number,
+  periodDays: number,
+  fertileStart: number,
+  ovulationDay: number,
+  pmsStart: number,
+) {
+  if (day <= periodDays) return "menstrual"
+  if (day >= fertileStart && day <= ovulationDay) return "fertile"
+  if (day >= pmsStart) return "pms"
+  return "default"
+}
+
+export function CycleWheel({
+  insights,
+  todayLabel,
+  statusLabel,
+  dayMarkerLabel,
+  learnAboutCycleLabel,
+  learnAboutCycleHref = "/dashboard/insights",
+}: CycleWheelProps) {
   const totalDays = insights.average_cycle_length || 28
   const periodDays = insights.average_period_length || 5
-  const cycleDay = insights.cycle_day ?? 1
+  const cycleDay = Math.min(insights.cycle_day ?? 1, totalDays)
 
   const ovulationDay = Math.max(periodDays + 1, totalDays - 14)
   const fertileStart = Math.max(periodDays + 1, ovulationDay - 5)
-  const pmsStart = Math.max(fertileStart, totalDays - 6)
+  const pmsStart = Math.max(fertileStart + 1, totalDays - 6)
 
-  const segments = [
-    { start: 1, end: periodDays, color: PHASE_COLORS.menstrual, opacity: 0.95 },
-    { start: periodDays + 1, end: fertileStart - 1, color: PHASE_COLORS.follicular, opacity: 0.55 },
-    { start: fertileStart, end: ovulationDay - 1, color: PHASE_COLORS.fertile, opacity: 0.75 },
-    { start: ovulationDay, end: ovulationDay, color: PHASE_COLORS.ovulation, opacity: 1 },
-    { start: ovulationDay + 1, end: pmsStart - 1, color: PHASE_COLORS.luteal, opacity: 0.45 },
-    { start: pmsStart, end: totalDays, color: PHASE_COLORS.pms, opacity: 0.7 },
+  const arcs = [
+    { start: 1, end: periodDays, color: "#f429a0", width: 28 },
+    { start: fertileStart, end: ovulationDay, color: "#f76dbe", width: 28 },
+    { start: pmsStart, end: totalDays, color: "#f98fcd", width: 20, opacity: 0.85 },
   ]
 
-  const markerAngle = dayToAngle(Math.min(cycleDay, totalDays), totalDays)
-  const marker = polarToCartesian(120, 120, 92, markerAngle)
+  const markerAngle = dayToAngle(cycleDay, totalDays)
+  const marker = polarToCartesian(CX, CY, RING + 18, markerAngle)
+  const periodIcon = polarToCartesian(CX, CY, RING + 4, dayToAngle(1, totalDays))
+
+  const dots = Array.from({ length: totalDays }, (_, index) => {
+    const day = index + 1
+    const angle = dayToAngle(day, totalDays)
+    const point = polarToCartesian(CX, CY, DOT_RING, angle)
+    const phase = dayPhase(day, periodDays, fertileStart, ovulationDay, pmsStart)
+    const isToday = day === cycleDay
+    let fill = "rgba(255,255,255,0.22)"
+    if (phase === "menstrual") fill = "#f429a0"
+    if (phase === "fertile") fill = "#f76dbe"
+    if (phase === "pms") fill = "#f98fcd"
+    if (isToday) fill = "#ffffff"
+    return { day, point, fill, isToday }
+  })
 
   return (
-    <div className="relative mx-auto flex w-full max-w-[280px] flex-col items-center">
-      <svg viewBox="0 0 240 240" className="h-auto w-full drop-shadow-sm">
-        <circle cx="120" cy="120" r="98" fill="var(--background)" stroke="var(--border)" strokeWidth="2" />
-        {segments.map((segment) => {
-          if (segment.end < segment.start) return null
-          const startAngle = dayToAngle(segment.start - 0.5, totalDays)
-          const endAngle = dayToAngle(segment.end + 0.5, totalDays)
+    <div className="relative mx-auto w-full max-w-[380px]">
+      <svg viewBox="0 0 400 400" className="h-auto w-full" aria-hidden>
+        {/* Base track */}
+        <circle
+          cx={CX}
+          cy={CY}
+          r={RING}
+          fill="none"
+          stroke="rgba(255,255,255,0.12)"
+          strokeWidth={28}
+        />
+
+        {/* Phase arcs */}
+        {arcs.map((arc) => {
+          if (arc.end < arc.start) return null
+          const startAngle = dayToAngle(arc.start, totalDays)
+          const endAngle = dayToAngle(arc.end, totalDays)
           return (
             <path
-              key={`${segment.start}-${segment.end}`}
-              d={describeArc(120, 120, 98, startAngle, endAngle)}
+              key={`${arc.start}-${arc.end}`}
+              d={describeArc(CX, CY, RING, startAngle, endAngle)}
               fill="none"
-              stroke={segment.color}
-              strokeWidth={14}
+              stroke={arc.color}
+              strokeWidth={arc.width}
               strokeLinecap="round"
-              opacity={segment.opacity}
+              opacity={arc.opacity ?? 1}
             />
           )
         })}
-        <circle cx={marker.x} cy={marker.y} r="8" fill="white" stroke="var(--cycle-menstrual)" strokeWidth="3" />
-        <circle cx="120" cy="120" r="58" fill="var(--card)" opacity="0.92" />
+
+        {/* Inner dotted ring */}
+        {dots.map(({ day, point, fill, isToday }) => (
+          <circle
+            key={day}
+            cx={point.x}
+            cy={point.y}
+            r={isToday ? 4.5 : 3}
+            fill={fill}
+            opacity={isToday ? 1 : 0.9}
+          />
+        ))}
+
+        {/* Period droplet marker */}
+        <circle cx={periodIcon.x} cy={periodIcon.y} r={9} fill="#f429a0" stroke="#ffffff" strokeWidth={2} />
+        <circle cx={periodIcon.x} cy={periodIcon.y + 1} r={2.5} fill="#ffffff" opacity={0.9} />
+
+        {/* Fertile window marker */}
+        {fertileStart <= ovulationDay ? (
+          <circle
+            cx={polarToCartesian(CX, CY, RING + 2, dayToAngle(Math.round((fertileStart + ovulationDay) / 2), totalDays)).x}
+            cy={polarToCartesian(CX, CY, RING + 2, dayToAngle(Math.round((fertileStart + ovulationDay) / 2), totalDays)).y}
+            r={7}
+            fill="#f76dbe"
+            stroke="#ffffff"
+            strokeWidth={2}
+          />
+        ) : null}
+
+        {/* Current day bubble */}
+        <foreignObject
+          x={marker.x - 42}
+          y={marker.y - 16}
+          width={84}
+          height={32}
+          className="overflow-visible"
+        >
+          <div className="flex items-center justify-center rounded-full border border-white/20 bg-[#1a1020]/95 px-3 py-1 text-xs font-semibold text-white shadow-lg backdrop-blur-sm">
+            {dayMarkerLabel}
+          </div>
+        </foreignObject>
       </svg>
-      <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center">
-        <p className="text-xs uppercase tracking-wide text-muted-foreground">{phaseLabel}</p>
-        <p className="font-heading text-4xl font-bold text-primary">{cycleDay}</p>
-        <p className="text-sm text-muted-foreground">{cycleDayLabel}</p>
+
+      {/* Center status — Clue-style */}
+      <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-8 text-center">
+        <p className="text-sm font-medium text-white/70">{todayLabel}</p>
+        <p className="mt-3 text-xl font-bold leading-snug text-white md:text-2xl">{statusLabel}</p>
+        <Link
+          href={learnAboutCycleHref}
+          className="pointer-events-auto mt-4 inline-flex items-center gap-1 text-sm font-medium text-[#f98fcd] transition-colors hover:text-white"
+        >
+          {learnAboutCycleLabel}
+          <ChevronDown className="size-4 rotate-[-90deg]" />
+        </Link>
       </div>
     </div>
   )

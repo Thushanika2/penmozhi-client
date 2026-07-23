@@ -18,20 +18,16 @@ import { toast } from "sonner"
 
 import { CycleWheel } from "@/components/cycle/cycle-wheel"
 import { FadeIn, MotionCard } from "@/components/motion-card"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
 import { getLocalizedApiError } from "@/lib/localize-api-error"
 import { useDashboardSummary } from "@/hooks/use-queries"
-import { useAuth } from "@/providers/auth-provider"
 import { useLanguage } from "@/providers/language-provider"
-import type { CyclePhase } from "@/types/cycle-history-log"
 
 const moreModules = [
   { href: "/dashboard/symptoms", titleKey: "dashboard.modules.symptoms.title", icon: Activity },
@@ -50,22 +46,23 @@ function formatDate(value: string | null | undefined, locale: string) {
   })
 }
 
-function phaseLabelKey(phase: CyclePhase | null | undefined) {
-  return phase ? `dashboard.phases.${phase}` : "dashboard.phases.unknown"
+function formatTodayLabel(locale: string) {
+  const date = new Date()
+  const formatted = date.toLocaleDateString(locale === "ta" ? "ta-IN" : "en-CA")
+  return formatted
 }
 
-function periodHeadline(
+function cycleStatusLabel(
   daysUntil: number | null | undefined,
   t: (key: string, params?: Record<string, string>) => string,
 ) {
-  if (daysUntil == null) return null
-  if (daysUntil <= 0) return t("dashboard.periodToday")
-  if (daysUntil === 1) return t("dashboard.periodInDays", { days: "1" })
-  return t("dashboard.periodInDays", { days: String(daysUntil) })
+  if (daysUntil == null) return t("dashboard.description")
+  if (daysUntil <= 0) return t("dashboard.cycleWheel.periodStartingToday")
+  if (daysUntil === 1) return t("dashboard.cycleWheel.daysUntilPeriodOne")
+  return t("dashboard.cycleWheel.daysUntilPeriod", { days: String(daysUntil) })
 }
 
 export function DashboardHomeView() {
-  const { user } = useAuth()
   const { t, locale } = useLanguage()
   const { data: summary, isLoading, isError, error } = useDashboardSummary()
 
@@ -74,88 +71,69 @@ export function DashboardHomeView() {
   }, [isError, error, t])
 
   const insights = summary?.cycle_insights
-  const headline = insights?.has_data
-    ? periodHeadline(insights.days_until_next_period, t)
-    : null
 
   return (
     <div>
       <FadeIn>
-        <div className="mb-8">
-          <p className="section-eyebrow">{t("dashboard.eyebrow")}</p>
-          <h1 className="mt-1 text-2xl font-bold tracking-tight md:text-3xl">
-            {t("dashboard.welcome", { name: user?.full_name ?? t("dashboard.welcomeFallbackName") })}
-          </h1>
-          {headline ? (
-            <p className="mt-2 text-xl font-semibold text-primary md:text-2xl">{headline}</p>
-          ) : (
-            <p className="mt-2 text-muted-foreground">{t("dashboard.description")}</p>
-          )}
-        </div>
-
         {isLoading ? (
           <p className="text-muted-foreground">{t("common.loading")}</p>
         ) : insights?.has_data ? (
           <>
-            <div className="mb-6 flex flex-wrap gap-3">
-              <Button className="rounded-full" render={<Link href="/dashboard/cycle" />}>
-                <CalendarDays className="size-4" />
-                {t("dashboard.actions.logPeriod")}
-              </Button>
-              <Button variant="outline" className="rounded-full" render={<Link href="/dashboard/daily-log" />}>
-                <ClipboardList className="size-4" />
-                {t("dashboard.actions.dailyLog")}
-              </Button>
-              <Button variant="outline" className="rounded-full" render={<Link href="/dashboard/insights" />}>
-                <LineChart className="size-4" />
-                {t("dashboard.actions.viewInsights")}
-              </Button>
-            </div>
+            <MotionCard delay={0.05}>
+              <div className="clue-cycle-panel mb-8 overflow-hidden rounded-3xl px-4 py-8 md:px-8 md:py-10">
+                <div className="mb-6 text-center">
+                  <p className="text-lg font-semibold text-white">{t("dashboard.cycleWheel.tagline")}</p>
+                  <p className="text-sm text-[#f98fcd]">{t("dashboard.cycleWheel.subtitle")}</p>
+                </div>
 
-            <div className="mb-8 grid gap-6 lg:grid-cols-[340px_1fr]">
-              <MotionCard delay={0.05}>
-                <Card className="rounded-3xl border-border">
-                  <CardHeader className="text-center">
-                    <CardTitle className="text-lg">{t("dashboard.cycleWheel.title")}</CardTitle>
-                    <CardDescription>{t("dashboard.cycleWheel.description")}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <CycleWheel
-                      insights={insights}
-                      phaseLabel={t(phaseLabelKey(insights.current_phase))}
-                      cycleDayLabel={t("dashboard.cycleWheel.cycleDay")}
-                    />
-                    <div className="mt-4 flex justify-center">
-                      <Badge variant="secondary" className="rounded-full px-3">
-                        {t(phaseLabelKey(insights.current_phase))}
-                      </Badge>
-                    </div>
-                  </CardContent>
-                </Card>
-              </MotionCard>
+                <CycleWheel
+                  insights={insights}
+                  todayLabel={t("dashboard.cycleWheel.today", { date: formatTodayLabel(locale) })}
+                  statusLabel={cycleStatusLabel(insights.days_until_next_period, t)}
+                  dayMarkerLabel={t("dashboard.cycleWheel.dayMarker", {
+                    day: String(insights.cycle_day ?? 1),
+                  })}
+                  learnAboutCycleLabel={t("dashboard.cycleWheel.learnAboutCycle")}
+                />
 
-              <div className="grid gap-4 sm:grid-cols-2">
-                <InsightCard
-                  title={t("dashboard.cards.nextPeriod")}
-                  value={formatDate(insights.next_period_date, locale)}
-                  hint={t("dashboard.cards.daysUntil", { days: String(insights.days_until_next_period ?? "—") })}
-                />
-                <InsightCard
-                  title={t("dashboard.cards.ovulation")}
-                  value={formatDate(insights.ovulation_date, locale)}
-                  hint={t("dashboard.cards.ovulationHint")}
-                />
-                <InsightCard
-                  title={t("dashboard.cards.fertileWindow")}
-                  value={`${formatDate(insights.fertile_window_start, locale)} – ${formatDate(insights.fertile_window_end, locale)}`}
-                  hint={t("dashboard.cards.fertileHint")}
-                />
-                <InsightCard
-                  title={t("dashboard.cards.pmsWindow")}
-                  value={`${formatDate(insights.pms_window_start, locale)} – ${formatDate(insights.pms_window_end, locale)}`}
-                  hint={t("dashboard.cards.pmsHint")}
-                />
+                <div className="mt-8 flex flex-wrap justify-center gap-3">
+                  <Button className="rounded-full bg-[#f429a0] hover:bg-[#f54baf]" render={<Link href="/dashboard/cycle" />}>
+                    <CalendarDays className="size-4" />
+                    {t("dashboard.actions.logPeriod")}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="rounded-full border-white/25 bg-white/10 text-white hover:bg-white/20 hover:text-white"
+                    render={<Link href="/dashboard/daily-log" />}
+                  >
+                    <ClipboardList className="size-4" />
+                    {t("dashboard.actions.dailyLog")}
+                  </Button>
+                </div>
               </div>
+            </MotionCard>
+
+            <div className="mb-8 grid gap-4 sm:grid-cols-2">
+              <InsightCard
+                title={t("dashboard.cards.nextPeriod")}
+                value={formatDate(insights.next_period_date, locale)}
+                hint={t("dashboard.cards.daysUntil", { days: String(insights.days_until_next_period ?? "—") })}
+              />
+              <InsightCard
+                title={t("dashboard.cards.ovulation")}
+                value={formatDate(insights.ovulation_date, locale)}
+                hint={t("dashboard.cards.ovulationHint")}
+              />
+              <InsightCard
+                title={t("dashboard.cards.fertileWindow")}
+                value={`${formatDate(insights.fertile_window_start, locale)} – ${formatDate(insights.fertile_window_end, locale)}`}
+                hint={t("dashboard.cards.fertileHint")}
+              />
+              <InsightCard
+                title={t("dashboard.cards.pmsWindow")}
+                value={`${formatDate(insights.pms_window_start, locale)} – ${formatDate(insights.pms_window_end, locale)}`}
+                hint={t("dashboard.cards.pmsHint")}
+              />
             </div>
 
             <div className="mb-8 grid gap-4 md:grid-cols-2">
