@@ -30,6 +30,7 @@ export interface HealthProfile {
   smoking: boolean
   alcohol: boolean
   trying_to_conceive: boolean
+  is_teenager: boolean
   is_pregnant: boolean
   is_breastfeeding: boolean
   using_birth_control: boolean

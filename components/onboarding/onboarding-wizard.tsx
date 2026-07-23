@@ -111,6 +111,7 @@ function defaultForm(user: UserProfile | null): OnboardingPayload {
     smoking: false,
     alcohol: false,
     trying_to_conceive: false,
+    is_teenager: false,
     is_pregnant: false,
     is_breastfeeding: false,
     using_birth_control: false,
@@ -481,6 +482,11 @@ function OnboardingWizardForm({ user }: { user: UserProfile }) {
 
           {step === 5 ? (
             <>
+              <ToggleRow
+                label={t("onboarding.fields.isTeenager")}
+                checked={form.is_teenager}
+                onChange={(checked) => updateField("is_teenager", checked)}
+              />
               <ToggleRow
                 label={t("onboarding.fields.tryingToConceive")}
                 checked={form.trying_to_conceive}

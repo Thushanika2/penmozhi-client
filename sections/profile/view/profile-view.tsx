@@ -129,6 +129,7 @@ function buildHealthForm(healthProfile: HealthProfile) {
     smoking: healthProfile.smoking,
     alcohol: healthProfile.alcohol,
     tryingToConceive: healthProfile.trying_to_conceive,
+    isTeenager: healthProfile.is_teenager,
     isPregnant: healthProfile.is_pregnant,
     isBreastfeeding: healthProfile.is_breastfeeding,
     usingBirthControl: healthProfile.using_birth_control,
@@ -207,6 +208,7 @@ function ProfileViewContent({
       smoking: false,
       alcohol: false,
       tryingToConceive: false,
+      isTeenager: false,
       isPregnant: false,
       isBreastfeeding: false,
       usingBirthControl: false,
@@ -288,6 +290,7 @@ function ProfileViewContent({
         smoking: healthForm.smoking,
         alcohol: healthForm.alcohol,
         trying_to_conceive: healthForm.tryingToConceive,
+        is_teenager: healthForm.isTeenager,
         is_pregnant: healthForm.isPregnant,
         is_breastfeeding: healthForm.isBreastfeeding,
         using_birth_control: healthForm.usingBirthControl,
@@ -605,6 +608,11 @@ function ProfileViewContent({
               label={t("profile.lifestyle.alcohol")}
               checked={healthForm.alcohol}
               onChange={(checked) => setHealthForm((c) => ({ ...c, alcohol: checked }))}
+            />
+            <ToggleRow
+              label={t("profile.lifestyle.isTeenager")}
+              checked={healthForm.isTeenager}
+              onChange={(checked) => setHealthForm((c) => ({ ...c, isTeenager: checked }))}
             />
             <ToggleRow
               label={t("profile.lifestyle.tryingToConceive")}
