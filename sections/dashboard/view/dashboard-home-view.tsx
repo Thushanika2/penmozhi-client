@@ -87,9 +87,9 @@ export function DashboardHomeView() {
         ) : insights?.has_data ? (
           <>
             <MotionCard delay={0.05}>
-              <div className="clue-cycle-panel mb-8 overflow-hidden rounded-3xl px-4 py-8 md:px-8 md:py-10">
-                <div className="mb-2 text-center">
-                  <p className="text-base font-semibold text-white">
+              <div className="clue-cycle-panel mb-8 overflow-hidden rounded-[1.75rem] px-3 pb-8 pt-5 md:px-6 md:pb-10 md:pt-6">
+                <div className="mb-1 text-center">
+                  <p className="text-[15px] font-semibold tracking-tight text-white">
                     {t("dashboard.cycleWheel.currentCycle")}
                   </p>
                 </div>
@@ -103,19 +103,21 @@ export function DashboardHomeView() {
                     locale,
                     t,
                   )}
-                  dayMarkerLabel={t("dashboard.cycleWheel.dayMarker", {
-                    day: String(insights.cycle_day ?? 1),
-                  })}
+                  dayWord={t("dashboard.cycleWheel.dayWord")}
+                  cycleDay={insights.cycle_day ?? 1}
                 />
 
-                <div className="mt-8 flex flex-wrap justify-center gap-3">
-                  <Button className="rounded-full bg-[#f429a0] hover:bg-[#f54baf]" render={<Link href="/dashboard/cycle" />}>
+                <div className="mt-4 flex flex-wrap justify-center gap-3 px-2">
+                  <Button
+                    className="rounded-full bg-[#e53935] hover:bg-[#f44336]"
+                    render={<Link href="/dashboard/cycle" />}
+                  >
                     <CalendarDays className="size-4" />
                     {t("dashboard.actions.logPeriod")}
                   </Button>
                   <Button
                     variant="outline"
-                    className="rounded-full border-white/25 bg-white/10 text-white hover:bg-white/20 hover:text-white"
+                    className="rounded-full border-white/20 bg-white/5 text-white hover:bg-white/10 hover:text-white"
                     render={<Link href="/dashboard/daily-log" />}
                   >
                     <ClipboardList className="size-4" />

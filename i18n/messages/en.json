@@ -371,6 +371,7 @@
       "description": "Track where you are in your current cycle.",
       "currentCycle": "Current cycle",
       "cycleDay": "Cycle day",
+      "dayWord": "Day",
       "today": "Today, {date}",
       "dayMarker": "Day {day}",
       "nextPeriodDue": "Your next period is due {date}",
