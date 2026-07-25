@@ -608,9 +608,41 @@
   },
   "insights": {
     "title": "Health Insights",
-    "description": "Visualize your cycle patterns, symptoms, daily logs, and mood over time.",
+    "description": "See your cycle, symptoms, sleep, energy, and mood in simple charts.",
     "range": {
       "months": "Last {count} months"
+    },
+    "summary": {
+      "title": "In plain words",
+      "empty": "Log periods and daily health notes to unlock personal insights here.",
+      "avgCycle": "In the last {months} months, your average cycle was {days} days.",
+      "topMood": "Your most logged mood was {mood}.",
+      "topSymptom": "Your most common symptom was {symptom}.",
+      "logsCount": "You saved {count} daily health logs in this period."
+    },
+    "units": {
+      "days": "Days",
+      "hours": "Hours",
+      "entries": "Times",
+      "daysValue": "{value} days",
+      "hoursValue": "{value} hours",
+      "entriesValue": "{value} times"
+    },
+    "moods": {
+      "happy": "Happy",
+      "calm": "Calm",
+      "sad": "Sad",
+      "anxious": "Anxious",
+      "angry": "Angry",
+      "tired": "Tired",
+      "irritable": "Irritable",
+      "stressed": "Stressed",
+      "energetic": "Energetic",
+      "neutral": "Neutral",
+      "low": "Low",
+      "good": "Good",
+      "okay": "Okay",
+      "mood_swings": "Mood swings"
     },
     "sections": {
       "cycleStats": "Cycle statistics",
@@ -619,57 +651,77 @@
       "mood": "Mood trends"
     },
     "stats": {
-      "avgCycle": "Average cycle (days)",
-      "avgPeriod": "Average period (days)",
+      "avgCycle": "Average cycle",
+      "avgPeriod": "Average period",
       "longestCycle": "Longest cycle",
-      "shortestCycle": "Shortest cycle"
+      "shortestCycle": "Shortest cycle",
+      "avgCycleHint": "Typical healthy range is about 21–35 days",
+      "avgPeriodHint": "Many periods last about 3–7 days"
     },
     "charts": {
       "cycleLength": {
         "title": "Cycle length trend",
-        "description": "Days between period starts over time",
+        "description": "How many days between each period start. The soft pink band is a common healthy range (21–35 days).",
         "label": "Cycle length",
+        "unitHint": "Y-axis = days between periods",
+        "averageLine": "Your average: {days} days",
         "empty": "Log at least two periods to see cycle length trends."
       },
       "periodLength": {
         "title": "Period length",
-        "description": "How long each logged period lasted",
+        "description": "How many days each logged period lasted.",
         "label": "Period days",
+        "unitHint": "Y-axis = bleeding days",
         "empty": "Log periods to see period length trends."
       },
       "symptomPain": {
         "title": "Symptom pain trend",
+        "description": "Average pain from symptoms you logged (0 = no pain, 10 = worst).",
         "label": "Average pain",
+        "unitHint": "Y-axis = pain score 0–10",
         "empty": "Log symptoms to see pain trends."
       },
       "symptomCategory": {
         "title": "Symptoms by category",
-        "label": "Entries",
+        "description": "Which symptoms you logged most often.",
+        "label": "Times logged",
+        "unitHint": "Y-axis = how many times each symptom was logged",
         "empty": "Log symptoms to see category breakdown."
       },
       "dailyPain": {
         "title": "Daily pain level",
-        "label": "Pain score",
+        "description": "Pain from your daily logs, shown as None → Mild → Moderate → Severe.",
+        "label": "Pain level",
+        "unitHint": "Y-axis = pain words, not just numbers",
         "empty": "Save daily logs with pain levels to see this chart."
       },
       "sleep": {
         "title": "Sleep hours",
-        "label": "Hours",
+        "description": "How many hours you slept on days you logged.",
+        "label": "Sleep",
+        "unitHint": "Y-axis = hours of sleep",
         "empty": "Save daily logs with sleep hours to see this chart."
       },
       "energy": {
         "title": "Energy level",
-        "label": "Energy score",
+        "description": "Energy from your daily logs, shown as Low → Medium → High.",
+        "label": "Energy level",
+        "unitHint": "Y-axis = energy words, not just numbers",
         "empty": "Save daily logs with energy levels to see this chart."
       },
       "moodFrequency": {
         "title": "Most logged moods",
-        "label": "Entries",
+        "description": "Which moods appear most often in your logs.",
+        "label": "Times logged",
+        "unitHint": "Y-axis = how many times each mood was logged",
         "empty": "Add mood in daily logs or symptoms to see mood patterns."
       },
       "moodTimeline": {
-        "title": "Mood entries over time",
+        "title": "Mood over time",
+        "description": "Main mood for each day you logged how you felt.",
         "label": "Mood entries",
+        "unitHint": "Hover a bar to see that day's main mood",
+        "tooltip": "{count} entries · main mood: {mood}",
         "empty": "Add mood in daily logs or symptoms to see mood over time."
       }
     }
