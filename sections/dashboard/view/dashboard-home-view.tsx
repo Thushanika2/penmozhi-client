@@ -105,11 +105,17 @@ export function DashboardHomeView() {
                   )}
                   dayWord={t("dashboard.cycleWheel.dayWord")}
                   cycleDay={insights.cycle_day ?? 1}
+                  phaseLabels={{
+                    menstrual: t("dashboard.phases.menstrual"),
+                    follicular: t("dashboard.phases.follicular"),
+                    ovulation: t("dashboard.phases.ovulation"),
+                    luteal: t("dashboard.phases.luteal"),
+                  }}
                 />
 
                 <div className="mt-4 flex flex-wrap justify-center gap-3 px-2">
                   <Button
-                    className="rounded-full bg-[#e53935] hover:bg-[#f44336]"
+                    className="rounded-full bg-[#f429a0] hover:bg-[#f54baf]"
                     render={<Link href="/dashboard/cycle" />}
                   >
                     <CalendarDays className="size-4" />
