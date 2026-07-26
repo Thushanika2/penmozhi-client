@@ -31,7 +31,8 @@ import { Select } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { getLocalizedApiError } from "@/lib/localize-api-error"
 import { queryKeys } from "@/lib/query-keys"
-import { deleteAccount, updateProfile } from "@/services/auth"
+import { deleteAccount, updateAppLock, updateProfile } from "@/services/auth"
+import { exportAccountData } from "@/services/account"
 import {
   getHealthProfileRisks,
   updateHealthProfile,
@@ -155,6 +156,7 @@ export function ProfileView() {
       setHealthProfile={auth.setHealthProfile}
       updateUser={auth.updateUser}
       logout={auth.logout}
+      refreshProfile={auth.refreshProfile}
     />
   )
 }
@@ -165,12 +167,14 @@ function ProfileViewContent({
   setHealthProfile,
   updateUser,
   logout,
+  refreshProfile,
 }: {
   user: UserProfile
   healthProfile: HealthProfile | null
   setHealthProfile: ReturnType<typeof useAuth>["setHealthProfile"]
   updateUser: ReturnType<typeof useAuth>["updateUser"]
   logout: ReturnType<typeof useAuth>["logout"]
+  refreshProfile: ReturnType<typeof useAuth>["refreshProfile"]
 }) {
   const router = useRouter()
   const { t } = useLanguage()
@@ -186,6 +190,9 @@ function ProfileViewContent({
   const [deletePassword, setDeletePassword] = React.useState("")
   const [deletePasswordError, setDeletePasswordError] = React.useState<string | null>(null)
   const [deleting, setDeleting] = React.useState(false)
+  const [appLockPin, setAppLockPin] = React.useState("")
+  const [savingAppLock, setSavingAppLock] = React.useState(false)
+  const [exporting, setExporting] = React.useState(false)
 
   const [accountForm, setAccountForm] = React.useState(() => buildAccountForm(user))
 
@@ -331,6 +338,52 @@ function ProfileViewContent({
       toast.error(getLocalizedApiError(error, t))
     } finally {
       setDeleting(false)
+    }
+  }
+
+  async function handleSetAppLock() {
+    if (!appLockPin.trim()) return
+    setSavingAppLock(true)
+    try {
+      await updateAppLock({ pin: appLockPin })
+      await refreshProfile()
+      setAppLockPin("")
+      toast.success(t("profile.appLock.saved"))
+    } catch (error) {
+      toast.error(getLocalizedApiError(error, t))
+    } finally {
+      setSavingAppLock(false)
+    }
+  }
+
+  async function handleClearAppLock() {
+    setSavingAppLock(true)
+    try {
+      await updateAppLock({ clear: true })
+      await refreshProfile()
+      toast.success(t("profile.appLock.cleared"))
+    } catch (error) {
+      toast.error(getLocalizedApiError(error, t))
+    } finally {
+      setSavingAppLock(false)
+    }
+  }
+
+  async function handleExportData() {
+    setExporting(true)
+    try {
+      const blob = await exportAccountData()
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement("a")
+      link.href = url
+      link.download = "penmozhi-export.json"
+      link.click()
+      URL.revokeObjectURL(url)
+      toast.success(t("profile.privacy.exportSuccess"))
+    } catch (error) {
+      toast.error(getLocalizedApiError(error, t))
+    } finally {
+      setExporting(false)
     }
   }
 
@@ -720,12 +773,39 @@ function ProfileViewContent({
         </Card>
       </form>
 
-      <Card className="mt-6 rounded-3xl border-destructive/30">
+      <Card className="mt-6 rounded-3xl">
         <CardHeader>
-          <CardTitle>{t("profile.delete.title")}</CardTitle>
-          <CardDescription>{t("profile.delete.description")}</CardDescription>
+          <CardTitle>{t("profile.appLock.title")}</CardTitle>
+          <CardDescription>{t("profile.appLock.description")}</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="flex flex-wrap items-end gap-3">
+          <Field label={t("profile.appLock.pinLabel")}>
+            <PasswordInput
+              value={appLockPin}
+              onChange={(event) => setAppLockPin(event.target.value)}
+              maxLength={8}
+            />
+          </Field>
+          <Button onClick={() => void handleSetAppLock()} disabled={savingAppLock || !appLockPin}>
+            {t("profile.appLock.set")}
+          </Button>
+          {user.has_app_lock ? (
+            <Button variant="outline" onClick={() => void handleClearAppLock()} disabled={savingAppLock}>
+              {t("profile.appLock.clear")}
+            </Button>
+          ) : null}
+        </CardContent>
+      </Card>
+
+      <Card className="mt-6 rounded-3xl">
+        <CardHeader>
+          <CardTitle>{t("profile.privacy.title")}</CardTitle>
+          <CardDescription>{t("profile.privacy.description")}</CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-wrap gap-3">
+          <Button variant="outline" className="rounded-full" onClick={() => void handleExportData()} disabled={exporting}>
+            {exporting ? t("common.loading") : t("profile.privacy.export")}
+          </Button>
           <Button variant="destructive" className="rounded-full" onClick={() => setDeleteOpen(true)}>
             {t("profile.delete.button")}
           </Button>

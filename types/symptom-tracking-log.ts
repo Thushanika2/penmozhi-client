@@ -7,6 +7,8 @@ export interface SymptomTrackingLog {
   mood_status: string | null
   sleep_metrics: string | null
   disorder_status_id: number | null
+  tracking_category_id: number | null
+  custom_tag_id: number | null
   created_at: string | null
 }
 

@@ -58,6 +58,11 @@
     "forum": "Forum",
     "profile": "Profile",
     "more": "More",
+    "pregnancy": "Pregnancy",
+    "perimenopause": "Perimenopause",
+    "conceive": "Conceive",
+    "sharing": "Sharing",
+    "wearables": "Wearables",
     "education": "Education",
     "logout": "Log out",
     "forumModeration": "Forum Moderation",
@@ -850,7 +855,119 @@
     "validation": {
       "disorderTypeRequired": "Disorder type is required",
       "diagnosisStatusRequired": "Diagnosis status is required"
+    },
+    "patterns": {
+      "title": "Patterns we've noticed",
+      "empty": "No patterns detected from your recent logs yet."
     }
+  },
+  "mode": {
+    "label": "Tracking mode",
+    "updated": "Tracking mode updated",
+    "options": {
+      "period": "Period tracking",
+      "conceive": "Trying to conceive",
+      "pregnancy": "Pregnancy",
+      "perimenopause": "Perimenopause",
+      "non_bleeding": "Non-bleeding"
+    }
+  },
+  "appLock": {
+    "title": "Unlock Penmozhi",
+    "description": "Enter your app PIN to continue.",
+    "pinLabel": "PIN",
+    "unlock": "Unlock"
+  },
+  "customTags": {
+    "trackingCategory": "Tracking category",
+    "selectCategory": "Select a category",
+    "customTag": "Custom tag",
+    "selectTag": "Select a tag",
+    "newTagPlaceholder": "New tag name",
+    "addTag": "Add tag",
+    "created": "Custom tag created"
+  },
+  "pregnancy": {
+    "title": "Pregnancy",
+    "description": "Track your pregnancy journey",
+    "saved": "Pregnancy profile saved",
+    "profile": {
+      "title": "Pregnancy details",
+      "lmp": "Last menstrual period"
+    },
+    "summary": {
+      "title": "Summary",
+      "dueDate": "Estimated due date",
+      "trimester": "Current trimester"
+    }
+  },
+  "perimenopause": {
+    "title": "Perimenopause",
+    "description": "Log perimenopause symptoms",
+    "saved": "Log saved",
+    "form": {
+      "title": "Daily log",
+      "date": "Date",
+      "hotFlashes": "Hot flashes",
+      "nightSweats": "Night sweats",
+      "sleepDisruption": "Sleep disruption",
+      "moodChanges": "Mood changes",
+      "notes": "Notes"
+    },
+    "history": {
+      "title": "Recent logs",
+      "empty": "No logs yet."
+    }
+  },
+  "conceive": {
+    "title": "Conceive",
+    "description": "Fertile window and ovulation predictions",
+    "noData": "Log at least one period start to see predictions.",
+    "fertileWindow": "Fertile window",
+    "ovulation": "Predicted ovulation",
+    "nextPeriod": "Next period",
+    "basedOnCycles": "Based on period start dates"
+  },
+  "sharing": {
+    "title": "Cycle sharing",
+    "description": "Share your cycle data with trusted people",
+    "inviteSent": "Invitation sent",
+    "accepted": "Share accepted",
+    "revoked": "Share revoked",
+    "accept": "Accept",
+    "revoke": "Revoke",
+    "view": "View shared data",
+    "fromOwner": "Shared with you",
+    "viewError": "Unable to load shared data",
+    "invite": {
+      "title": "Invite someone",
+      "email": "Email address",
+      "send": "Send invite"
+    },
+    "list": {
+      "title": "Your shares",
+      "empty": "No shares yet."
+    },
+    "sharedView": {
+      "title": "Shared cycle data",
+      "description": "Data shared by {name}",
+      "cycles": "Cycles",
+      "symptoms": "Symptoms"
+    }
+  },
+  "wearables": {
+    "title": "Wearables",
+    "description": "Connect fitness and sleep trackers",
+    "providers": {
+      "title": "Available providers"
+    },
+    "connect": "Connect",
+    "disconnect": "Disconnect",
+    "connected": "Connected",
+    "disconnected": "Wearable disconnected",
+    "lastSynced": "Last synced",
+    "stubMessage": "OAuth integration is not yet configured.",
+    "todoNote": "Real OAuth requires provider credentials in .env."
   },
   "aiAssistant": {
     "title": "AI Health Assistant",
@@ -1105,6 +1222,21 @@
       "confirm": "Delete permanently",
       "deleting": "Deleting...",
       "success": "Your account has been deleted"
+    },
+    "privacy": {
+      "title": "Privacy & Data",
+      "description": "Export or delete your personal health data.",
+      "export": "Export my data",
+      "exportSuccess": "Your data export has started downloading."
+    },
+    "appLock": {
+      "title": "App lock",
+      "description": "Require a PIN when opening the dashboard on this device.",
+      "pinLabel": "PIN (4–8 digits)",
+      "set": "Set PIN",
+      "clear": "Remove PIN",
+      "saved": "App lock updated",
+      "cleared": "App lock removed"
     }
   },
   "api": {

@@ -5,6 +5,15 @@ import { getDashboardSummary } from "@/services/dashboard"
 import { getHealthInsights } from "@/services/insights"
 import { getAdminAnalytics, getAdminUsers } from "@/services/admin"
 import { getMySymptoms, getSymptomTrends } from "@/services/symptom"
+import { getTrackingCategories } from "@/services/tracking-category"
+import { getMyCustomTags } from "@/services/custom-tag"
+import { getPregnancyProfile } from "@/services/pregnancy-profile"
+import { getMyPerimenopauseLogs } from "@/services/perimenopause-log"
+import { getConceiveInsights } from "@/services/conceive"
+import { getCycleShares, viewCycleShare } from "@/services/cycle-share"
+import { getMyWearables } from "@/services/wearable"
+import { getMySubscription } from "@/services/subscription"
+import { getPCOSPatterns } from "@/services/pcos-patterns"
 
 export function useDashboardSummary() {
   return useQuery({
@@ -47,5 +56,76 @@ export function useSymptomsData() {
         trends: trendsData,
       }
     },
+  })
+}
+
+export function useTrackingCategories(group?: string) {
+  return useQuery({
+    queryKey: queryKeys.trackingCategories.list(group),
+    queryFn: () => getTrackingCategories(group),
+  })
+}
+
+export function useCustomTags() {
+  return useQuery({
+    queryKey: queryKeys.customTags.list,
+    queryFn: getMyCustomTags,
+  })
+}
+
+export function usePregnancyProfile() {
+  return useQuery({
+    queryKey: queryKeys.pregnancy.profile,
+    queryFn: getPregnancyProfile,
+  })
+}
+
+export function usePerimenopauseLogs() {
+  return useQuery({
+    queryKey: queryKeys.perimenopause.list,
+    queryFn: () => getMyPerimenopauseLogs(),
+  })
+}
+
+export function useConceiveInsights() {
+  return useQuery({
+    queryKey: queryKeys.conceive.insights,
+    queryFn: getConceiveInsights,
+  })
+}
+
+export function useCycleShares() {
+  return useQuery({
+    queryKey: queryKeys.cycleShares.list,
+    queryFn: getCycleShares,
+  })
+}
+
+export function useCycleShareView(shareId: number) {
+  return useQuery({
+    queryKey: queryKeys.cycleShares.view(shareId),
+    queryFn: () => viewCycleShare(shareId),
+    enabled: shareId > 0,
+  })
+}
+
+export function useWearables() {
+  return useQuery({
+    queryKey: queryKeys.wearables.list,
+    queryFn: getMyWearables,
+  })
+}
+
+export function useSubscription() {
+  return useQuery({
+    queryKey: queryKeys.subscription.my,
+    queryFn: getMySubscription,
+  })
+}
+
+export function usePCOSPatterns() {
+  return useQuery({
+    queryKey: queryKeys.pcosPatterns.list,
+    queryFn: getPCOSPatterns,
   })
 }

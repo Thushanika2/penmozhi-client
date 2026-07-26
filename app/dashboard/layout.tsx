@@ -1,5 +1,7 @@
 import { AuthenticatedRoute } from "@/components/auth-guard"
+import { AppLockGate } from "@/components/app-lock-gate"
 import { DashboardSidebar } from "@/components/dashboard-sidebar"
+import { NotificationProvider } from "@/components/notification-provider"
 
 export default function DashboardLayout({
   children,
@@ -8,7 +10,11 @@ export default function DashboardLayout({
 }) {
   return (
     <AuthenticatedRoute allowedRoles={["user"]}>
-      <DashboardSidebar>{children}</DashboardSidebar>
+      <NotificationProvider>
+        <AppLockGate>
+          <DashboardSidebar>{children}</DashboardSidebar>
+        </AppLockGate>
+      </NotificationProvider>
     </AuthenticatedRoute>
   )
 }

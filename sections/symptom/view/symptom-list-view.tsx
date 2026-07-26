@@ -18,6 +18,7 @@ import {
   YAxis,
 } from "recharts"
 
+import { CustomTagManager } from "@/components/custom-tag-manager"
 import { PageHeader } from "@/components/page-header"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -60,6 +61,8 @@ export function SymptomListView() {
   const { t } = useLanguage()
   const queryClient = useQueryClient()
   const { data, isLoading, isError, error } = useSymptomsData()
+  const [trackingCategoryId, setTrackingCategoryId] = React.useState<number | null>(null)
+  const [customTagId, setCustomTagId] = React.useState<number | null>(null)
 
   function translateApiMessage(code: string, fallback?: string | null) {
     const key = `api.messages.${code}`
@@ -93,6 +96,8 @@ export function SymptomListView() {
         pain_severity: values.painSeverity,
         mood_status: values.moodStatus || null,
         sleep_metrics: values.sleepMetrics || null,
+        tracking_category_id: trackingCategoryId,
+        custom_tag_id: customTagId,
       })
       toast.success(t("symptoms.toast.logged"))
       if (result.ai_flag) {
@@ -103,6 +108,8 @@ export function SymptomListView() {
         )
       }
       reset({ painSeverity: 3 })
+      setTrackingCategoryId(null)
+      setCustomTagId(null)
       await queryClient.invalidateQueries({ queryKey: queryKeys.symptoms.list })
     } catch (error) {
       toast.error(getLocalizedApiError(error, t))
@@ -209,6 +216,14 @@ export function SymptomListView() {
               <Input
                 placeholder={t("symptoms.form.sleepPlaceholder")}
                 {...register("sleepMetrics")}
+              />
+            </div>
+            <div className="md:col-span-2 lg:col-span-5">
+              <CustomTagManager
+                trackingCategoryId={trackingCategoryId}
+                customTagId={customTagId}
+                onTrackingCategoryChange={setTrackingCategoryId}
+                onCustomTagChange={setCustomTagId}
               />
             </div>
             <div className="flex items-end">

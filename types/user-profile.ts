@@ -1,5 +1,11 @@
 export type LanguagePreference = "tamil" | "english"
 export type UserRole = "user" | "admin"
+export type TrackingMode =
+  | "period"
+  | "conceive"
+  | "pregnancy"
+  | "perimenopause"
+  | "non_bleeding"
 
 export interface UserProfile {
   id: number
@@ -12,4 +18,6 @@ export interface UserProfile {
   onboarding_completed: boolean
   role: UserRole
   registration_date: string | null
+  mode: TrackingMode
+  has_app_lock: boolean
 }

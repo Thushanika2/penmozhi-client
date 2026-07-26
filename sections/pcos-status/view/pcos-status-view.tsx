@@ -32,6 +32,7 @@ import {
   getPCOSStatusHistory,
   updatePCOSStatus,
 } from "@/services/pcos-status"
+import { usePCOSPatterns } from "@/hooks/use-queries"
 import { useLanguage } from "@/providers/language-provider"
 import type { PCOSDisorderStatus } from "@/types/pcos-status"
 
@@ -47,6 +48,8 @@ export function PCOSStatusView() {
   const [history, setHistory] = React.useState<PCOSDisorderStatus[]>([])
   const [selectedId, setSelectedId] = React.useState<number | null>(null)
   const [loading, setLoading] = React.useState(true)
+  const { data: patternsData } = usePCOSPatterns()
+  const [expandedPattern, setExpandedPattern] = React.useState<string | null>(null)
   const schema = React.useMemo(
     () =>
       z.object({
@@ -234,6 +237,47 @@ export function PCOSStatusView() {
           </Card>
         </div>
       )}
+
+      <Card className="mt-6">
+        <CardHeader>
+          <CardTitle>{t("pcosStatus.patterns.title")}</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p className="text-sm text-muted-foreground">{patternsData?.disclaimer}</p>
+          {patternsData?.patterns?.length ? (
+            patternsData.patterns.map((pattern) => (
+              <div key={pattern.pattern} className="rounded-lg border border-border p-4">
+                <button
+                  type="button"
+                  className="flex w-full items-start justify-between gap-2 text-left"
+                  onClick={() =>
+                    setExpandedPattern((current) =>
+                      current === pattern.pattern ? null : pattern.pattern,
+                    )
+                  }
+                >
+                  <div>
+                    <Badge variant="secondary" className="mb-2">
+                      {pattern.pattern}
+                    </Badge>
+                    <p className="text-sm">{pattern.description}</p>
+                  </div>
+                  <span className="text-xs text-muted-foreground">
+                    {expandedPattern === pattern.pattern ? "−" : "+"}
+                  </span>
+                </button>
+                {expandedPattern === pattern.pattern ? (
+                  <pre className="mt-3 max-h-48 overflow-auto rounded bg-muted p-3 text-xs">
+                    {JSON.stringify(pattern.triggered_logs, null, 2)}
+                  </pre>
+                ) : null}
+              </div>
+            ))
+          ) : (
+            <p className="text-sm text-muted-foreground">{t("pcosStatus.patterns.empty")}</p>
+          )}
+        </CardContent>
+      </Card>
     </div>
   )
 }

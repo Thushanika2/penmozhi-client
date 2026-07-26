@@ -24,4 +24,32 @@ export const queryKeys = {
   profile: {
     risks: (healthProfileId: number) => ["profile", "risks", healthProfileId] as const,
   },
+  trackingCategories: {
+    list: (group?: string) => ["tracking-categories", group ?? "all"] as const,
+  },
+  customTags: {
+    list: ["custom-tags", "list"] as const,
+  },
+  pregnancy: {
+    profile: ["pregnancy", "profile"] as const,
+  },
+  perimenopause: {
+    list: ["perimenopause", "list"] as const,
+  },
+  conceive: {
+    insights: ["conceive", "insights"] as const,
+  },
+  cycleShares: {
+    list: ["cycle-shares", "list"] as const,
+    view: (id: number) => ["cycle-shares", "view", id] as const,
+  },
+  wearables: {
+    list: ["wearables", "list"] as const,
+  },
+  subscription: {
+    my: ["subscription", "my"] as const,
+  },
+  pcosPatterns: {
+    list: ["pcos-patterns", "list"] as const,
+  },
 }

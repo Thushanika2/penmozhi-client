@@ -58,6 +58,11 @@
     "forum": "மன்றம்",
     "profile": "சுயவிவரம்",
     "more": "மேலும்",
+    "pregnancy": "கர்ப்பம்",
+    "perimenopause": "மாதவிடாய் நிறுத்த முன்",
+    "conceive": "கருவுறுதல்",
+    "sharing": "பகிர்வு",
+    "wearables": "Wearables",
     "education": "கல்வி",
     "logout": "வெளியேறு",
     "forumModeration": "மன்ற மேற்பார்வை",
@@ -850,7 +855,119 @@
     "validation": {
       "disorderTypeRequired": "கோளாறு வகை தேவை",
       "diagnosisStatusRequired": "நோயறிதல் நிலை தேவை"
+    },
+    "patterns": {
+      "title": "நாங்கள் கவனித்த வடிவங்கள்",
+      "empty": "உங்கள் சமீபத்திய பதிவுகளிலிருந்து வடிவங்கள் இன்னும் கண்டறியப்படவில்லை."
     }
+  },
+  "mode": {
+    "label": "கண்காணிப்பு முறை",
+    "updated": "கண்காணிப்பு முறை புதுப்பிக்கப்பட்டது",
+    "options": {
+      "period": "மாதவிடாய் கண்காணிப்பு",
+      "conceive": "கருவுற முயற்சி",
+      "pregnancy": "கர்ப்பம்",
+      "perimenopause": "மாதவிடாய் நிறுத்த முன்",
+      "non_bleeding": "இரத்தப்போக்கு இல்லாத"
+    }
+  },
+  "appLock": {
+    "title": "Penmozhi ஐ திறக்கவும்",
+    "description": "தொடர உங்கள் PIN ஐ உள்ளிடவும்.",
+    "pinLabel": "PIN",
+    "unlock": "திற"
+  },
+  "customTags": {
+    "trackingCategory": "கண்காணிப்பு வகை",
+    "selectCategory": "வகையைத் தேர்ந்தெடுக்கவும்",
+    "customTag": "தனிப்பயன் குறி",
+    "selectTag": "குறியைத் தேர்ந்தெடுக்கவும்",
+    "newTagPlaceholder": "புதிய குறி பெயர்",
+    "addTag": "குறி சேர்",
+    "created": "தனிப்பயன் குறி உருவாக்கப்பட்டது"
+  },
+  "pregnancy": {
+    "title": "கர்ப்பம்",
+    "description": "உங்கள் கர்ப்ப பயணத்தைக் கண்காணிக்கவும்",
+    "saved": "கர்ப்ப சுயவிவரம் சேமிக்கப்பட்டது",
+    "profile": {
+      "title": "கர்ப்ப விவரங்கள்",
+      "lmp": "கடைசி மாதவிடாய்"
+    },
+    "summary": {
+      "title": "சுருக்கம்",
+      "dueDate": "எதிர்பார்க்கப்படும் பிரசவ தேதி",
+      "trimester": "தற்போதைய மூன்றாம் பகுதி"
+    }
+  },
+  "perimenopause": {
+    "title": "மாதவிடாய் நிறுத்த முன்",
+    "description": "மாதவிடாய் நிறுத்த முன் அறிகுறிகளைப் பதிவு செய்யவும்",
+    "saved": "பதிவு சேமிக்கப்பட்டது",
+    "form": {
+      "title": "தினசரி பதிவு",
+      "date": "தேதி",
+      "hotFlashes": "சூடான அலைப்புகள்",
+      "nightSweats": "இரவு வியர்வை",
+      "sleepDisruption": "தூக்கம் குறைவு",
+      "moodChanges": "மனநிலை மாற்றம்",
+      "notes": "குறிப்புகள்"
+    },
+    "history": {
+      "title": "சமீபத்திய பதிவுகள்",
+      "empty": "இன்னும் பதிவுகள் இல்லை."
+    }
+  },
+  "conceive": {
+    "title": "கருவுறுதல்",
+    "description": "ப fertile window மற்றும் ovulation கணிப்புகள்",
+    "noData": "கணிப்புகளைப் பார்க்க குறைந்தது ஒரு மாதவிடாய் தொடக்கத்தைப் பதிவு செய்யுங்கள்.",
+    "fertileWindow": "Fertile window",
+    "ovulation": "கணிக்கப்பட்ட ovulation",
+    "nextPeriod": "அடுத்த மாதவிடாய்",
+    "basedOnCycles": "மாதவிடாய் தொடக்க தேதிகளின் அடிப்படையில்"
+  },
+  "sharing": {
+    "title": "சுழற்சி பகிர்வு",
+    "description": "நம்பகமான நபர்களுடன் உங்கள் சுழற்சி தரவைப் பகிரவும்",
+    "inviteSent": "அழைப்பு அனுப்பப்பட்டது",
+    "accepted": "பகிர்வு ஏற்றுக்கொள்ளப்பட்டது",
+    "revoked": "பகிர்வு ரத்து செய்யப்பட்டது",
+    "accept": "ஏற்க",
+    "revoke": "ரத்து",
+    "view": "பகிரப்பட்ட தரவைப் பார்",
+    "fromOwner": "உங்களுடன் பகிரப்பட்டது",
+    "viewError": "பகிரப்பட்ட தரவை ஏற்ற முடியவில்லை",
+    "invite": {
+      "title": "ஒருவரை அழை",
+      "email": "மின்னஞ்சல்",
+      "send": "அழைப்பு அனுப்பு"
+    },
+    "list": {
+      "title": "உங்கள் பகிர்வுகள்",
+      "empty": "இன்னும் பகிர்வுகள் இல்லை."
+    },
+    "sharedView": {
+      "title": "பகிரப்பட்ட சுழற்சி தரவு",
+      "description": "{name} பகிர்ந்த தரவு",
+      "cycles": "சுழற்சிகள்",
+      "symptoms": "அறிகுறிகள்"
+    }
+  },
+  "wearables": {
+    "title": "Wearables",
+    "description": "Fitness மற்றும் sleep trackers ஐ இணைக்கவும்",
+    "providers": {
+      "title": "கிடைக்கும் providers"
+    },
+    "connect": "இணை",
+    "disconnect": "துண்டி",
+    "connected": "இணைக்கப்பட்டது",
+    "disconnected": "Wearable துண்டிக்கப்பட்டது",
+    "lastSynced": "கடைசி sync",
+    "stubMessage": "OAuth இணைப்பு இன்னும் கட்டமைக்கப்படவில்லை.",
+    "todoNote": "உண்மையான OAuth க்கு .env இல் provider credentials தேவை."
   },
   "aiAssistant": {
     "title": "AI உடல்நல உதவியாளர்",
@@ -1105,6 +1222,21 @@
       "confirm": "நிரந்தரமாக நீக்கு",
       "deleting": "நீக்குகிறது...",
       "success": "உங்கள் கணக்கு நீக்கப்பட்டது"
+    },
+    "privacy": {
+      "title": "தனியுரிமை & தரவு",
+      "description": "உங்கள் தனிப்பட்ட உடல்நலத் தரவை ஏற்றுமதி செய்யவும் அல்லது நீக்கவும்.",
+      "export": "என் தரவை ஏற்றுமதி செய்",
+      "exportSuccess": "உங்கள் தரவு ஏற்றுமதி பதிவிறக்கம் தொடங்கியது."
+    },
+    "appLock": {
+      "title": "App lock",
+      "description": "இந்த சாதனத்தில் dashboard திறக்கும்போது PIN தேவை.",
+      "pinLabel": "PIN (4–8 இலக்கங்கள்)",
+      "set": "PIN அமை",
+      "clear": "PIN நீக்கு",
+      "saved": "App lock புதுப்பிக்கப்பட்டது",
+      "cleared": "App lock நீக்கப்பட்டது"
     }
   },
   "api": {

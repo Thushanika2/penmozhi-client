@@ -93,8 +93,32 @@ export async function updateLanguagePreference(language_preference: "tamil" | "e
 }
 
 export async function deleteAccount(password: string) {
-  const { data } = await apiClient.delete<{ message: string }>("/api/auth/account", {
+  const { data } = await apiClient.delete<{ message: string }>("/api/account", {
     data: { password },
   })
+  return data
+}
+
+export async function updateMode(mode: string) {
+  const { data } = await apiClient.patch<{ message: string; user: UserProfile }>(
+    "/api/auth/mode",
+    { mode },
+  )
+  return data
+}
+
+export async function updateAppLock(payload: { pin?: string; clear?: boolean }) {
+  const { data } = await apiClient.patch<{ message: string; user: UserProfile }>(
+    "/api/auth/app-lock",
+    payload,
+  )
+  return data
+}
+
+export async function verifyAppLock(pin: string) {
+  const { data } = await apiClient.post<{ verified: boolean; message: string }>(
+    "/api/auth/app-lock/verify",
+    { pin },
+  )
   return data
 }

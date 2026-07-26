@@ -10,7 +10,8 @@ export interface CreateSymptomPayload {
   pain_severity: number
   mood_status?: string | null
   sleep_metrics?: string | null
-  disorder_status_id?: number | null
+  tracking_category_id?: number | null
+  custom_tag_id?: number | null
 }
 
 export async function createSymptom(payload: CreateSymptomPayload) {

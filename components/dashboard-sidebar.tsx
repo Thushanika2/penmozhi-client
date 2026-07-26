@@ -4,6 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
   Activity,
+  Baby,
   Bell,
   BookOpen,
   CalendarDays,
@@ -15,13 +16,16 @@ import {
   LogOut,
   Menu,
   MessageSquare,
+  Share2,
   Sparkles,
   User,
+  Watch,
   X,
 } from "lucide-react"
 import * as React from "react"
 
 import { DashboardBottomNav } from "@/components/dashboard-bottom-nav"
+import { ModeSwitcher } from "@/components/mode-switcher"
 import { BrandLogo } from "@/components/brand-logo"
 import { Button } from "@/components/ui/button"
 import { LanguageSwitcher } from "@/components/language-switcher"
@@ -44,7 +48,17 @@ const moreNav = [
   { href: "/dashboard/ai-assistant", labelKey: "nav.aiAssistant", icon: Sparkles },
   { href: "/dashboard/pcos-status", labelKey: "nav.pcosStatus", icon: HeartPulse },
   { href: "/dashboard/forum", labelKey: "nav.forum", icon: MessageSquare },
+  { href: "/dashboard/sharing", labelKey: "nav.sharing", icon: Share2 },
+  { href: "/dashboard/wearables", labelKey: "nav.wearables", icon: Watch },
 ]
+
+const modeNavMap: Record<string, { href: string; labelKey: string; icon: typeof Baby }[]> = {
+  pregnancy: [{ href: "/dashboard/pregnancy", labelKey: "nav.pregnancy", icon: Baby }],
+  perimenopause: [{ href: "/dashboard/perimenopause", labelKey: "nav.perimenopause", icon: HeartPulse }],
+  conceive: [{ href: "/dashboard/conceive", labelKey: "nav.conceive", icon: Sparkles }],
+  period: [],
+  non_bleeding: [],
+}
 
 function isActive(pathname: string, href: string, exact?: boolean) {
   if (exact) return pathname === href
@@ -59,6 +73,7 @@ export function DashboardSidebar({ children }: { children: React.ReactNode }) {
   const [moreOpen, setMoreOpen] = React.useState(false)
 
   const moreActive = moreNav.some((item) => isActive(pathname, item.href))
+  const modeNav = modeNavMap[user?.mode ?? "period"] ?? []
 
   return (
     <div className="flex min-h-svh gradient-mesh">
@@ -91,6 +106,22 @@ export function DashboardSidebar({ children }: { children: React.ReactNode }) {
           {primaryNav.map((item) => {
             const Icon = item.icon
             const active = isActive(pathname, item.href, item.exact)
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setMobileOpen(false)}
+                className={cn("nav-link pl-4", active ? "nav-link-active" : "nav-link-inactive")}
+              >
+                <Icon className="size-4 shrink-0" />
+                {t(item.labelKey)}
+              </Link>
+            )
+          })}
+
+          {modeNav.map((item) => {
+            const Icon = item.icon
+            const active = isActive(pathname, item.href)
             return (
               <Link
                 key={item.href}
@@ -141,6 +172,8 @@ export function DashboardSidebar({ children }: { children: React.ReactNode }) {
             <BookOpen className="size-4 shrink-0" />
             {t("nav.education")}
           </Link>
+
+          <ModeSwitcher />
         </nav>
 
         <div className="border-t border-border p-4">
