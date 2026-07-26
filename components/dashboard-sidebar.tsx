@@ -38,6 +38,7 @@ const primaryNav = [
   { href: "/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard, exact: true },
   { href: "/dashboard/cycle", labelKey: "nav.cycleTracking", icon: CalendarDays },
   { href: "/dashboard/daily-log", labelKey: "nav.dailyLog", icon: ClipboardList },
+  { href: "/dashboard/ai-assistant", labelKey: "nav.aiAssistant", icon: Sparkles },
   { href: "/dashboard/insights", labelKey: "nav.insights", icon: LineChart },
   { href: "/dashboard/profile", labelKey: "nav.profile", icon: User },
 ]
@@ -45,7 +46,6 @@ const primaryNav = [
 const moreNav = [
   { href: "/dashboard/symptoms", labelKey: "nav.symptoms", icon: Activity },
   { href: "/dashboard/reminders", labelKey: "nav.reminders", icon: Bell },
-  { href: "/dashboard/ai-assistant", labelKey: "nav.aiAssistant", icon: Sparkles },
   { href: "/dashboard/pcos-status", labelKey: "nav.pcosStatus", icon: HeartPulse },
   { href: "/dashboard/forum", labelKey: "nav.forum", icon: MessageSquare },
   { href: "/dashboard/sharing", labelKey: "nav.sharing", icon: Share2 },

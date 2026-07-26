@@ -29,10 +29,10 @@ import { useDashboardSummary } from "@/hooks/use-queries"
 import { useLanguage } from "@/providers/language-provider"
 
 const moreModules = [
+  { href: "/dashboard/ai-assistant", titleKey: "dashboard.modules.aiAssistant.title", icon: Sparkles },
   { href: "/dashboard/symptoms", titleKey: "dashboard.modules.symptoms.title", icon: Activity },
   { href: "/dashboard/pcos-status", titleKey: "dashboard.modules.pcosStatus.title", icon: HeartPulse },
   { href: "/dashboard/reminders", titleKey: "dashboard.modules.reminders.title", icon: Bell },
-  { href: "/dashboard/ai-assistant", titleKey: "dashboard.modules.aiAssistant.title", icon: Sparkles },
   { href: "/dashboard/forum", titleKey: "dashboard.modules.forum.title", icon: MessageSquare },
   { href: "/dashboard/profile", titleKey: "dashboard.modules.healthProfile.title", icon: User },
 ]
@@ -128,6 +128,14 @@ export function DashboardHomeView() {
                   >
                     <ClipboardList className="size-4" />
                     {t("dashboard.actions.dailyLog")}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="rounded-full border-white/20 bg-white/5 text-white hover:bg-white/10 hover:text-white"
+                    render={<Link href="/dashboard/ai-assistant" />}
+                  >
+                    <Sparkles className="size-4" />
+                    {t("dashboard.actions.askAssistant")}
                   </Button>
                 </div>
               </div>
@@ -225,6 +233,10 @@ export function DashboardHomeView() {
                 </Button>
                 <Button variant="outline" className="rounded-full" render={<Link href="/dashboard/daily-log" />}>
                   {t("dashboard.actions.dailyLog")}
+                </Button>
+                <Button variant="outline" className="rounded-full" render={<Link href="/dashboard/ai-assistant" />}>
+                  <Sparkles className="size-4" />
+                  {t("dashboard.actions.askAssistant")}
                 </Button>
               </div>
             </CardContent>

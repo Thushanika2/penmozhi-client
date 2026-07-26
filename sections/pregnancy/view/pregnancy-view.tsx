@@ -21,14 +21,10 @@ export function PregnancyView() {
   const queryClient = useQueryClient()
   const { data, isLoading } = usePregnancyProfile()
   const profile = data?.pregnancy_profile
-  const [lmp, setLmp] = React.useState("")
+  const profileLmp = profile?.last_menstrual_period ?? ""
+  const [editedLmp, setEditedLmp] = React.useState<string | null>(null)
+  const lmp = editedLmp ?? profileLmp
   const [saving, setSaving] = React.useState(false)
-
-  React.useEffect(() => {
-    if (profile?.last_menstrual_period) {
-      setLmp(profile.last_menstrual_period)
-    }
-  }, [profile?.last_menstrual_period])
 
   async function handleSave(event: React.FormEvent) {
     event.preventDefault()
@@ -37,6 +33,7 @@ export function PregnancyView() {
     try {
       await updatePregnancyProfile({ last_menstrual_period: lmp })
       await queryClient.invalidateQueries({ queryKey: queryKeys.pregnancy.profile })
+      setEditedLmp(null)
       toast.success(t("pregnancy.saved"))
     } catch (error) {
       toast.error(getLocalizedApiError(error, t))
@@ -60,7 +57,7 @@ export function PregnancyView() {
               <form onSubmit={handleSave} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="lmp">{t("pregnancy.profile.lmp")}</Label>
-                  <Input id="lmp" type="date" value={lmp} onChange={(e) => setLmp(e.target.value)} />
+                  <Input id="lmp" type="date" value={lmp} onChange={(e) => setEditedLmp(e.target.value)} />
                 </div>
                 <Button type="submit" disabled={saving || !lmp}>
                   {saving ? t("common.saving") : t("common.save")}

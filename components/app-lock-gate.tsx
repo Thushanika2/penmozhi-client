@@ -3,12 +3,6 @@
 import * as React from "react"
 
 import { Button } from "@/components/ui/button"
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { getLocalizedApiError } from "@/lib/localize-api-error"
@@ -21,23 +15,19 @@ const SESSION_KEY = "penmozhi_app_unlocked"
 export function AppLockGate({ children }: { children: React.ReactNode }) {
   const { user } = useAuth()
   const { t } = useLanguage()
-  const [unlocked, setUnlocked] = React.useState(false)
+  const [pinUnlocked, setPinUnlocked] = React.useState(false)
   const [pin, setPin] = React.useState("")
   const [submitting, setSubmitting] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
 
   const needsLock = Boolean(user?.has_app_lock)
 
-  React.useEffect(() => {
-    if (!needsLock) {
-      setUnlocked(true)
-      return
-    }
-    const stored = sessionStorage.getItem(SESSION_KEY)
-    if (stored === String(user?.id)) {
-      setUnlocked(true)
-    }
+  const sessionUnlocked = React.useMemo(() => {
+    if (typeof window === "undefined" || !needsLock || user?.id == null) return false
+    return sessionStorage.getItem(SESSION_KEY) === String(user.id)
   }, [needsLock, user?.id])
+
+  const unlocked = !needsLock || pinUnlocked || sessionUnlocked
 
   async function handleVerify(event: React.FormEvent) {
     event.preventDefault()
@@ -47,7 +37,7 @@ export function AppLockGate({ children }: { children: React.ReactNode }) {
       const result = await verifyAppLock(pin)
       if (result.verified) {
         sessionStorage.setItem(SESSION_KEY, String(user?.id))
-        setUnlocked(true)
+        setPinUnlocked(true)
       }
     } catch (err) {
       setError(getLocalizedApiError(err, t))

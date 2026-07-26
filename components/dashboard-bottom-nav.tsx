@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { CalendarDays, ClipboardList, Heart, LayoutDashboard, LineChart, User } from "lucide-react"
+import { CalendarDays, ClipboardList, Heart, LayoutDashboard, Sparkles, User } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/providers/auth-provider"
@@ -12,7 +12,7 @@ const baseNavItems = [
   { href: "/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard, exact: true as const },
   { href: "/dashboard/cycle", labelKey: "nav.cycleTracking", icon: CalendarDays, exact: false as const },
   { href: "/dashboard/daily-log", labelKey: "nav.dailyLog", icon: ClipboardList, exact: false as const },
-  { href: "/dashboard/insights", labelKey: "nav.insights", icon: LineChart, exact: false as const },
+  { href: "/dashboard/ai-assistant", labelKey: "nav.aiAssistant", icon: Sparkles, exact: false as const },
   { href: "/dashboard/profile", labelKey: "nav.profile", icon: User, exact: false as const },
 ]
 
@@ -32,7 +32,7 @@ export function DashboardBottomNav() {
 
   const modeItem = modeNavItems[user?.mode ?? ""]
   const navItems = modeItem
-    ? [...baseNavItems.slice(0, 4), modeItem, baseNavItems[4]]
+    ? [...baseNavItems.slice(0, 3), baseNavItems[3], modeItem]
     : baseNavItems
 
   return (
