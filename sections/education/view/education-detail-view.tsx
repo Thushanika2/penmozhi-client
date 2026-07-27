@@ -1,5 +1,6 @@
 "use client"
 
+import { useRouter } from "next/navigation"
 import * as React from "react"
 import { toast } from "sonner"
 
@@ -10,29 +11,52 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { localeToEducationLanguage } from "@/i18n/config"
 import { getLocalizedApiError } from "@/lib/localize-api-error"
 import { useLanguage } from "@/providers/language-provider"
 import { getEducationResource } from "@/services/education"
 import type { EducationalResource } from "@/types/educational-resource"
 
 export function EducationDetailView({ id }: { id: number }) {
-  const { t } = useLanguage()
+  const router = useRouter()
+  const { t, locale } = useLanguage()
   const [resource, setResource] = React.useState<EducationalResource | null>(null)
   const [loading, setLoading] = React.useState(true)
+  const expectedLanguage = localeToEducationLanguage(locale)
 
   React.useEffect(() => {
+    let cancelled = false
+
     async function load() {
+      setLoading(true)
       try {
         const data = await getEducationResource(id)
-        setResource(data.education_resource)
+        if (cancelled) return
+
+        const article = data.education_resource
+        if (article.language !== expectedLanguage) {
+          router.replace("/education")
+          return
+        }
+
+        setResource(article)
       } catch (error) {
-        toast.error(getLocalizedApiError(error, t))
+        if (!cancelled) {
+          toast.error(getLocalizedApiError(error, t))
+          setResource(null)
+        }
       } finally {
-        setLoading(false)
+        if (!cancelled) {
+          setLoading(false)
+        }
       }
     }
+
     load()
-  }, [id, t])
+    return () => {
+      cancelled = true
+    }
+  }, [expectedLanguage, id, router, t])
 
   if (loading)
     return (

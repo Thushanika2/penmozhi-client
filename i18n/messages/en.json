@@ -1039,6 +1039,8 @@
     "published": "Published {date}",
     "readMore": "Read more",
     "editArticle": "Edit article",
+    "languageEnglish": "English",
+    "languageTamil": "Tamil",
     "allArticles": "All articles",
     "backToArticles": "Back to articles",
     "detail": {
@@ -1056,6 +1058,7 @@
       "editArticle": "Edit article",
       "titleLabel": "Title",
       "categoryLabel": "Category",
+      "languageLabel": "Language",
       "publicationDateLabel": "Publication date",
       "contentLabel": "Content",
       "publish": "Publish",

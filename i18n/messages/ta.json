@@ -1039,6 +1039,8 @@
     "published": "{date} அன்று வெளியிடப்பட்டது",
     "readMore": "மேலும் படிக்க",
     "editArticle": "கட்டுரையைத் திருத்து",
+    "languageEnglish": "English",
+    "languageTamil": "தமிழ்",
     "allArticles": "அனைத்து கட்டுரைகள்",
     "backToArticles": "கட்டுரைகளுக்குத் திரும்பு",
     "detail": {
@@ -1056,6 +1058,7 @@
       "editArticle": "கட்டுரையைத் திருத்து",
       "titleLabel": "தலைப்பு",
       "categoryLabel": "வகை",
+      "languageLabel": "மொழி",
       "publicationDateLabel": "வெளியீட்டுத் தேதி",
       "contentLabel": "உள்ளடக்கம்",
       "publish": "வெளியிடு",

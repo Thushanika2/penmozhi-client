@@ -18,3 +18,7 @@ export function preferenceToLocale(preference: LanguagePreference | string | nul
 export function localeToPreference(locale: Locale): LanguagePreference {
   return locale === "ta" ? "tamil" : "english"
 }
+
+export function localeToEducationLanguage(locale: Locale): "english" | "tamil" {
+  return locale === "ta" ? "tamil" : "english"
+}

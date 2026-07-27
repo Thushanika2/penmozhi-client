@@ -6,6 +6,7 @@ import { toast } from "sonner"
 
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
+import { localeToEducationLanguage } from "@/i18n/config"
 import { getLocalizedApiError } from "@/lib/localize-api-error"
 import { useLanguage } from "@/providers/language-provider"
 import { getEducationResources } from "@/services/education"
@@ -18,24 +19,40 @@ export function EducationListView({
   publicMode?: boolean
   adminMode?: boolean
 }) {
-  const { t } = useLanguage()
+  const { t, locale } = useLanguage()
   const [resources, setResources] = React.useState<EducationalResource[]>([])
   const [category, setCategory] = React.useState("")
   const [loading, setLoading] = React.useState(true)
 
   React.useEffect(() => {
+    let cancelled = false
+
     async function load() {
+      setLoading(true)
       try {
-        const data = await getEducationResources(category || undefined)
-        setResources(data.education_resources)
+        const data = await getEducationResources({
+          category: category || undefined,
+          language: adminMode ? undefined : localeToEducationLanguage(locale),
+        })
+        if (!cancelled) {
+          setResources(data.education_resources)
+        }
       } catch (error) {
-        toast.error(getLocalizedApiError(error, t))
+        if (!cancelled) {
+          toast.error(getLocalizedApiError(error, t))
+        }
       } finally {
-        setLoading(false)
+        if (!cancelled) {
+          setLoading(false)
+        }
       }
     }
+
     load()
-  }, [category, t])
+    return () => {
+      cancelled = true
+    }
+  }, [adminMode, category, locale, t])
 
   if (loading) {
     return <p className="text-muted-foreground">{t("education.loadingArticles")}</p>
@@ -58,7 +75,16 @@ export function EducationListView({
             <div className="border-b border-border/50 bg-gradient-to-r from-primary/5 to-[#f98fcd]/10 px-6 py-4">
               <div className="flex items-start justify-between gap-2">
                 <h3 className="text-lg font-semibold leading-snug">{resource.article_title}</h3>
-                <Badge variant="secondary">{resource.content_category}</Badge>
+                <div className="flex shrink-0 flex-col items-end gap-1">
+                  <Badge variant="secondary">{resource.content_category}</Badge>
+                  {adminMode ? (
+                    <Badge variant="outline">
+                      {resource.language === "tamil"
+                        ? t("education.languageTamil")
+                        : t("education.languageEnglish")}
+                    </Badge>
+                  ) : null}
+                </div>
               </div>
               <p className="mt-1 text-xs text-muted-foreground">
                 {t("education.published", { date: resource.publication_date })}

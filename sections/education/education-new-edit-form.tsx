@@ -17,7 +17,9 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Select } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
+import { localeToEducationLanguage } from "@/i18n/config"
 import { getLocalizedApiError } from "@/lib/localize-api-error"
 import { useLanguage } from "@/providers/language-provider"
 import {
@@ -31,6 +33,7 @@ interface FormValues {
   contentCategory: string
   contentBody: string
   publicationDate: string
+  language: "english" | "tamil"
 }
 
 export function EducationFormView({
@@ -38,7 +41,7 @@ export function EducationFormView({
 }: {
   resource?: EducationalResource
 }) {
-  const { t } = useLanguage()
+  const { t, locale } = useLanguage()
   const router = useRouter()
 
   const schema = React.useMemo(
@@ -56,6 +59,7 @@ export function EducationFormView({
         publicationDate: z
           .string()
           .min(1, t("education.form.validation.publicationDateRequired")),
+        language: z.enum(["english", "tamil"]),
       }),
     [t],
   )
@@ -72,9 +76,11 @@ export function EducationFormView({
           contentCategory: resource.content_category,
           contentBody: resource.content_body,
           publicationDate: resource.publication_date,
+          language: resource.language ?? "english",
         }
       : {
           publicationDate: new Date().toISOString().slice(0, 10),
+          language: localeToEducationLanguage(locale),
         },
   })
 
@@ -84,6 +90,7 @@ export function EducationFormView({
       content_category: values.contentCategory,
       content_body: values.contentBody,
       publication_date: values.publicationDate,
+      language: values.language,
     }
 
     try {
@@ -123,6 +130,16 @@ export function EducationFormView({
               <p className="text-sm text-destructive">
                 {errors.contentCategory.message}
               </p>
+            ) : null}
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="language">{t("education.form.languageLabel")}</Label>
+            <Select id="language" {...register("language")}>
+              <option value="english">{t("education.languageEnglish")}</option>
+              <option value="tamil">{t("education.languageTamil")}</option>
+            </Select>
+            {errors.language ? (
+              <p className="text-sm text-destructive">{errors.language.message}</p>
             ) : null}
           </div>
           <div className="space-y-2">

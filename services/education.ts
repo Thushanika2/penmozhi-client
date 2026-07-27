@@ -6,6 +6,7 @@ export interface CreateEducationPayload {
   content_category: string
   content_body: string
   publication_date: string
+  language?: "english" | "tamil"
 }
 
 export interface UpdateEducationPayload {
@@ -13,12 +14,23 @@ export interface UpdateEducationPayload {
   content_category?: string
   content_body?: string
   publication_date?: string
+  language?: "english" | "tamil"
 }
 
-export async function getEducationResources(category?: string) {
+export interface EducationListParams {
+  category?: string
+  language?: "english" | "tamil"
+}
+
+export async function getEducationResources(params?: EducationListParams) {
   const { data } = await apiClient.get<{ education_resources: EducationalResource[] }>(
     "/api/education",
-    { params: category ? { category } : undefined },
+    {
+      params: {
+        ...(params?.category ? { category: params.category } : {}),
+        ...(params?.language ? { language: params.language } : {}),
+      },
+    },
   )
   return data
 }
