@@ -17,6 +17,24 @@ import { useLanguage } from "@/providers/language-provider"
 import { getEducationResource } from "@/services/education"
 import type { EducationalResource } from "@/types/educational-resource"
 
+function renderArticleBody(body: string) {
+  return body.split(/(https?:\/\/[^\s]+)/g).map((part, index) =>
+    /^https?:\/\//.test(part) ? (
+      <a
+        key={`${part}-${index}`}
+        href={part}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="break-all font-medium text-primary underline underline-offset-2"
+      >
+        {part}
+      </a>
+    ) : (
+      <React.Fragment key={`text-${index}`}>{part}</React.Fragment>
+    ),
+  )
+}
+
 export function EducationDetailView({ id }: { id: number }) {
   const router = useRouter()
   const { t, locale } = useLanguage()
@@ -78,7 +96,7 @@ export function EducationDetailView({ id }: { id: number }) {
       </CardHeader>
       <CardContent>
         <div className="prose prose-sm max-w-none whitespace-pre-wrap dark:prose-invert">
-          {resource.content_body}
+          {renderArticleBody(resource.content_body)}
         </div>
       </CardContent>
     </Card>
