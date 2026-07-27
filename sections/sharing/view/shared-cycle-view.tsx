@@ -40,8 +40,8 @@ export function SharedCycleView({ shareId }: { shareId: number }) {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>{t("cycle.table.start")}</TableHead>
-                  <TableHead>{t("cycle.table.end")}</TableHead>
+                  <TableHead>{t("cycle.history.start")}</TableHead>
+                  <TableHead>{t("cycle.history.end")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

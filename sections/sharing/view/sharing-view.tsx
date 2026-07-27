@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { useSearchParams } from "next/navigation"
 import { useQueryClient } from "@tanstack/react-query"
 import * as React from "react"
 import { toast } from "sonner"
@@ -12,6 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { getLocalizedApiError } from "@/lib/localize-api-error"
+import { cn } from "@/lib/utils"
 import { queryKeys } from "@/lib/query-keys"
 import { useCycleShares } from "@/hooks/use-queries"
 import { acceptCycleShare, createCycleShare, revokeCycleShare } from "@/services/cycle-share"
@@ -22,10 +24,31 @@ export function SharingView() {
   const { t } = useLanguage()
   const { user } = useAuth()
   const queryClient = useQueryClient()
+  const searchParams = useSearchParams()
+  const highlightShareId = searchParams.get("share")
   const { data, isLoading } = useCycleShares()
-  const shares = data?.cycle_shares ?? []
+  const shares = React.useMemo(() => data?.cycle_shares ?? [], [data?.cycle_shares])
   const [email, setEmail] = React.useState("")
   const [saving, setSaving] = React.useState(false)
+  const shareRefs = React.useRef<Record<number, HTMLLIElement | null>>({})
+
+  React.useEffect(() => {
+    if (!highlightShareId || isLoading || !shares.length) return
+
+    const shareId = Number(highlightShareId)
+    if (!Number.isFinite(shareId)) return
+
+    const share = shares.find((item) => item.id === shareId)
+    if (!share) return
+
+    shareRefs.current[shareId]?.scrollIntoView({ behavior: "smooth", block: "nearest" })
+
+    const isRecipient =
+      share.shared_with_email.toLowerCase() === user?.email.toLowerCase()
+    if (isRecipient && share.status === "pending") {
+      toast.message(t("sharing.pendingInvite"))
+    }
+  }, [highlightShareId, isLoading, shares, t, user?.email])
 
   async function handleInvite(event: React.FormEvent) {
     event.preventDefault()
@@ -106,7 +129,16 @@ export function SharingView() {
                   const isRecipient =
                     share.shared_with_email.toLowerCase() === user?.email.toLowerCase()
                   return (
-                    <li key={share.id} className="rounded-lg border border-border p-3 text-sm">
+                    <li
+                      key={share.id}
+                      ref={(node) => {
+                        shareRefs.current[share.id] = node
+                      }}
+                      className={cn(
+                        "rounded-lg border border-border p-3 text-sm",
+                        highlightShareId === String(share.id) && "border-primary ring-2 ring-primary/20",
+                      )}
+                    >
                       <div className="flex items-center justify-between gap-2">
                         <span>{isOwner ? share.shared_with_email : t("sharing.fromOwner")}</span>
                         <Badge>{share.status}</Badge>

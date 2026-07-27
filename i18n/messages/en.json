@@ -18,6 +18,7 @@
     "loading": "Loading...",
     "notSet": "Not set",
     "saving": "Saving...",
+    "save": "Save",
     "selectLanguage": "Select language",
     "tamil": "தமிழ்",
     "showPassword": "Show password",
@@ -940,6 +941,7 @@
     "view": "View shared data",
     "fromOwner": "Shared with you",
     "viewError": "Unable to load shared data",
+    "pendingInvite": "You have a pending cycle share invitation below.",
     "invite": {
       "title": "Invite someone",
       "email": "Email address",
