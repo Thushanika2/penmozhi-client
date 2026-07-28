@@ -20,6 +20,7 @@ export interface AIChatResponse {
   message: string
   reply: string
   recommendations: string[]
+  chat_id: number
   session_id: number
   messages: AIChatMessage[]
   session: AIHealthAssistantSession

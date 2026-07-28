@@ -987,7 +987,8 @@
     "newChat": "புதிய அரட்டை",
     "loadingHistory": "உங்கள் அரட்டை வரலாறு ஏற்றப்படுகிறது...",
     "noSessions": "சேமிக்கப்பட்ட அரட்டைகள் இல்லை.",
-    "messageCount": "{count} செய்திகள்"
+    "messageCount": "{count} செய்திகள்",
+    "typing": "தட்டச்சு செய்கிறது..."
   },
   "forum": {
     "anonymous": "அநாமதேயர்",

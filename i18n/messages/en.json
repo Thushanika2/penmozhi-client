@@ -987,7 +987,8 @@
     "newChat": "New chat",
     "loadingHistory": "Loading your chat history...",
     "noSessions": "No saved chats yet.",
-    "messageCount": "{count} messages"
+    "messageCount": "{count} messages",
+    "typing": "Typing..."
   },
   "forum": {
     "anonymous": "Anonymous",

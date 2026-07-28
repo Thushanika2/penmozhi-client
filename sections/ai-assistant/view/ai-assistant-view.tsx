@@ -25,6 +25,22 @@ import {
 } from "@/services/ai-assistant"
 import type { AIChatMessage, AIHealthAssistantSession } from "@/types/ai-assistant"
 
+function TypingIndicator({ label }: { label: string }) {
+  return (
+    <div className="max-w-[85%] rounded-lg bg-muted p-3 text-sm">
+      <span className="sr-only">{label}</span>
+      <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
+          <span className="size-2 animate-bounce rounded-full bg-primary/70 [animation-delay:0ms]" />
+          <span className="size-2 animate-bounce rounded-full bg-primary/70 [animation-delay:150ms]" />
+          <span className="size-2 animate-bounce rounded-full bg-primary/70 [animation-delay:300ms]" />
+        </div>
+        <span className="text-xs text-muted-foreground">{label}</span>
+      </div>
+    </div>
+  )
+}
+
 export function AIAssistantView() {
   const { t } = useLanguage()
   const [message, setMessage] = React.useState("")
@@ -90,11 +106,12 @@ export function AIAssistantView() {
     try {
       const data = await sendChatMessage({
         message: userMessage,
+        chat_id: activeSessionId,
         session_id: activeSessionId,
         new_session: isNewConversation || activeSessionId == null,
       })
       setChat(data.messages)
-      setActiveSessionId(data.session_id)
+      setActiveSessionId(data.chat_id ?? data.session_id)
       setIsNewConversation(false)
       if (data.recommendations.length) {
         setRecommendations((prev) => {
@@ -144,18 +161,21 @@ export function AIAssistantView() {
                   {t("aiAssistant.emptyChat")}
                 </p>
               ) : (
-                chat.map((entry, index) => (
-                  <div
-                    key={`${entry.role}-${index}`}
-                    className={
-                      entry.role === "user"
-                        ? "ml-auto max-w-[85%] rounded-lg bg-primary/10 p-3 text-sm"
-                        : "max-w-[85%] rounded-lg bg-muted p-3 text-sm"
-                    }
-                  >
-                    {entry.content}
-                  </div>
-                ))
+                <>
+                  {chat.map((entry, index) => (
+                    <div
+                      key={`${entry.role}-${index}`}
+                      className={
+                        entry.role === "user"
+                          ? "ml-auto max-w-[85%] rounded-lg bg-primary/10 p-3 text-sm"
+                          : "max-w-[85%] rounded-lg bg-muted p-3 text-sm"
+                      }
+                    >
+                      {entry.content}
+                    </div>
+                  ))}
+                  {sending ? <TypingIndicator label={t("aiAssistant.typing")} /> : null}
+                </>
               )}
             </div>
             <form onSubmit={handleSend} className="flex gap-2">

@@ -7,6 +7,7 @@ import type {
 
 export interface ChatPayload {
   message: string
+  chat_id?: number | null
   session_id?: number | null
   new_session?: boolean
 }
