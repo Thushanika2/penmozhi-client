@@ -21,7 +21,7 @@ const baseURL =
 
 const apiClient = axios.create({
   baseURL,
-  timeout: 10_000,
+  timeout: 30_000,
   headers: {
     "Content-Type": "application/json",
   },
@@ -91,8 +91,12 @@ apiClient.interceptors.response.use(
       }
 
       if (!error.response) {
-        error.message =
-          "Cannot reach the Penmozhi API. Make sure the backend is running on port 5000."
+        const timedOut =
+          error.code === "ECONNABORTED" ||
+          error.message.toLowerCase().includes("timeout")
+        error.message = timedOut
+          ? "The Penmozhi API request timed out. Please try again."
+          : "Cannot reach the Penmozhi API. Make sure the backend is running on port 5000."
       }
     }
     return Promise.reject(error)

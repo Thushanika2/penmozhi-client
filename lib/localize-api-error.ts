@@ -25,6 +25,9 @@ export function getLocalizedApiError(error: unknown, t: Translate): string {
   if (payload?.message) return payload.message
 
   const fallback = getApiErrorMessage(error)
+  if (fallback.includes("request timed out")) {
+    return t("api.errors.timeout")
+  }
   if (fallback.includes("Cannot reach the Penmozhi API")) {
     return t("api.errors.network")
   }

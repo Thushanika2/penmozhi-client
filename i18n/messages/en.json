@@ -983,7 +983,11 @@
     "recommendationsDescription": "Based on your recent symptoms and questions",
     "noRecommendations": "No recommendations yet — start a chat to receive tips.",
     "recentSessions": "Recent sessions",
-    "sessionFallback": "Chat session"
+    "sessionFallback": "Chat session",
+    "newChat": "New chat",
+    "loadingHistory": "Loading your chat history...",
+    "noSessions": "No saved chats yet.",
+    "messageCount": "{count} messages"
   },
   "forum": {
     "anonymous": "Anonymous",
@@ -1248,6 +1252,7 @@
   "api": {
     "errors": {
       "network": "Cannot reach the Penmozhi API. Make sure the backend is running on port 5000.",
+      "timeout": "The AI assistant is taking longer than expected. Please try again.",
       "unexpected": "An unexpected error occurred.",
       "request": {
         "body_required": "Request body is required."
@@ -1265,7 +1270,11 @@
         "language_invalid": "Language must be Tamil or English.",
         "minutes_positive": "Minutes must be a positive number.",
         "message_required": "Message is required.",
-        "body_required": "Comment text is required."
+        "body_required": "Comment text is required.",
+        "session_id_invalid": "Invalid chat session id."
+      },
+      "ai": {
+        "session_not_found": "Chat session not found."
       },
       "reminders": {
         "not_found": "Reminder not found."
