@@ -60,7 +60,13 @@ export function AuthenticatedRoute({
   return <>{children}</>
 }
 
-export function GuestRoute({ children }: { children: React.ReactNode }) {
+export function GuestRoute({
+  children,
+  fullScreen = false,
+}: {
+  children: React.ReactNode
+  fullScreen?: boolean
+}) {
   const { user, isLoading } = useAuth()
   const { t } = useLanguage()
   const router = useRouter()
@@ -72,7 +78,13 @@ export function GuestRoute({ children }: { children: React.ReactNode }) {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-[40vh] items-center justify-center text-muted-foreground">
+      <div
+        className={
+          fullScreen
+            ? "flex min-h-svh items-center justify-center text-muted-foreground"
+            : "flex min-h-[40vh] items-center justify-center text-muted-foreground"
+        }
+      >
         {t("common.loading")}
       </div>
     )

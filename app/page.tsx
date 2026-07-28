@@ -14,6 +14,7 @@ import {
   TrendingUp,
 } from "lucide-react"
 
+import { GuestRoute } from "@/components/auth-guard"
 import { SiteFooter } from "@/components/site-footer"
 import { SiteHeader } from "@/components/site-header"
 import { Button } from "@/components/ui/button"
@@ -21,6 +22,14 @@ import { Badge } from "@/components/ui/badge"
 import { useLanguage } from "@/providers/language-provider"
 
 export default function LandingPage() {
+  return (
+    <GuestRoute fullScreen>
+      <LandingPageContent />
+    </GuestRoute>
+  )
+}
+
+function LandingPageContent() {
   const { t } = useLanguage()
 
   const stats = [

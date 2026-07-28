@@ -15,7 +15,7 @@ export type BirthControlType =
 
 export interface PeriodHistoryEntry {
   period_start: string
-  flow: FlowLevel
+  flow: FlowLevel | ""
 }
 
 export type SymptomOption =
@@ -52,7 +52,6 @@ export interface OnboardingPayload {
   weight: number
   language_preference: LanguagePreference
   timezone: string
-  knows_last_three_months: boolean
   period_history: PeriodHistoryEntry[]
   menarche_age?: number | null
   average_cycle_length: number

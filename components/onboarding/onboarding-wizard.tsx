@@ -16,8 +16,13 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select } from "@/components/ui/select"
+import { compareDateKeysDesc } from "@/lib/date-only"
 import { getPostAuthPath } from "@/lib/auth-redirect"
 import { getLocalizedApiError } from "@/lib/localize-api-error"
+import {
+  isMenstrualBaselineStepComplete,
+  MenstrualBaselineStep,
+} from "@/components/onboarding/menstrual-baseline-step"
 import { useAuth } from "@/providers/auth-provider"
 import { useLanguage } from "@/providers/language-provider"
 import * as onboardingService from "@/services/onboarding"
@@ -25,10 +30,11 @@ import { COUNTRIES } from "@/lib/countries"
 import type { UserProfile } from "@/types/user-profile"
 import type {
   BirthControlType,
+  ExerciseFrequency,
   FlowLevel,
   HealthConditionOption,
   OnboardingPayload,
-  PeriodHistoryEntry,
+  StressLevel,
   SymptomOption,
 } from "@/types/onboarding"
 
@@ -62,12 +68,31 @@ const CONDITION_OPTIONS: HealthConditionOption[] = [
 
 const TOTAL_STEPS = 8
 
-function emptyPeriodEntry(): PeriodHistoryEntry {
-  return { period_start: "", flow: "medium" }
+type OnboardingFormState = Omit<
+  OnboardingPayload,
+  "exercise_frequency" | "stress_level" | "smoking" | "alcohol" | "is_teenager"
+> & {
+  exercise_frequency: ExerciseFrequency | ""
+  stress_level: StressLevel | ""
+  smoking: boolean | null
+  alcohol: boolean | null
+  reproductive_none: boolean
 }
 
-function periodHistoryForMode(knowsThree: boolean): PeriodHistoryEntry[] {
-  return Array.from({ length: knowsThree ? 3 : 1 }, emptyPeriodEntry)
+function isTeenagerFromDateOfBirth(dateOfBirth: string): boolean {
+  const age = calculateAge(dateOfBirth)
+  return age !== null && age >= 13 && age <= 19
+}
+
+function isLifestyleStepComplete(form: OnboardingFormState): boolean {
+  return (
+    form.sleep_hours > 0 &&
+    form.water_intake_liters > 0 &&
+    Boolean(form.exercise_frequency) &&
+    Boolean(form.stress_level) &&
+    form.smoking !== null &&
+    form.alcohol !== null
+  )
 }
 
 function calculateAge(dateOfBirth: string) {
@@ -86,36 +111,35 @@ function calculateBmi(weight: number, height: number) {
   return Math.round((weight / (heightM * heightM)) * 10) / 10
 }
 
-function defaultForm(user: UserProfile | null): OnboardingPayload {
+function defaultForm(user: UserProfile | null): OnboardingFormState {
   return {
     full_name: user?.full_name ?? "",
     date_of_birth: user?.date_of_birth ?? "",
-    country: user?.country ?? "India",
-    height: 160,
-    weight: 55,
+    country: user?.country ?? "",
+    height: 0,
+    weight: 0,
     language_preference: user?.language_preference ?? "english",
     timezone: user?.timezone ?? "Asia/Kolkata",
-    knows_last_three_months: true,
-    period_history: periodHistoryForMode(true),
-    average_cycle_length: 28,
+    period_history: [],
+    average_cycle_length: 0,
     average_period_length: 5,
     last_period_start: "",
     typical_flow: "medium",
     cycle_regularity: "regular",
     common_symptoms: [],
     health_conditions: [],
-    sleep_hours: 7,
-    water_intake_liters: 2,
-    exercise_frequency: "weekly",
-    stress_level: "medium",
-    smoking: false,
-    alcohol: false,
+    sleep_hours: 0,
+    water_intake_liters: 0,
+    exercise_frequency: "",
+    stress_level: "",
+    smoking: null,
+    alcohol: null,
     trying_to_conceive: false,
-    is_teenager: false,
     is_pregnant: false,
     is_breastfeeding: false,
     using_birth_control: false,
     birth_control_type: "none",
+    reproductive_none: false,
     notify_period: true,
     notify_ovulation: true,
     notify_medication: true,
@@ -131,13 +155,13 @@ export function OnboardingWizard() {
 
 function OnboardingWizardForm({ user }: { user: UserProfile }) {
   const { setHealthProfile, updateUser } = useAuth()
-  const { t } = useLanguage()
+  const { t, locale } = useLanguage()
   const router = useRouter()
   const [step, setStep] = React.useState(0)
   const [submitting, setSubmitting] = React.useState(false)
-  const [form, setForm] = React.useState<OnboardingPayload>(() => defaultForm(user))
+  const [form, setForm] = React.useState<OnboardingFormState>(() => defaultForm(user))
 
-  function updateField<K extends keyof OnboardingPayload>(key: K, value: OnboardingPayload[K]) {
+  function updateField<K extends keyof OnboardingFormState>(key: K, value: OnboardingFormState[K]) {
     setForm((current) => ({ ...current, [key]: value }))
   }
 
@@ -165,24 +189,38 @@ function OnboardingWizardForm({ user }: { user: UserProfile }) {
     })
   }
 
-  function updatePeriodHistory(
-    index: number,
-    key: keyof PeriodHistoryEntry,
-    value: string,
+  function toggleReproductiveOption(
+    option:
+      | "reproductive_none"
+      | "trying_to_conceive"
+      | "is_pregnant"
+      | "is_breastfeeding"
+      | "using_birth_control",
   ) {
     setForm((current) => {
-      const next = [...current.period_history]
-      next[index] = { ...next[index], [key]: value }
-      return { ...current, period_history: next }
-    })
-  }
+      if (option === "reproductive_none") {
+        const next = !current.reproductive_none
+        return {
+          ...current,
+          reproductive_none: next,
+          trying_to_conceive: false,
+          is_pregnant: false,
+          is_breastfeeding: false,
+          using_birth_control: false,
+          birth_control_type: "none",
+        }
+      }
 
-  function setKnowsLastThreeMonths(knows: boolean) {
-    setForm((current) => ({
-      ...current,
-      knows_last_three_months: knows,
-      period_history: periodHistoryForMode(knows),
-    }))
+      const nextValue = !current[option]
+      return {
+        ...current,
+        reproductive_none: false,
+        [option]: nextValue,
+        ...(option === "using_birth_control" && !nextValue
+          ? { birth_control_type: "none" as BirthControlType }
+          : {}),
+      }
+    })
   }
 
   function validateStep(currentStep: number): boolean {
@@ -206,18 +244,70 @@ function OnboardingWizardForm({ user }: { user: UserProfile }) {
     }
 
     if (currentStep === 1) {
-      if (!form.average_cycle_length) {
+      if (!form.average_cycle_length || form.average_cycle_length < 21) {
         toast.error(t("onboarding.validation.cycleLengthRequired"))
         return false
       }
-      for (const [index, entry] of form.period_history.entries()) {
-        if (!entry.period_start) {
-          toast.error(t("onboarding.validation.periodStartRequired", { month: String(index + 1) }))
+      if (form.period_history.length < 1) {
+        toast.error(t("onboarding.validation.atLeastOnePeriod"))
+        return false
+      }
+      for (const entry of form.period_history) {
+        if (!entry.flow) {
+          toast.error(t("onboarding.validation.flowRequired"))
           return false
         }
       }
     }
 
+    if (currentStep === 2) {
+      if (!form.common_symptoms.length) {
+        toast.error(t("onboarding.validation.symptomsRequired"))
+        return false
+      }
+    }
+
+    if (currentStep === 3) {
+      if (!form.health_conditions.length) {
+        toast.error(t("onboarding.validation.conditionsRequired"))
+        return false
+      }
+    }
+
+    if (currentStep === 4) {
+      if (!form.sleep_hours || form.sleep_hours <= 0) {
+        toast.error(t("onboarding.validation.sleepHoursRequired"))
+        return false
+      }
+      if (!form.water_intake_liters || form.water_intake_liters <= 0) {
+        toast.error(t("onboarding.validation.waterIntakeRequired"))
+        return false
+      }
+      if (!form.exercise_frequency) {
+        toast.error(t("onboarding.validation.exerciseRequired"))
+        return false
+      }
+      if (!form.stress_level) {
+        toast.error(t("onboarding.validation.stressRequired"))
+        return false
+      }
+      if (form.smoking === null) {
+        toast.error(t("onboarding.validation.smokingRequired"))
+        return false
+      }
+      if (form.alcohol === null) {
+        toast.error(t("onboarding.validation.alcoholRequired"))
+        return false
+      }
+    }
+
+    return true
+  }
+
+  function validateRequiredSteps(): boolean {
+    for (const stepIndex of [0, 1, 2, 3, 4]) {
+      if (!validateStep(stepIndex)) return false
+    }
     return true
   }
 
@@ -227,16 +317,27 @@ function OnboardingWizardForm({ user }: { user: UserProfile }) {
   }
 
   async function finishSetup() {
-    if (!validateStep(0) || !validateStep(1)) return
+    if (!validateRequiredSteps()) return
 
-    const sortedHistory = [...form.period_history].sort(
-      (a, b) => new Date(b.period_start).getTime() - new Date(a.period_start).getTime(),
+    const sortedHistory = [...form.period_history].sort((a, b) =>
+      compareDateKeysDesc(a.period_start, b.period_start),
     )
+    const { reproductive_none, exercise_frequency, stress_level, smoking, alcohol, ...rest } =
+      form
+    void reproductive_none
     const payload: OnboardingPayload = {
-      ...form,
-      period_history: sortedHistory,
+      ...rest,
+      exercise_frequency: exercise_frequency as ExerciseFrequency,
+      stress_level: stress_level as StressLevel,
+      smoking: smoking ?? false,
+      alcohol: alcohol ?? false,
+      is_teenager: isTeenagerFromDateOfBirth(form.date_of_birth),
+      period_history: sortedHistory.map((entry) => ({
+        period_start: entry.period_start,
+        flow: entry.flow as FlowLevel,
+      })),
       last_period_start: sortedHistory[0]?.period_start ?? "",
-      typical_flow: sortedHistory[0]?.flow ?? "medium",
+      typical_flow: (sortedHistory[0]?.flow as FlowLevel) ?? "medium",
     }
 
     setSubmitting(true)
@@ -255,6 +356,14 @@ function OnboardingWizardForm({ user }: { user: UserProfile }) {
 
   const age = calculateAge(form.date_of_birth)
   const bmi = calculateBmi(form.weight, form.height)
+  const menstrualBaselineComplete = isMenstrualBaselineStepComplete(
+    form.average_cycle_length,
+    form.period_history,
+  )
+  const lifestyleComplete = isLifestyleStepComplete(form)
+  const sortedPeriodHistory = [...form.period_history].sort((a, b) =>
+    compareDateKeysDesc(a.period_start, b.period_start),
+  )
 
   return (
     <div className="mx-auto w-full max-w-2xl px-4 py-8">
@@ -295,6 +404,9 @@ function OnboardingWizardForm({ user }: { user: UserProfile }) {
                   value={form.country}
                   onChange={(e) => updateField("country", e.target.value)}
                 >
+                  <option value="" disabled>
+                    {t("onboarding.placeholders.selectCountry")}
+                  </option>
                   {COUNTRIES.map((country) => (
                     <option key={country} value={country}>
                       {country}
@@ -307,7 +419,8 @@ function OnboardingWizardForm({ user }: { user: UserProfile }) {
                   <Input
                     type="number"
                     className="rounded-xl"
-                    value={form.height}
+                    placeholder={t("onboarding.placeholders.heightCm")}
+                    value={form.height || ""}
                     onChange={(e) => updateField("height", Number(e.target.value))}
                   />
                 </Field>
@@ -315,7 +428,8 @@ function OnboardingWizardForm({ user }: { user: UserProfile }) {
                   <Input
                     type="number"
                     className="rounded-xl"
-                    value={form.weight}
+                    placeholder={t("onboarding.placeholders.weightKg")}
+                    value={form.weight || ""}
                     onChange={(e) => updateField("weight", Number(e.target.value))}
                   />
                 </Field>
@@ -327,74 +441,14 @@ function OnboardingWizardForm({ user }: { user: UserProfile }) {
           ) : null}
 
           {step === 1 ? (
-            <>
-              <Field label={t("onboarding.fields.cycleLength")}>
-                <Input
-                  type="number"
-                  className="rounded-xl"
-                  value={form.average_cycle_length}
-                  onChange={(e) => updateField("average_cycle_length", Number(e.target.value))}
-                />
-              </Field>
-
-              <div className="space-y-3 rounded-xl border border-border/60 p-4">
-                <p className="text-sm font-medium">{t("onboarding.fields.periodHistoryMode")}</p>
-                <label className="flex cursor-pointer items-center gap-3 text-sm">
-                  <input
-                    type="radio"
-                    name="periodHistoryMode"
-                    checked={form.knows_last_three_months}
-                    onChange={() => setKnowsLastThreeMonths(true)}
-                  />
-                  {t("onboarding.fields.knowsLastThreeMonths")}
-                </label>
-                <label className="flex cursor-pointer items-center gap-3 text-sm">
-                  <input
-                    type="radio"
-                    name="periodHistoryMode"
-                    checked={!form.knows_last_three_months}
-                    onChange={() => setKnowsLastThreeMonths(false)}
-                  />
-                  {t("onboarding.fields.knowsLastMonthOnly")}
-                </label>
-              </div>
-
-              {form.period_history.map((entry, index) => (
-                <div
-                  key={`period-${index}`}
-                  className="space-y-3 rounded-xl border border-border/60 p-4"
-                >
-                  <p className="text-sm font-medium">
-                    {form.knows_last_three_months
-                      ? t(`onboarding.periodMonths.${index}`)
-                      : t("onboarding.fields.lastPeriodStart")}
-                  </p>
-                  <Field label={t("onboarding.fields.lastPeriodStart")}>
-                    <Input
-                      type="date"
-                      className="rounded-xl"
-                      value={entry.period_start}
-                      onChange={(e) => updatePeriodHistory(index, "period_start", e.target.value)}
-                    />
-                  </Field>
-                  <Field label={t("onboarding.fields.typicalFlow")}>
-                    <Select
-                      className="rounded-xl"
-                      value={entry.flow}
-                      onChange={(e) =>
-                        updatePeriodHistory(index, "flow", e.target.value as FlowLevel)
-                      }
-                    >
-                      {(["light", "medium", "heavy", "very_heavy"] as const).map((flow) => (
-                        <option key={flow} value={flow}>
-                          {t(`onboarding.flow.${flow}`)}
-                        </option>
-                      ))}
-                    </Select>
-                  </Field>
-                </div>
-              ))}
-            </>
+            <MenstrualBaselineStep
+              locale={locale}
+              averageCycleLength={form.average_cycle_length}
+              periodHistory={form.period_history}
+              onCycleLengthChange={(value) => updateField("average_cycle_length", value)}
+              onPeriodHistoryChange={(entries) => updateField("period_history", entries)}
+              t={t}
+            />
           ) : null}
 
           {step === 2 ? (
@@ -424,7 +478,8 @@ function OnboardingWizardForm({ user }: { user: UserProfile }) {
                   type="number"
                   step="0.5"
                   className="rounded-xl"
-                  value={form.sleep_hours}
+                  placeholder={t("onboarding.placeholders.sleepHours")}
+                  value={form.sleep_hours || ""}
                   onChange={(e) => updateField("sleep_hours", Number(e.target.value))}
                 />
               </Field>
@@ -433,7 +488,8 @@ function OnboardingWizardForm({ user }: { user: UserProfile }) {
                   type="number"
                   step="0.1"
                   className="rounded-xl"
-                  value={form.water_intake_liters}
+                  placeholder={t("onboarding.placeholders.waterLiters")}
+                  value={form.water_intake_liters || ""}
                   onChange={(e) => updateField("water_intake_liters", Number(e.target.value))}
                 />
               </Field>
@@ -442,9 +498,12 @@ function OnboardingWizardForm({ user }: { user: UserProfile }) {
                   className="rounded-xl"
                   value={form.exercise_frequency}
                   onChange={(e) =>
-                    updateField("exercise_frequency", e.target.value as OnboardingPayload["exercise_frequency"])
+                    updateField("exercise_frequency", e.target.value as ExerciseFrequency | "")
                   }
                 >
+                  <option value="" disabled>
+                    {t("onboarding.placeholders.selectExercise")}
+                  </option>
                   {(["never", "rarely", "weekly", "daily"] as const).map((item) => (
                     <option key={item} value={item}>
                       {t(`onboarding.exercise.${item}`)}
@@ -456,10 +515,11 @@ function OnboardingWizardForm({ user }: { user: UserProfile }) {
                 <Select
                   className="rounded-xl"
                   value={form.stress_level}
-                  onChange={(e) =>
-                    updateField("stress_level", e.target.value as OnboardingPayload["stress_level"])
-                  }
+                  onChange={(e) => updateField("stress_level", e.target.value as StressLevel | "")}
                 >
+                  <option value="" disabled>
+                    {t("onboarding.placeholders.selectStress")}
+                  </option>
                   {(["low", "medium", "high"] as const).map((item) => (
                     <option key={item} value={item}>
                       {t(`onboarding.stress.${item}`)}
@@ -467,15 +527,17 @@ function OnboardingWizardForm({ user }: { user: UserProfile }) {
                   ))}
                 </Select>
               </Field>
-              <ToggleRow
+              <YesNoField
                 label={t("onboarding.fields.smoking")}
-                checked={form.smoking}
-                onChange={(checked) => updateField("smoking", checked)}
+                value={form.smoking}
+                onChange={(value) => updateField("smoking", value)}
+                t={t}
               />
-              <ToggleRow
+              <YesNoField
                 label={t("onboarding.fields.alcohol")}
-                checked={form.alcohol}
-                onChange={(checked) => updateField("alcohol", checked)}
+                value={form.alcohol}
+                onChange={(value) => updateField("alcohol", value)}
+                t={t}
               />
             </>
           ) : null}
@@ -483,29 +545,24 @@ function OnboardingWizardForm({ user }: { user: UserProfile }) {
           {step === 5 ? (
             <>
               <ToggleRow
-                label={t("onboarding.fields.isTeenager")}
-                checked={form.is_teenager}
-                onChange={(checked) => updateField("is_teenager", checked)}
-              />
-              <ToggleRow
                 label={t("onboarding.fields.tryingToConceive")}
                 checked={form.trying_to_conceive}
-                onChange={(checked) => updateField("trying_to_conceive", checked)}
+                onChange={() => toggleReproductiveOption("trying_to_conceive")}
               />
               <ToggleRow
                 label={t("onboarding.fields.pregnant")}
                 checked={form.is_pregnant}
-                onChange={(checked) => updateField("is_pregnant", checked)}
+                onChange={() => toggleReproductiveOption("is_pregnant")}
               />
               <ToggleRow
                 label={t("onboarding.fields.breastfeeding")}
                 checked={form.is_breastfeeding}
-                onChange={(checked) => updateField("is_breastfeeding", checked)}
+                onChange={() => toggleReproductiveOption("is_breastfeeding")}
               />
               <ToggleRow
                 label={t("onboarding.fields.usingBirthControl")}
                 checked={form.using_birth_control}
-                onChange={(checked) => updateField("using_birth_control", checked)}
+                onChange={() => toggleReproductiveOption("using_birth_control")}
               />
               {form.using_birth_control ? (
                 <Field label={t("onboarding.fields.birthControlType")}>
@@ -526,6 +583,11 @@ function OnboardingWizardForm({ user }: { user: UserProfile }) {
                   </Select>
                 </Field>
               ) : null}
+              <ToggleRow
+                label={t("onboarding.fields.noneOfTheAbove")}
+                checked={form.reproductive_none}
+                onChange={() => toggleReproductiveOption("reproductive_none")}
+              />
             </>
           ) : null}
 
@@ -569,7 +631,7 @@ function OnboardingWizardForm({ user }: { user: UserProfile }) {
               />
               <SummaryRow
                 label={t("onboarding.fields.lastPeriodStart")}
-                value={form.period_history[0]?.period_start ?? ""}
+                value={sortedPeriodHistory[0]?.period_start ?? ""}
               />
               <SummaryRow
                 label={t("onboarding.fields.symptoms")}
@@ -593,7 +655,15 @@ function OnboardingWizardForm({ user }: { user: UserProfile }) {
             {t("common.back")}
           </Button>
           {step < TOTAL_STEPS - 1 ? (
-            <Button type="button" className="rounded-full" onClick={goNext}>
+            <Button
+              type="button"
+              className="rounded-full"
+              disabled={
+                (step === 1 && !menstrualBaselineComplete) ||
+                (step === 4 && !lifestyleComplete)
+              }
+              onClick={goNext}
+            >
               {t("onboarding.next")}
             </Button>
           ) : (
@@ -617,6 +687,44 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
     <div className="space-y-2">
       <Label>{label}</Label>
       {children}
+    </div>
+  )
+}
+
+function YesNoField({
+  label,
+  value,
+  onChange,
+  t,
+}: {
+  label: string
+  value: boolean | null
+  onChange: (value: boolean) => void
+  t: (key: string) => string
+}) {
+  return (
+    <div className="space-y-2">
+      <Label>{label}</Label>
+      <div className="grid grid-cols-2 gap-2">
+        <Button
+          type="button"
+          variant={value === true ? "default" : "outline"}
+          className="rounded-full"
+          aria-pressed={value === true}
+          onClick={() => onChange(true)}
+        >
+          {t("common.yes")}
+        </Button>
+        <Button
+          type="button"
+          variant={value === false ? "default" : "outline"}
+          className="rounded-full"
+          aria-pressed={value === false}
+          onClick={() => onChange(false)}
+        >
+          {t("common.no")}
+        </Button>
+      </div>
     </div>
   )
 }

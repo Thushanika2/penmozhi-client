@@ -43,12 +43,18 @@ function RegisterForm() {
 
   const schema = useMemo(
     () =>
-      z.object({
-        fullName: fullNameField(t),
-        email: emailField(t),
-        password: passwordField(t),
-        languagePreference: z.enum(["english", "tamil"]),
-      }),
+      z
+        .object({
+          fullName: fullNameField(t),
+          email: emailField(t),
+          password: passwordField(t),
+          confirmPassword: z.string().min(1, t("auth.validation.confirmPasswordRequired")),
+          languagePreference: z.enum(["english", "tamil"]),
+        })
+        .refine((data) => data.password === data.confirmPassword, {
+          message: t("auth.validation.passwordsDoNotMatch"),
+          path: ["confirmPassword"],
+        }),
     [t],
   )
 
@@ -129,6 +135,18 @@ function RegisterForm() {
               />
               {errors.password ? (
                 <p className="text-sm text-destructive">{errors.password.message}</p>
+              ) : null}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword">{t("auth.register.confirmPassword")}</Label>
+              <PasswordInput
+                id="confirmPassword"
+                autoComplete="new-password"
+                aria-invalid={Boolean(errors.confirmPassword)}
+                {...register("confirmPassword")}
+              />
+              {errors.confirmPassword ? (
+                <p className="text-sm text-destructive">{errors.confirmPassword.message}</p>
               ) : null}
             </div>
             <div className="space-y-2">

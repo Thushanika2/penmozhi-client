@@ -22,7 +22,9 @@
     "selectLanguage": "Select language",
     "tamil": "தமிழ்",
     "showPassword": "Show password",
-    "hidePassword": "Hide password"
+    "hidePassword": "Hide password",
+    "yes": "Yes",
+    "no": "No"
   },
   "a11y": {
     "closeDialog": "Close dialog",
@@ -214,6 +216,7 @@
       "fullName": "Full name",
       "email": "Email",
       "password": "Password",
+      "confirmPassword": "Confirm password",
       "dateOfBirth": "Date of birth",
       "language": "Preferred language",
       "languageEnglish": "English",
@@ -232,6 +235,8 @@
       "passwordRequired": "Please enter your password",
       "passwordMin": "Password must be at least 6 characters",
       "passwordMax": "Password must be 128 characters or fewer",
+      "confirmPasswordRequired": "Please confirm your password",
+      "passwordsDoNotMatch": "Passwords do not match",
       "dateOfBirthRequired": "Please select your date of birth",
       "tokenRequired": "Reset token is required",
       "passwordMismatch": "Passwords do not match"
@@ -280,6 +285,7 @@
       "pregnant": "Currently pregnant?",
       "breastfeeding": "Currently breastfeeding?",
       "usingBirthControl": "Using birth control?",
+      "noneOfTheAbove": "None of the above",
       "birthControlType": "Birth control type",
       "notifyPeriod": "Period reminder",
       "notifyOvulation": "Ovulation reminder",
@@ -291,10 +297,29 @@
       "knowsLastThreeMonths": "I know my last 3 periods",
       "knowsLastMonthOnly": "I only know my most recent period"
     },
+    "placeholders": {
+      "selectCountry": "Select your country",
+      "heightCm": "e.g. 160",
+      "weightKg": "e.g. 55",
+      "cycleLengthDays": "e.g. 28",
+      "sleepHours": "e.g. 7",
+      "waterLiters": "e.g. 2",
+      "selectExercise": "Select exercise frequency",
+      "selectStress": "Select stress level",
+      "selectFlow": "Select flow level"
+    },
     "periodMonths": {
       "0": "Most recent period",
       "1": "Previous month",
       "2": "Two months ago"
+    },
+    "periodHistory": {
+      "instructions": "Tap the dates your last periods started on the calendar below. After selecting a date, choose the flow level for that day.",
+      "selectUpToThree": "Select up to {max} period start dates on the calendar",
+      "selectedDates": "Selected periods",
+      "removeDate": "Remove date",
+      "previousMonth": "Previous month",
+      "nextMonth": "Next month"
     },
     "validation": {
       "dateOfBirthRequired": "Please enter your date of birth.",
@@ -302,7 +327,19 @@
       "heightRequired": "Please enter a valid height.",
       "weightRequired": "Please enter a valid weight.",
       "cycleLengthRequired": "Please enter your average cycle length.",
-      "periodStartRequired": "Please enter the period start date for month {month}."
+      "periodStartRequired": "Please enter the period start date for month {month}.",
+      "atLeastOnePeriod": "Please select at least one period start date on the calendar.",
+      "maxOnePeriod": "You can only select one period start date.",
+      "maxThreePeriods": "You can select up to three period start dates.",
+      "flowRequired": "Please select a flow level for each selected period.",
+      "sleepHoursRequired": "Please enter your average sleep hours.",
+      "waterIntakeRequired": "Please enter your daily water intake.",
+      "exerciseRequired": "Please select your exercise frequency.",
+      "stressRequired": "Please select your stress level.",
+      "smokingRequired": "Please answer whether you smoke.",
+      "alcoholRequired": "Please answer whether you drink alcohol.",
+      "symptomsRequired": "Please select at least one symptom option.",
+      "conditionsRequired": "Please select at least one health condition option."
     },
     "flow": {
       "light": "Light",

@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import {
   BookOpen,
   LayoutDashboard,
@@ -30,9 +30,15 @@ const navItems = [
 
 export function AdminSidebar({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
+  const router = useRouter()
   const { user, logout } = useAuth()
   const { t } = useLanguage()
   const [mobileOpen, setMobileOpen] = React.useState(false)
+
+  async function handleLogout() {
+    await logout()
+    router.replace("/")
+  }
 
   return (
     <div className="flex min-h-svh gradient-mesh">
@@ -96,7 +102,7 @@ export function AdminSidebar({ children }: { children: React.ReactNode }) {
             variant="outline"
             size="sm"
             className="mt-3 w-full rounded-full"
-            onClick={() => logout()}
+            onClick={handleLogout}
           >
             <LogOut className="size-4" />
             {t("nav.logout")}

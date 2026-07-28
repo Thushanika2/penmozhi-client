@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import {
   Activity,
   Baby,
@@ -67,10 +67,16 @@ function isActive(pathname: string, href: string, exact?: boolean) {
 
 export function DashboardSidebar({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
+  const router = useRouter()
   const { user, logout } = useAuth()
   const { t } = useLanguage()
   const [mobileOpen, setMobileOpen] = React.useState(false)
   const [moreOpen, setMoreOpen] = React.useState(false)
+
+  async function handleLogout() {
+    await logout()
+    router.replace("/")
+  }
 
   const moreActive = moreNav.some((item) => isActive(pathname, item.href))
   const modeNav = modeNavMap[user?.mode ?? "period"] ?? []
@@ -181,7 +187,7 @@ export function DashboardSidebar({ children }: { children: React.ReactNode }) {
             <p className="truncate text-sm font-semibold">{user?.full_name}</p>
             <p className="truncate text-xs text-muted-foreground">{user?.email}</p>
           </div>
-          <Button variant="outline" size="sm" className="mt-3 w-full rounded-full" onClick={() => logout()}>
+          <Button variant="outline" size="sm" className="mt-3 w-full rounded-full" onClick={handleLogout}>
             <LogOut className="size-4" />
             {t("nav.logout")}
           </Button>
