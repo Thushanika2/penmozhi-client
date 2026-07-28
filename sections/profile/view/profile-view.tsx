@@ -1,7 +1,6 @@
 "use client"
 
 import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { useRouter } from "next/navigation"
 import * as React from "react"
 import { toast } from "sonner"
 
@@ -155,7 +154,6 @@ export function ProfileView() {
       healthProfile={healthProfile}
       setHealthProfile={auth.setHealthProfile}
       updateUser={auth.updateUser}
-      logout={auth.logout}
       refreshProfile={auth.refreshProfile}
     />
   )
@@ -166,17 +164,14 @@ function ProfileViewContent({
   healthProfile,
   setHealthProfile,
   updateUser,
-  logout,
   refreshProfile,
 }: {
   user: UserProfile
   healthProfile: HealthProfile | null
   setHealthProfile: ReturnType<typeof useAuth>["setHealthProfile"]
   updateUser: ReturnType<typeof useAuth>["updateUser"]
-  logout: ReturnType<typeof useAuth>["logout"]
   refreshProfile: ReturnType<typeof useAuth>["refreshProfile"]
 }) {
-  const router = useRouter()
   const { t } = useLanguage()
   const queryClient = useQueryClient()
   const { data: risks = null } = useQuery({
@@ -330,10 +325,9 @@ function ProfileViewContent({
     setDeleting(true)
     try {
       await deleteAccount(deletePassword)
-      toast.success(t("profile.delete.success"))
+      toast.success(t("profile.delete.requestSubmitted"))
       setDeleteOpen(false)
-      await logout()
-      router.replace("/")
+      setDeletePassword("")
     } catch (error) {
       toast.error(getLocalizedApiError(error, t))
     } finally {

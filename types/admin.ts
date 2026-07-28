@@ -44,4 +44,54 @@ export interface AdminUsersResponse {
   }
 }
 
+export interface AdminPrivacyRequest {
+  id: number
+  user_id: number | null
+  user_email: string
+  request_type: "export" | "delete"
+  status: "pending" | "processing" | "completed"
+  created_at: string | null
+  completed_at: string | null
+  completed_by_admin_id: number | null
+  completed_by_admin_email: string | null
+}
+
+export interface AdminPrivacyRequestsResponse {
+  privacy_requests: AdminPrivacyRequest[]
+}
+
+export interface AdminPrivacyIntegration {
+  provider: string
+  integration_type: string
+  data_categories: string[]
+  connected_users: number
+  status: string
+}
+
+export interface AdminPrivacyIntegrationsResponse {
+  integrations: AdminPrivacyIntegration[]
+}
+
+export interface AdminUserConsent {
+  id: number
+  user_id: number
+  consent_type: string
+  policy_version: string
+  granted_at: string | null
+  context: string | null
+}
+
+export interface AdminUserConsentsResponse {
+  user_id: number
+  user_email: string
+  consents: AdminUserConsent[]
+}
+
+export interface AdminCompletePrivacyRequestResponse {
+  message: string
+  privacy_request: AdminPrivacyRequest
+  deletion_approach: string
+  tables_affected: string[]
+}
+
 export type AdminExportType = "users" | "cycles" | "symptoms" | "daily_logs" | "summary"

@@ -1117,7 +1117,8 @@
   },
   "admin": {
     "nav": {
-      "users": "Users"
+      "users": "Users",
+      "privacy": "Privacy & Compliance"
     },
     "dashboard": {
       "title": "Admin Dashboard",
@@ -1177,6 +1178,60 @@
       "pageInfo": "Page {page} of {pages}",
       "previous": "Previous",
       "next": "Next"
+    },
+    "privacy": {
+      "title": "Privacy & Compliance",
+      "description": "Review data export/deletion requests, third-party integrations, and user consent history.",
+      "requestsTitle": "Data export & deletion queue",
+      "requestsDescription": "Process user-initiated export and erasure requests. Deletion uses hard-delete across all user health tables.",
+      "statusFilter": "Filter by status",
+      "statusAll": "All statuses",
+      "statusPending": "Pending",
+      "statusProcessing": "Processing",
+      "statusCompleted": "Completed",
+      "noRequests": "No privacy requests found.",
+      "markComplete": "Mark completed",
+      "completing": "Completing...",
+      "completeSuccess": "Privacy request marked as completed.",
+      "deletionNote": "User account and health data were permanently deleted.",
+      "integrationsTitle": "Third-party integration audit",
+      "integrationsDescription": "Read-only view of data categories shared with connected providers.",
+      "consentsTitle": "User consent history",
+      "consentsDescription": "Look up consent records for compliance audits or support requests.",
+      "consentUserId": "User ID",
+      "consentUserIdRequired": "Enter a valid user ID.",
+      "lookupConsents": "Look up consents",
+      "consentForUser": "Consent history for {email} (ID {id})",
+      "noConsents": "No consent records found for this user.",
+      "columns": {
+        "user": "User",
+        "type": "Request type",
+        "requested": "Requested",
+        "status": "Status",
+        "completed": "Completed",
+        "actions": "Actions"
+      },
+      "requestType": {
+        "export": "Data export",
+        "delete": "Account deletion"
+      },
+      "status": {
+        "pending": "Pending",
+        "processing": "Processing",
+        "completed": "Completed"
+      },
+      "integrationColumns": {
+        "provider": "Provider",
+        "type": "Type",
+        "data": "Data categories shared",
+        "connected": "Connected users"
+      },
+      "consentColumns": {
+        "type": "Consent type",
+        "version": "Policy version",
+        "granted": "Granted at",
+        "context": "Context"
+      }
     }
   },
   "profile": {
@@ -1261,15 +1316,16 @@
     },
     "delete": {
       "title": "Delete account",
-      "description": "Permanently remove your account and all associated health data.",
+      "description": "Request permanent removal of your account and all associated health data.",
       "button": "Delete my account",
       "dialogTitle": "Delete your account?",
-      "dialogDescription": "This action cannot be undone. Enter your password to confirm.",
+      "dialogDescription": "Your deletion request will be reviewed by our team. Enter your password to confirm.",
       "passwordLabel": "Password",
       "passwordRequired": "Please enter your password to confirm",
-      "confirm": "Delete permanently",
-      "deleting": "Deleting...",
-      "success": "Your account has been deleted"
+      "confirm": "Submit deletion request",
+      "deleting": "Submitting...",
+      "success": "Your account has been deleted",
+      "requestSubmitted": "Your deletion request has been submitted. We will process it shortly."
     },
     "privacy": {
       "title": "Privacy & Data",

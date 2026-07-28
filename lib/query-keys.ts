@@ -8,6 +8,9 @@ export const queryKeys = {
   admin: {
     analytics: (days: number) => ["admin", "analytics", days] as const,
     users: (page: number, search: string) => ["admin", "users", page, search] as const,
+    privacyRequests: (status: string) => ["admin", "privacy", "requests", status] as const,
+    privacyIntegrations: () => ["admin", "privacy", "integrations"] as const,
+    userConsents: (userId: number) => ["admin", "privacy", "consents", userId] as const,
   },
   symptoms: {
     list: ["symptoms", "list"] as const,

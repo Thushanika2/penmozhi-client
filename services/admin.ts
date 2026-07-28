@@ -1,5 +1,13 @@
 import apiClient from "@/lib/api-client"
-import type { AdminAnalytics, AdminExportType, AdminUsersResponse } from "@/types/admin"
+import type {
+  AdminAnalytics,
+  AdminCompletePrivacyRequestResponse,
+  AdminExportType,
+  AdminPrivacyIntegrationsResponse,
+  AdminPrivacyRequestsResponse,
+  AdminUserConsentsResponse,
+  AdminUsersResponse,
+} from "@/types/admin"
 
 export async function getAdminAnalytics(days = 30) {
   const { data } = await apiClient.get<AdminAnalytics>("/admin/analytics", {
@@ -28,4 +36,32 @@ export async function downloadAdminExport(type: AdminExportType) {
   link.click()
   link.remove()
   window.URL.revokeObjectURL(url)
+}
+
+export async function getAdminPrivacyRequests(status?: string) {
+  const { data } = await apiClient.get<AdminPrivacyRequestsResponse>("/admin/privacy/requests", {
+    params: status ? { status } : undefined,
+  })
+  return data
+}
+
+export async function completeAdminPrivacyRequest(requestId: number) {
+  const { data } = await apiClient.post<AdminCompletePrivacyRequestResponse>(
+    `/admin/privacy/requests/${requestId}/complete`,
+  )
+  return data
+}
+
+export async function getAdminPrivacyIntegrations() {
+  const { data } = await apiClient.get<AdminPrivacyIntegrationsResponse>(
+    "/admin/privacy/integrations",
+  )
+  return data
+}
+
+export async function getAdminUserConsents(userId: number) {
+  const { data } = await apiClient.get<AdminUserConsentsResponse>(
+    `/admin/privacy/consents/${userId}`,
+  )
+  return data
 }

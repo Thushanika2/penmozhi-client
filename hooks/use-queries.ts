@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query"
 import { queryKeys } from "@/lib/query-keys"
 import { getDashboardSummary } from "@/services/dashboard"
 import { getHealthInsights } from "@/services/insights"
-import { getAdminAnalytics, getAdminUsers } from "@/services/admin"
+import { getAdminAnalytics, getAdminUsers, getAdminPrivacyIntegrations, getAdminPrivacyRequests, getAdminUserConsents } from "@/services/admin"
 import { getMySymptoms, getSymptomTrends } from "@/services/symptom"
 import { getTrackingCategories } from "@/services/tracking-category"
 import { getMyCustomTags } from "@/services/custom-tag"
@@ -40,6 +40,28 @@ export function useAdminUsers(page: number, search: string) {
   return useQuery({
     queryKey: queryKeys.admin.users(page, search),
     queryFn: () => getAdminUsers(page, search),
+  })
+}
+
+export function useAdminPrivacyRequests(status = "all") {
+  return useQuery({
+    queryKey: queryKeys.admin.privacyRequests(status),
+    queryFn: () => getAdminPrivacyRequests(status === "all" ? undefined : status),
+  })
+}
+
+export function useAdminPrivacyIntegrations() {
+  return useQuery({
+    queryKey: queryKeys.admin.privacyIntegrations(),
+    queryFn: getAdminPrivacyIntegrations,
+  })
+}
+
+export function useAdminUserConsents(userId: number | null) {
+  return useQuery({
+    queryKey: queryKeys.admin.userConsents(userId ?? 0),
+    queryFn: () => getAdminUserConsents(userId as number),
+    enabled: userId != null && userId > 0,
   })
 }
 
