@@ -7,7 +7,10 @@ export const queryKeys = {
   },
   admin: {
     analytics: (days: number) => ["admin", "analytics", days] as const,
-    users: (page: number, search: string) => ["admin", "users", page, search] as const,
+    users: (filters: import("@/types/admin").AdminUsersFilters) =>
+      ["admin", "users", filters] as const,
+    userDetail: (userId: number) => ["admin", "users", "detail", userId] as const,
+    testCandidates: () => ["admin", "users", "test-candidates"] as const,
     privacyRequests: (status: string) => ["admin", "privacy", "requests", status] as const,
     privacyIntegrations: () => ["admin", "privacy", "integrations"] as const,
     userConsents: (userId: number) => ["admin", "privacy", "consents", userId] as const,

@@ -44,6 +44,72 @@ export interface AdminUsersResponse {
   }
 }
 
+export interface AdminUsersFilters {
+  page?: number
+  search?: string
+  status?: "all" | "active" | "suspended" | "banned"
+  subscription?: "all" | "free" | "premium"
+  onboarding?: "all" | "complete" | "pending"
+  hideTestAccounts?: boolean
+}
+
+export interface AdminUserDetailSubscription {
+  plan: string
+  status: string
+  label: import("./user-profile").SubscriptionLabel
+  current_period_end: string | null
+  created_at: string | null
+}
+
+export interface AdminUserDetailActivity {
+  last_active_at: string | null
+  login_count: number
+  onboarding_completed: boolean
+}
+
+export interface AdminUserDetailPaymentHistory {
+  implemented: boolean
+  message: string
+  records: unknown[]
+}
+
+export interface AdminActionLogEntry {
+  id: number
+  admin_id: number
+  admin_email: string | null
+  action_type: string
+  target_user_id: number | null
+  timestamp: string | null
+  notes: string | null
+}
+
+export interface AdminUserDetailResponse {
+  user: import("./user-profile").UserProfile
+  subscription: AdminUserDetailSubscription
+  payment_history: AdminUserDetailPaymentHistory
+  activity: AdminUserDetailActivity
+  consents: AdminUserConsent[]
+  admin_action_logs: AdminActionLogEntry[]
+}
+
+export interface AdminRequestDeleteResponse {
+  message: string
+  privacy_request_id: number
+  redirect_path: string
+}
+
+export interface AdminTestAccountCandidate {
+  id: number
+  email: string
+  full_name: string
+  is_test_account: boolean
+  registration_date: string | null
+}
+
+export interface AdminTestAccountCandidatesResponse {
+  candidates: AdminTestAccountCandidate[]
+}
+
 export interface AdminPrivacyRequest {
   id: number
   user_id: number | null

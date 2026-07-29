@@ -1171,7 +1171,73 @@
         "language": "Language",
         "country": "Country",
         "onboarding": "Onboarding",
-        "registered": "Registered"
+        "registered": "Registered",
+        "status": "Status",
+        "subscription": "Subscription",
+        "lastActive": "Last active",
+        "actions": "Actions"
+      },
+      "status": {
+        "active": "Active",
+        "suspended": "Suspended",
+        "banned": "Banned"
+      },
+      "subscription": {
+        "free": "Free",
+        "premium": "Premium",
+        "trial": "Trial",
+        "expired": "Expired"
+      },
+      "filters": {
+        "status": "Status",
+        "subscription": "Subscription",
+        "onboarding": "Onboarding",
+        "all": "All",
+        "hideTestAccounts": "Hide test accounts"
+      },
+      "actions": {
+        "view": "View",
+        "suspend": "Suspend",
+        "unsuspend": "Unsuspend",
+        "forceLogout": "Force logout",
+        "delete": "Delete account",
+        "suspendSuccess": "User suspended.",
+        "unsuspendSuccess": "User reactivated.",
+        "forceLogoutSuccess": "All sessions invalidated.",
+        "deleteRequestSuccess": "Deletion request created. Complete it from Privacy & Compliance."
+      },
+      "bulk": {
+        "selectAll": "Select all on this page",
+        "selectUser": "Select {name}",
+        "selected": "{count} selected",
+        "exportCsv": "Export selected as CSV",
+        "exportSuccess": "Selected users exported."
+      },
+      "testAccount": "Test",
+      "detail": {
+        "notFound": "User not found.",
+        "backToList": "Back to users",
+        "profileTitle": "Profile",
+        "activityTitle": "Activity summary",
+        "activityDescription": "Aggregated account activity only — no health or cycle data.",
+        "loginCount": "Total logins",
+        "subscriptionTitle": "Subscription",
+        "plan": "Plan",
+        "periodEnd": "Current period ends",
+        "paymentTitle": "Payment history",
+        "paymentAvailable": "Payment records are available.",
+        "adminActionsTitle": "Admin actions",
+        "setStatus": "Account status",
+        "saveStatus": "Update status",
+        "statusUpdated": "Status updated.",
+        "markTestAccount": "Mark as test account",
+        "testAccountUpdated": "Test account flag updated.",
+        "auditLogTitle": "Admin action log",
+        "noAuditLogs": "No admin actions recorded for this user yet.",
+        "auditAction": "Action",
+        "auditAdmin": "Admin",
+        "auditTime": "Time",
+        "auditNotes": "Notes"
       },
       "onboardingComplete": "Complete",
       "onboardingPending": "Pending",

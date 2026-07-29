@@ -3,7 +3,8 @@ import { useQuery } from "@tanstack/react-query"
 import { queryKeys } from "@/lib/query-keys"
 import { getDashboardSummary } from "@/services/dashboard"
 import { getHealthInsights } from "@/services/insights"
-import { getAdminAnalytics, getAdminUsers, getAdminPrivacyIntegrations, getAdminPrivacyRequests, getAdminUserConsents } from "@/services/admin"
+import { getAdminAnalytics, getAdminUserDetail, getAdminUsers, getAdminPrivacyIntegrations, getAdminPrivacyRequests, getAdminTestAccountCandidates, getAdminUserConsents } from "@/services/admin"
+import type { AdminUsersFilters } from "@/types/admin"
 import { getMySymptoms, getSymptomTrends } from "@/services/symptom"
 import { getTrackingCategories } from "@/services/tracking-category"
 import { getMyCustomTags } from "@/services/custom-tag"
@@ -36,10 +37,25 @@ export function useAdminAnalytics(days = 30) {
   })
 }
 
-export function useAdminUsers(page: number, search: string) {
+export function useAdminUsers(filters: AdminUsersFilters) {
   return useQuery({
-    queryKey: queryKeys.admin.users(page, search),
-    queryFn: () => getAdminUsers(page, search),
+    queryKey: queryKeys.admin.users(filters),
+    queryFn: () => getAdminUsers(filters),
+  })
+}
+
+export function useAdminUserDetail(userId: number) {
+  return useQuery({
+    queryKey: queryKeys.admin.userDetail(userId),
+    queryFn: () => getAdminUserDetail(userId),
+    enabled: userId > 0,
+  })
+}
+
+export function useAdminTestAccountCandidates() {
+  return useQuery({
+    queryKey: queryKeys.admin.testCandidates(),
+    queryFn: getAdminTestAccountCandidates,
   })
 }
 

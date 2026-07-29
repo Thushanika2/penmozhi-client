@@ -1171,7 +1171,73 @@
         "language": "மொழி",
         "country": "நாடு",
         "onboarding": "Onboarding",
-        "registered": "பதிவு தேதி"
+        "registered": "பதிவு தேதி",
+        "status": "நிலை",
+        "subscription": "சந்தா",
+        "lastActive": "கடைசி செயல்பாடு",
+        "actions": "செயல்கள்"
+      },
+      "status": {
+        "active": "செயலில்",
+        "suspended": "இடைநிறுத்தம்",
+        "banned": "தடை"
+      },
+      "subscription": {
+        "free": "இலவசம்",
+        "premium": "Premium",
+        "trial": "Trial",
+        "expired": "காலாவதி"
+      },
+      "filters": {
+        "status": "நிலை",
+        "subscription": "சந்தா",
+        "onboarding": "Onboarding",
+        "all": "அனைத்தும்",
+        "hideTestAccounts": "சோதனை கணக்குகளை மறை"
+      },
+      "actions": {
+        "view": "பார்",
+        "suspend": "இடைநிறுத்து",
+        "unsuspend": "மீண்டும் செயல்படுத்து",
+        "forceLogout": "Force logout",
+        "delete": "கணக்கை நீக்கு",
+        "suspendSuccess": "பயனர் இடைநிறுத்தப்பட்டார்.",
+        "unsuspendSuccess": "பயனர் மீண்டும் செயல்படுத்தப்பட்டார்.",
+        "forceLogoutSuccess": "அனைத்து session-களும் invalidate செய்யப்பட்டன.",
+        "deleteRequestSuccess": "நீக்கம் கோரிக்கை உருவாக்கப்பட்டது. Privacy & Compliance-ல் முடிக்கவும்."
+      },
+      "bulk": {
+        "selectAll": "இந்தப் பக்கத்தில் அனைத்தையும் தேர்ந்தெடு",
+        "selectUser": "{name} தேர்ந்தெடு",
+        "selected": "{count} தேர்ந்தெடுக்கப்பட்டது",
+        "exportCsv": "தேர்ந்தெடுத்தவற்றை CSV-ஆக ஏற்றுமதி",
+        "exportSuccess": "தேர்ந்தெடுத்த பயனர்கள் ஏற்றுமதி செய்யப்பட்டன."
+      },
+      "testAccount": "Test",
+      "detail": {
+        "notFound": "பயனர் கிடைக்கவில்லை.",
+        "backToList": "பயனர் பட்டியலுக்குத் திரும்பு",
+        "profileTitle": "சுயவிவரம்",
+        "activityTitle": "செயல்பாட்டுச் சுருக்கம்",
+        "activityDescription": "கணக்கு செயல்பாட்டு சுருக்கம் மட்டும் — உடல்நல/சுழற்சி தரவு இல்லை.",
+        "loginCount": "மொத்த login எண்ணிக்கை",
+        "subscriptionTitle": "சந்தா",
+        "plan": "திட்டம்",
+        "periodEnd": "தற்போதைய காலம் முடிவு",
+        "paymentTitle": "கட்டண வரலாறு",
+        "paymentAvailable": "கட்டண பதிவுகள் கிடைக்கின்றன.",
+        "adminActionsTitle": "Admin செயல்கள்",
+        "setStatus": "கணக்கு நிலை",
+        "saveStatus": "நிலையைப் புதுப்பி",
+        "statusUpdated": "நிலை புதுப்பிக்கப்பட்டது.",
+        "markTestAccount": "சோதனை கணக்காகக் குறி",
+        "testAccountUpdated": "சோதனை கணக்கு குறி புதுப்பிக்கப்பட்டது.",
+        "auditLogTitle": "Admin action log",
+        "noAuditLogs": "இந்த பயனருக்கு admin செயல்கள் இன்னும் இல்லை.",
+        "auditAction": "செயல்",
+        "auditAdmin": "Admin",
+        "auditTime": "நேரம்",
+        "auditNotes": "குறிப்புகள்"
       },
       "onboardingComplete": "முடிந்தது",
       "onboardingPending": "நிலுவையில்",
