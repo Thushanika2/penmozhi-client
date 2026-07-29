@@ -19,6 +19,18 @@ const baseURL =
   process.env.NEXT_PUBLIC_API_URL ??
   (process.env.NODE_ENV === "development" ? "/backend" : "/backend")
 
+function getNetworkErrorMessage(): string {
+  if (typeof window !== "undefined") {
+    const host = window.location.hostname
+    const isLocal =
+      host === "localhost" || host === "127.0.0.1" || host.startsWith("192.168.")
+    if (isLocal) {
+      return "Cannot reach the Penmozhi API. Start the backend with python run.py in penmozhi-api."
+    }
+  }
+  return "Cannot reach the Penmozhi API. Check that the Railway API is deployed and API_URL is set on Vercel."
+}
+
 const apiClient = axios.create({
   baseURL,
   timeout: 30_000,
@@ -96,7 +108,7 @@ apiClient.interceptors.response.use(
           error.message.toLowerCase().includes("timeout")
         error.message = timedOut
           ? "The Penmozhi API request timed out. Please try again."
-          : "Cannot reach the Penmozhi API. Make sure the backend is running on port 5000."
+          : getNetworkErrorMessage()
       }
     }
     return Promise.reject(error)

@@ -1411,7 +1411,7 @@
   },
   "api": {
     "errors": {
-      "network": "Cannot reach the Penmozhi API. Make sure the backend is running on port 5000.",
+      "network": "Cannot reach the Penmozhi API. Start the backend with python run.py in penmozhi-api (local), or check Railway/Vercel API_URL (production).",
       "timeout": "The AI assistant is taking longer than expected. Please try again.",
       "unexpected": "An unexpected error occurred.",
       "request": {
