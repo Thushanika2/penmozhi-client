@@ -86,6 +86,16 @@ apiClient.interceptors.response.use(
   async (error) => {
     if (axios.isAxiosError(error)) {
       const originalRequest = error.config as (typeof error.config & { _retry?: boolean }) | undefined
+      const payload = error.response?.data as ApiErrorPayload | undefined
+
+      if (
+        error.response?.status === 403 &&
+        payload?.error_code === "onboarding.incomplete" &&
+        typeof window !== "undefined" &&
+        !window.location.pathname.startsWith("/onboarding")
+      ) {
+        window.location.replace("/onboarding")
+      }
 
       if (
         error.response?.status === 401 &&

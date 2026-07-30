@@ -9,7 +9,7 @@ export default function OnboardingPage() {
     <AuthenticatedRoute onboardingOnly>
       <div className="min-h-screen bg-gradient-to-b from-background via-background to-primary/5">
         <header className="flex justify-center py-6">
-          <BrandLogo href="/" size="md" />
+          <BrandLogo linked={false} size="md" />
         </header>
         <OnboardingWizard />
       </div>
