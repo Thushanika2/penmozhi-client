@@ -341,6 +341,7 @@
       "alcoholRequired": "Please answer whether you drink alcohol.",
       "symptomsRequired": "Please select at least one symptom option.",
       "conditionsRequired": "Please select at least one health condition option.",
+      "reproductiveRequired": "Please answer at least one reproductive health question or select None of the above.",
       "birthControlTypeRequired": "Please select a birth control type.",
       "fieldRequired": "This field is required"
     },

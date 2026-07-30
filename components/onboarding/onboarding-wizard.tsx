@@ -107,7 +107,14 @@ function isLifestyleStepComplete(form: OnboardingFormState): boolean {
 }
 
 function isReproductiveStepComplete(form: OnboardingFormState): boolean {
-  // Entire step is optional unless birth control is enabled.
+  const hasAnswer =
+    form.reproductive_none ||
+    form.trying_to_conceive ||
+    form.is_pregnant ||
+    form.is_breastfeeding ||
+    form.using_birth_control
+
+  if (!hasAnswer) return false
   if (!form.using_birth_control) return true
   return Boolean(form.birth_control_type) && form.birth_control_type !== "none"
 }
@@ -173,8 +180,19 @@ function getStepFieldErrors(
     if (form.smoking === null) errors.smoking = t("onboarding.validation.smokingRequired")
     if (form.alcohol === null) errors.alcohol = t("onboarding.validation.alcoholRequired")
   }
-  if (stepIndex === 5 && form.using_birth_control && form.birth_control_type === "none") {
-    errors.birth_control_type = t("onboarding.validation.birthControlTypeRequired")
+  if (stepIndex === 5) {
+    const hasAnswer =
+      form.reproductive_none ||
+      form.trying_to_conceive ||
+      form.is_pregnant ||
+      form.is_breastfeeding ||
+      form.using_birth_control
+    if (!hasAnswer) {
+      errors.reproductive = t("onboarding.validation.reproductiveRequired")
+    }
+    if (form.using_birth_control && form.birth_control_type === "none") {
+      errors.birth_control_type = t("onboarding.validation.birthControlTypeRequired")
+    }
   }
   return errors
 }
@@ -690,6 +708,9 @@ function OnboardingWizardForm({ user }: { user: UserProfile }) {
                 checked={form.reproductive_none}
                 onChange={() => toggleReproductiveOption("reproductive_none")}
               />
+              {fieldErrors.reproductive ? (
+                <p className="text-sm text-destructive">{fieldErrors.reproductive}</p>
+              ) : null}
             </>
           ) : null}
 
