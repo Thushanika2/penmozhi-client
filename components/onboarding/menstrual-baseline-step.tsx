@@ -23,14 +23,25 @@ interface MenstrualBaselineStepProps {
   periodHistory: PeriodHistoryEntry[]
   onCycleLengthChange: (value: number) => void
   onPeriodHistoryChange: (entries: PeriodHistoryEntry[]) => void
+  cycleLengthError?: string
+  periodHistoryError?: string
   t: (key: string, values?: Record<string, string | number>) => string
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({
+  label,
+  children,
+  error,
+}: {
+  label: string
+  children: React.ReactNode
+  error?: string
+}) {
   return (
     <div className="space-y-2">
       <Label>{label}</Label>
       {children}
+      {error ? <p className="text-sm text-destructive">{error}</p> : null}
     </div>
   )
 }
@@ -49,6 +60,8 @@ export function MenstrualBaselineStep({
   periodHistory,
   onCycleLengthChange,
   onPeriodHistoryChange,
+  cycleLengthError,
+  periodHistoryError,
   t,
 }: MenstrualBaselineStepProps) {
   function togglePeriodDate(dateKey: string) {
@@ -98,7 +111,7 @@ export function MenstrualBaselineStep({
 
   return (
     <>
-      <Field label={t("onboarding.fields.cycleLength")}>
+      <Field label={t("onboarding.fields.cycleLength")} error={cycleLengthError}>
         <Input
           type="number"
           className="rounded-xl"
@@ -108,14 +121,19 @@ export function MenstrualBaselineStep({
         />
       </Field>
 
-      <PeriodHistoryPicker
-        locale={locale}
-        entries={periodHistory}
-        onToggleDate={togglePeriodDate}
-        onUpdateFlow={updatePeriodFlow}
-        onRemoveDate={removePeriodDate}
-        t={t}
-      />
+      <div className="space-y-2">
+        <PeriodHistoryPicker
+          locale={locale}
+          entries={periodHistory}
+          onToggleDate={togglePeriodDate}
+          onUpdateFlow={updatePeriodFlow}
+          onRemoveDate={removePeriodDate}
+          t={t}
+        />
+        {periodHistoryError ? (
+          <p className="text-sm text-destructive">{periodHistoryError}</p>
+        ) : null}
+      </div>
     </>
   )
 }
@@ -126,6 +144,7 @@ export function isMenstrualBaselineStepComplete(
 ): boolean {
   return (
     averageCycleLength >= 21 &&
+    averageCycleLength <= 45 &&
     periodHistory.length >= 1 &&
     periodHistory.every((entry) => Boolean(entry.period_start) && Boolean(entry.flow))
   )

@@ -84,15 +84,127 @@ function isTeenagerFromDateOfBirth(dateOfBirth: string): boolean {
   return age !== null && age >= 13 && age <= 19
 }
 
+function isBasicInfoStepComplete(form: OnboardingFormState): boolean {
+  return (
+    Boolean(form.date_of_birth) &&
+    Boolean(form.country.trim()) &&
+    form.height >= 50 &&
+    form.height <= 300 &&
+    form.weight >= 20 &&
+    form.weight <= 500
+  )
+}
+
 function isLifestyleStepComplete(form: OnboardingFormState): boolean {
   return (
-    form.sleep_hours > 0 &&
-    form.water_intake_liters > 0 &&
+    form.sleep_hours >= 0.5 &&
+    form.water_intake_liters >= 0.1 &&
     Boolean(form.exercise_frequency) &&
     Boolean(form.stress_level) &&
     form.smoking !== null &&
     form.alcohol !== null
   )
+}
+
+function isReproductiveStepComplete(form: OnboardingFormState): boolean {
+  // Entire step is optional unless birth control is enabled.
+  if (!form.using_birth_control) return true
+  return Boolean(form.birth_control_type) && form.birth_control_type !== "none"
+}
+
+function isStepComplete(stepIndex: number, form: OnboardingFormState): boolean {
+  if (stepIndex === 0) return isBasicInfoStepComplete(form)
+  if (stepIndex === 1) {
+    return isMenstrualBaselineStepComplete(form.average_cycle_length, form.period_history)
+  }
+  if (stepIndex === 2) return form.common_symptoms.length > 0
+  if (stepIndex === 3) return form.health_conditions.length > 0
+  if (stepIndex === 4) return isLifestyleStepComplete(form)
+  if (stepIndex === 5) return isReproductiveStepComplete(form)
+  // Steps 6 (notifications) and 7 (summary) are optional / review-only.
+  return true
+}
+
+type StepFieldErrors = Partial<Record<string, string>>
+
+function getStepFieldErrors(
+  stepIndex: number,
+  form: OnboardingFormState,
+  t: (key: string) => string,
+): StepFieldErrors {
+  const errors: StepFieldErrors = {}
+  if (stepIndex === 0) {
+    if (!form.date_of_birth) errors.date_of_birth = t("onboarding.validation.dateOfBirthRequired")
+    if (!form.country.trim()) errors.country = t("onboarding.validation.countryRequired")
+    if (!form.height || form.height < 50 || form.height > 300) {
+      errors.height = t("onboarding.validation.heightRequired")
+    }
+    if (!form.weight || form.weight < 20 || form.weight > 500) {
+      errors.weight = t("onboarding.validation.weightRequired")
+    }
+  }
+  if (stepIndex === 1) {
+    if (!form.average_cycle_length || form.average_cycle_length < 21 || form.average_cycle_length > 45) {
+      errors.average_cycle_length = t("onboarding.validation.cycleLengthRequired")
+    }
+    if (form.period_history.length < 1) {
+      errors.period_history = t("onboarding.validation.atLeastOnePeriod")
+    } else if (form.period_history.some((entry) => !entry.flow)) {
+      errors.period_history = t("onboarding.validation.flowRequired")
+    }
+  }
+  if (stepIndex === 2 && !form.common_symptoms.length) {
+    errors.common_symptoms = t("onboarding.validation.symptomsRequired")
+  }
+  if (stepIndex === 3 && !form.health_conditions.length) {
+    errors.health_conditions = t("onboarding.validation.conditionsRequired")
+  }
+  if (stepIndex === 4) {
+    if (!form.sleep_hours || form.sleep_hours < 0.5) {
+      errors.sleep_hours = t("onboarding.validation.sleepHoursRequired")
+    }
+    if (!form.water_intake_liters || form.water_intake_liters < 0.1) {
+      errors.water_intake_liters = t("onboarding.validation.waterIntakeRequired")
+    }
+    if (!form.exercise_frequency) {
+      errors.exercise_frequency = t("onboarding.validation.exerciseRequired")
+    }
+    if (!form.stress_level) errors.stress_level = t("onboarding.validation.stressRequired")
+    if (form.smoking === null) errors.smoking = t("onboarding.validation.smokingRequired")
+    if (form.alcohol === null) errors.alcohol = t("onboarding.validation.alcoholRequired")
+  }
+  if (stepIndex === 5 && form.using_birth_control && form.birth_control_type === "none") {
+    errors.birth_control_type = t("onboarding.validation.birthControlTypeRequired")
+  }
+  return errors
+}
+
+const DRAFT_STORAGE_PREFIX = "penmozhi_onboarding_draft_"
+
+function loadDraft(userId: number): { step: number; form: OnboardingFormState } | null {
+  if (typeof window === "undefined") return null
+  try {
+    const raw = localStorage.getItem(`${DRAFT_STORAGE_PREFIX}${userId}`)
+    if (!raw) return null
+    const parsed = JSON.parse(raw) as { step?: number; form?: OnboardingFormState }
+    if (!parsed.form || typeof parsed.step !== "number") return null
+    return { step: Math.min(Math.max(parsed.step, 0), TOTAL_STEPS - 1), form: parsed.form }
+  } catch {
+    return null
+  }
+}
+
+function saveDraft(userId: number, step: number, form: OnboardingFormState) {
+  if (typeof window === "undefined") return
+  localStorage.setItem(
+    `${DRAFT_STORAGE_PREFIX}${userId}`,
+    JSON.stringify({ step, form }),
+  )
+}
+
+function clearDraft(userId: number) {
+  if (typeof window === "undefined") return
+  localStorage.removeItem(`${DRAFT_STORAGE_PREFIX}${userId}`)
 }
 
 function calculateAge(dateOfBirth: string) {
@@ -157,9 +269,29 @@ function OnboardingWizardForm({ user }: { user: UserProfile }) {
   const { setHealthProfile, updateUser } = useAuth()
   const { t, locale } = useLanguage()
   const router = useRouter()
-  const [step, setStep] = React.useState(0)
+  const initialDraft = React.useMemo(() => loadDraft(user.id), [user.id])
+  const [step, setStep] = React.useState(initialDraft?.step ?? 0)
   const [submitting, setSubmitting] = React.useState(false)
-  const [form, setForm] = React.useState<OnboardingFormState>(() => defaultForm(user))
+  const [attemptedContinue, setAttemptedContinue] = React.useState(false)
+  const [form, setForm] = React.useState<OnboardingFormState>(
+    () => initialDraft?.form ?? defaultForm(user),
+  )
+
+  React.useEffect(() => {
+    saveDraft(user.id, step, form)
+  }, [user.id, step, form])
+
+  React.useEffect(() => {
+    // Keep incomplete users on the onboarding route if they use browser back/forward.
+    const lockHistory = () => {
+      if (window.location.pathname !== "/onboarding") {
+        router.replace("/onboarding")
+      }
+    }
+    window.history.pushState(null, "", "/onboarding")
+    window.addEventListener("popstate", lockHistory)
+    return () => window.removeEventListener("popstate", lockHistory)
+  }, [router])
 
   function updateField<K extends keyof OnboardingFormState>(key: K, value: OnboardingFormState[K]) {
     setForm((current) => ({ ...current, [key]: value }))
@@ -224,95 +356,36 @@ function OnboardingWizardForm({ user }: { user: UserProfile }) {
   }
 
   function validateStep(currentStep: number): boolean {
-    if (currentStep === 0) {
-      if (!form.date_of_birth) {
-        toast.error(t("onboarding.validation.dateOfBirthRequired"))
-        return false
-      }
-      if (!form.country) {
-        toast.error(t("onboarding.validation.countryRequired"))
-        return false
-      }
-      if (!form.height || form.height < 50) {
-        toast.error(t("onboarding.validation.heightRequired"))
-        return false
-      }
-      if (!form.weight || form.weight < 20) {
-        toast.error(t("onboarding.validation.weightRequired"))
-        return false
-      }
+    const errors = getStepFieldErrors(currentStep, form, t)
+    const firstError = Object.values(errors)[0]
+    if (firstError) {
+      toast.error(firstError)
+      return false
     }
-
-    if (currentStep === 1) {
-      if (!form.average_cycle_length || form.average_cycle_length < 21) {
-        toast.error(t("onboarding.validation.cycleLengthRequired"))
-        return false
-      }
-      if (form.period_history.length < 1) {
-        toast.error(t("onboarding.validation.atLeastOnePeriod"))
-        return false
-      }
-      for (const entry of form.period_history) {
-        if (!entry.flow) {
-          toast.error(t("onboarding.validation.flowRequired"))
-          return false
-        }
-      }
-    }
-
-    if (currentStep === 2) {
-      if (!form.common_symptoms.length) {
-        toast.error(t("onboarding.validation.symptomsRequired"))
-        return false
-      }
-    }
-
-    if (currentStep === 3) {
-      if (!form.health_conditions.length) {
-        toast.error(t("onboarding.validation.conditionsRequired"))
-        return false
-      }
-    }
-
-    if (currentStep === 4) {
-      if (!form.sleep_hours || form.sleep_hours <= 0) {
-        toast.error(t("onboarding.validation.sleepHoursRequired"))
-        return false
-      }
-      if (!form.water_intake_liters || form.water_intake_liters <= 0) {
-        toast.error(t("onboarding.validation.waterIntakeRequired"))
-        return false
-      }
-      if (!form.exercise_frequency) {
-        toast.error(t("onboarding.validation.exerciseRequired"))
-        return false
-      }
-      if (!form.stress_level) {
-        toast.error(t("onboarding.validation.stressRequired"))
-        return false
-      }
-      if (form.smoking === null) {
-        toast.error(t("onboarding.validation.smokingRequired"))
-        return false
-      }
-      if (form.alcohol === null) {
-        toast.error(t("onboarding.validation.alcoholRequired"))
-        return false
-      }
-    }
-
     return true
   }
 
   function validateRequiredSteps(): boolean {
     for (const stepIndex of [0, 1, 2, 3, 4]) {
-      if (!validateStep(stepIndex)) return false
+      if (!validateStep(stepIndex)) {
+        setStep(stepIndex)
+        setAttemptedContinue(true)
+        return false
+      }
+    }
+    if (!isReproductiveStepComplete(form)) {
+      setStep(5)
+      setAttemptedContinue(true)
+      toast.error(t("onboarding.validation.birthControlTypeRequired"))
+      return false
     }
     return true
   }
 
   function goNext() {
+    setAttemptedContinue(true)
     if (!validateStep(step)) return
+    setAttemptedContinue(false)
     setStep((current) => Math.min(TOTAL_STEPS - 1, current + 1))
   }
 
@@ -343,6 +416,7 @@ function OnboardingWizardForm({ user }: { user: UserProfile }) {
     setSubmitting(true)
     try {
       const data = await onboardingService.completeOnboarding(payload)
+      clearDraft(user.id)
       updateUser(() => data.user)
       setHealthProfile(data.health_profile)
       toast.success(t("onboarding.completeSuccess"))
@@ -356,11 +430,8 @@ function OnboardingWizardForm({ user }: { user: UserProfile }) {
 
   const age = calculateAge(form.date_of_birth)
   const bmi = calculateBmi(form.weight, form.height)
-  const menstrualBaselineComplete = isMenstrualBaselineStepComplete(
-    form.average_cycle_length,
-    form.period_history,
-  )
-  const lifestyleComplete = isLifestyleStepComplete(form)
+  const stepComplete = isStepComplete(step, form)
+  const fieldErrors = attemptedContinue ? getStepFieldErrors(step, form, t) : {}
   const sortedPeriodHistory = [...form.period_history].sort((a, b) =>
     compareDateKeysDesc(a.period_start, b.period_start),
   )
@@ -387,7 +458,10 @@ function OnboardingWizardForm({ user }: { user: UserProfile }) {
         <CardContent className="space-y-4">
           {step === 0 ? (
             <>
-              <Field label={t("onboarding.fields.dateOfBirth")}>
+              <Field
+                label={t("onboarding.fields.dateOfBirth")}
+                error={fieldErrors.date_of_birth}
+              >
                 <Input
                   type="date"
                   className="rounded-xl"
@@ -398,7 +472,7 @@ function OnboardingWizardForm({ user }: { user: UserProfile }) {
               <Field label={t("onboarding.fields.age")}>
                 <Input className="rounded-xl" readOnly value={age ?? ""} />
               </Field>
-              <Field label={t("onboarding.fields.country")}>
+              <Field label={t("onboarding.fields.country")} error={fieldErrors.country}>
                 <Select
                   className="rounded-xl"
                   value={form.country}
@@ -415,7 +489,7 @@ function OnboardingWizardForm({ user }: { user: UserProfile }) {
                 </Select>
               </Field>
               <div className="grid gap-4 sm:grid-cols-2">
-                <Field label={t("onboarding.fields.height")}>
+                <Field label={t("onboarding.fields.height")} error={fieldErrors.height}>
                   <Input
                     type="number"
                     className="rounded-xl"
@@ -424,7 +498,7 @@ function OnboardingWizardForm({ user }: { user: UserProfile }) {
                     onChange={(e) => updateField("height", Number(e.target.value))}
                   />
                 </Field>
-                <Field label={t("onboarding.fields.weight")}>
+                <Field label={t("onboarding.fields.weight")} error={fieldErrors.weight}>
                   <Input
                     type="number"
                     className="rounded-xl"
@@ -447,33 +521,45 @@ function OnboardingWizardForm({ user }: { user: UserProfile }) {
               periodHistory={form.period_history}
               onCycleLengthChange={(value) => updateField("average_cycle_length", value)}
               onPeriodHistoryChange={(entries) => updateField("period_history", entries)}
+              cycleLengthError={fieldErrors.average_cycle_length}
+              periodHistoryError={fieldErrors.period_history}
               t={t}
             />
           ) : null}
 
           {step === 2 ? (
-            <CheckboxGrid
-              options={SYMPTOM_OPTIONS}
-              selected={form.common_symptoms}
-              onToggle={(value) => toggleListItem("common_symptoms", value)}
-              labelPrefix="onboarding.symptoms"
-              t={t}
-            />
+            <>
+              <CheckboxGrid
+                options={SYMPTOM_OPTIONS}
+                selected={form.common_symptoms}
+                onToggle={(value) => toggleListItem("common_symptoms", value)}
+                labelPrefix="onboarding.symptoms"
+                t={t}
+              />
+              {fieldErrors.common_symptoms ? (
+                <p className="text-sm text-destructive">{fieldErrors.common_symptoms}</p>
+              ) : null}
+            </>
           ) : null}
 
           {step === 3 ? (
-            <CheckboxGrid
-              options={CONDITION_OPTIONS}
-              selected={form.health_conditions}
-              onToggle={(value) => toggleListItem("health_conditions", value)}
-              labelPrefix="onboarding.conditions"
-              t={t}
-            />
+            <>
+              <CheckboxGrid
+                options={CONDITION_OPTIONS}
+                selected={form.health_conditions}
+                onToggle={(value) => toggleListItem("health_conditions", value)}
+                labelPrefix="onboarding.conditions"
+                t={t}
+              />
+              {fieldErrors.health_conditions ? (
+                <p className="text-sm text-destructive">{fieldErrors.health_conditions}</p>
+              ) : null}
+            </>
           ) : null}
 
           {step === 4 ? (
             <>
-              <Field label={t("onboarding.fields.sleepHours")}>
+              <Field label={t("onboarding.fields.sleepHours")} error={fieldErrors.sleep_hours}>
                 <Input
                   type="number"
                   step="0.5"
@@ -483,7 +569,10 @@ function OnboardingWizardForm({ user }: { user: UserProfile }) {
                   onChange={(e) => updateField("sleep_hours", Number(e.target.value))}
                 />
               </Field>
-              <Field label={t("onboarding.fields.waterIntake")}>
+              <Field
+                label={t("onboarding.fields.waterIntake")}
+                error={fieldErrors.water_intake_liters}
+              >
                 <Input
                   type="number"
                   step="0.1"
@@ -493,7 +582,10 @@ function OnboardingWizardForm({ user }: { user: UserProfile }) {
                   onChange={(e) => updateField("water_intake_liters", Number(e.target.value))}
                 />
               </Field>
-              <Field label={t("onboarding.fields.exerciseFrequency")}>
+              <Field
+                label={t("onboarding.fields.exerciseFrequency")}
+                error={fieldErrors.exercise_frequency}
+              >
                 <Select
                   className="rounded-xl"
                   value={form.exercise_frequency}
@@ -511,7 +603,7 @@ function OnboardingWizardForm({ user }: { user: UserProfile }) {
                   ))}
                 </Select>
               </Field>
-              <Field label={t("onboarding.fields.stressLevel")}>
+              <Field label={t("onboarding.fields.stressLevel")} error={fieldErrors.stress_level}>
                 <Select
                   className="rounded-xl"
                   value={form.stress_level}
@@ -531,12 +623,14 @@ function OnboardingWizardForm({ user }: { user: UserProfile }) {
                 label={t("onboarding.fields.smoking")}
                 value={form.smoking}
                 onChange={(value) => updateField("smoking", value)}
+                error={fieldErrors.smoking}
                 t={t}
               />
               <YesNoField
                 label={t("onboarding.fields.alcohol")}
                 value={form.alcohol}
                 onChange={(value) => updateField("alcohol", value)}
+                error={fieldErrors.alcohol}
                 t={t}
               />
             </>
@@ -565,14 +659,22 @@ function OnboardingWizardForm({ user }: { user: UserProfile }) {
                 onChange={() => toggleReproductiveOption("using_birth_control")}
               />
               {form.using_birth_control ? (
-                <Field label={t("onboarding.fields.birthControlType")}>
+                <Field
+                  label={t("onboarding.fields.birthControlType")}
+                  error={fieldErrors.birth_control_type}
+                >
                   <Select
                     className="rounded-xl"
-                    value={form.birth_control_type}
+                    value={
+                      form.birth_control_type === "none" ? "" : form.birth_control_type
+                    }
                     onChange={(e) =>
                       updateField("birth_control_type", e.target.value as BirthControlType)
                     }
                   >
+                    <option value="" disabled>
+                      {t("onboarding.placeholders.selectBirthControl")}
+                    </option>
                     {(["pill", "iud", "implant", "injection", "condom", "other"] as const).map(
                       (item) => (
                         <option key={item} value={item}>
@@ -650,7 +752,10 @@ function OnboardingWizardForm({ user }: { user: UserProfile }) {
             variant="outline"
             className="rounded-full"
             disabled={step === 0 || submitting}
-            onClick={() => setStep((current) => Math.max(0, current - 1))}
+            onClick={() => {
+              setAttemptedContinue(false)
+              setStep((current) => Math.max(0, current - 1))
+            }}
           >
             {t("common.back")}
           </Button>
@@ -658,10 +763,7 @@ function OnboardingWizardForm({ user }: { user: UserProfile }) {
             <Button
               type="button"
               className="rounded-full"
-              disabled={
-                (step === 1 && !menstrualBaselineComplete) ||
-                (step === 4 && !lifestyleComplete)
-              }
+              disabled={!stepComplete || submitting}
               onClick={goNext}
             >
               {t("onboarding.next")}
@@ -670,7 +772,7 @@ function OnboardingWizardForm({ user }: { user: UserProfile }) {
             <Button
               type="button"
               className="rounded-full"
-              disabled={submitting}
+              disabled={submitting || !isStepComplete(0, form) || !isStepComplete(1, form) || !isStepComplete(2, form) || !isStepComplete(3, form) || !isStepComplete(4, form) || !isReproductiveStepComplete(form)}
               onClick={() => void finishSetup()}
             >
               {submitting ? t("onboarding.finishing") : t("onboarding.finish")}
@@ -682,11 +784,20 @@ function OnboardingWizardForm({ user }: { user: UserProfile }) {
   )
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({
+  label,
+  children,
+  error,
+}: {
+  label: string
+  children: React.ReactNode
+  error?: string
+}) {
   return (
     <div className="space-y-2">
       <Label>{label}</Label>
       {children}
+      {error ? <p className="text-sm text-destructive">{error}</p> : null}
     </div>
   )
 }
@@ -695,11 +806,13 @@ function YesNoField({
   label,
   value,
   onChange,
+  error,
   t,
 }: {
   label: string
   value: boolean | null
   onChange: (value: boolean) => void
+  error?: string
   t: (key: string) => string
 }) {
   return (
@@ -725,6 +838,7 @@ function YesNoField({
           {t("common.no")}
         </Button>
       </div>
+      {error ? <p className="text-sm text-destructive">{error}</p> : null}
     </div>
   )
 }

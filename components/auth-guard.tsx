@@ -25,6 +25,9 @@ export function AuthenticatedRoute({
   const { t } = useLanguage()
   const router = useRouter()
 
+  const needsOnboarding =
+    !!user && user.role !== "admin" && !user.onboarding_completed
+
   React.useEffect(() => {
     if (isLoading) return
     if (!user) {
@@ -39,10 +42,10 @@ export function AuthenticatedRoute({
       router.replace(getPostAuthPath(user))
       return
     }
-    if (!onboardingOnly && !user.onboarding_completed && user.role !== "admin") {
+    if (!onboardingOnly && needsOnboarding) {
       router.replace("/onboarding")
     }
-  }, [allowedRoles, isLoading, onboardingOnly, router, user])
+  }, [allowedRoles, isLoading, needsOnboarding, onboardingOnly, router, user])
 
   if (isLoading) {
     return (
@@ -55,7 +58,7 @@ export function AuthenticatedRoute({
   if (!user) return null
   if (allowedRoles && !allowedRoles.includes(user.role)) return null
   if (onboardingOnly && user.onboarding_completed) return null
-  if (!onboardingOnly && !user.onboarding_completed && user.role !== "admin") return null
+  if (!onboardingOnly && needsOnboarding) return null
 
   return <>{children}</>
 }

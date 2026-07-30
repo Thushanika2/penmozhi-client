@@ -306,7 +306,8 @@
       "waterLiters": "e.g. 2",
       "selectExercise": "Select exercise frequency",
       "selectStress": "Select stress level",
-      "selectFlow": "Select flow level"
+      "selectFlow": "Select flow level",
+      "selectBirthControl": "Select birth control type"
     },
     "periodMonths": {
       "0": "Most recent period",
@@ -339,7 +340,9 @@
       "smokingRequired": "Please answer whether you smoke.",
       "alcoholRequired": "Please answer whether you drink alcohol.",
       "symptomsRequired": "Please select at least one symptom option.",
-      "conditionsRequired": "Please select at least one health condition option."
+      "conditionsRequired": "Please select at least one health condition option.",
+      "birthControlTypeRequired": "Please select a birth control type.",
+      "fieldRequired": "This field is required"
     },
     "flow": {
       "light": "Light",
@@ -1424,6 +1427,10 @@
         "invalid_credentials": "Invalid email or password.",
         "user_not_found": "User not found.",
         "forbidden": "Access forbidden: insufficient permissions."
+      },
+      "onboarding": {
+        "incomplete": "Please complete onboarding before using the app.",
+        "already_completed": "Onboarding is already completed."
       },
       "validation": {
         "language_required": "Language preference is required.",
