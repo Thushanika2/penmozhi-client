@@ -13,14 +13,14 @@ const CY = 200
 
 const TRACK_COLOR = "rgba(255,255,255,0.08)"
 const PHASE_COLORS = {
-  menstrual: "#f429a0",
-  follicular: "#f7a8d5",
-  ovulation: "#d946ef",
-  luteal: "#a855a7",
+  menstrual: "#cb0a7b",
+  follicular: "#f9c5d5",
+  ovulation: "#f2789f",
+  luteal: "#f999b7",
 } as const
 const INNER_DOT = "rgba(255,255,255,0.28)"
 const INNER_DOT_PASSED = "rgba(255,255,255,0.62)"
-const PREDICTED_DOT = "#f429a0"
+const PREDICTED_DOT = "#cb0a7b"
 
 interface CycleWheelProps {
   insights: CycleInsights
@@ -251,7 +251,7 @@ export function CycleWheel({
           height={28}
           className="overflow-visible"
         >
-          <div className="flex size-7 items-center justify-center rounded-full bg-[#f429a0] shadow-md">
+          <div className="flex size-7 items-center justify-center rounded-full bg-[#cb0a7b] shadow-md">
             <Droplet className="size-3.5 fill-white text-white" strokeWidth={0} />
           </div>
         </foreignObject>

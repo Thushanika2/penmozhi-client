@@ -49,52 +49,53 @@
 }
 
 :root {
-    --brand-deep: #f429a0;
-    --brand: #f54baf;
-    --brand-light: #f76dbe;
-    --brand-soft: #f98fcd;
-    --brand-blush: #fef5fb;
+    /* Light palette: FEE3EC → F9C5D5 → F999B7 → F2789F → cb0a7b */
+    --brand-deep: #cb0a7b;
+    --brand: #f2789f;
+    --brand-light: #f999b7;
+    --brand-soft: #f9c5d5;
+    --brand-blush: #fee3ec;
     --brand-white: #ffffff;
 
-    --cycle-menstrual: #f429a0;
-    --cycle-follicular: #f98fcd;
-    --cycle-fertile: #f76dbe;
-    --cycle-ovulation: #f54baf;
-    --cycle-luteal: #f98fcd;
-    --cycle-pms: #f76dbe;
+    --cycle-menstrual: #cb0a7b;
+    --cycle-follicular: #f9c5d5;
+    --cycle-fertile: #f999b7;
+    --cycle-ovulation: #f2789f;
+    --cycle-luteal: #f9c5d5;
+    --cycle-pms: #f999b7;
 
     --background: #ffffff;
-    --foreground: #2d0a1e;
+    --foreground: #4a0a32;
     --card: #ffffff;
-    --card-foreground: #2d0a1e;
+    --card-foreground: #4a0a32;
     --popover: #ffffff;
-    --popover-foreground: #2d0a1e;
-    --primary: #f429a0;
+    --popover-foreground: #4a0a32;
+    --primary: #cb0a7b;
     --primary-foreground: #ffffff;
-    --secondary: #fef5fb;
-    --secondary-foreground: #6b1a4a;
-    --muted: #faf5f8;
-    --muted-foreground: #8b5a72;
-    --accent: #fdf0f7;
-    --accent-foreground: #4a1235;
+    --secondary: #fee3ec;
+    --secondary-foreground: #8a1458;
+    --muted: #fee3ec;
+    --muted-foreground: #9a4a6e;
+    --accent: #f9c5d5;
+    --accent-foreground: #6b0f45;
     --destructive: #dc2626;
-    --border: #f0d0e4;
-    --input: #f8e8f2;
-    --ring: #f429a0;
-    --chart-1: #f429a0;
-    --chart-2: #f54baf;
-    --chart-3: #f76dbe;
-    --chart-4: #f98fcd;
-    --chart-5: #fef5fb;
+    --border: #f9c5d5;
+    --input: #fee3ec;
+    --ring: #cb0a7b;
+    --chart-1: #cb0a7b;
+    --chart-2: #f2789f;
+    --chart-3: #f999b7;
+    --chart-4: #f9c5d5;
+    --chart-5: #fee3ec;
     --radius: 0.75rem;
     --sidebar: #ffffff;
-    --sidebar-foreground: #2d0a1e;
-    --sidebar-primary: #f429a0;
+    --sidebar-foreground: #4a0a32;
+    --sidebar-primary: #cb0a7b;
     --sidebar-primary-foreground: #ffffff;
-    --sidebar-accent: #fef5fb;
-    --sidebar-accent-foreground: #6b1a4a;
-    --sidebar-border: #f0d0e4;
-    --sidebar-ring: #f429a0;
+    --sidebar-accent: #fee3ec;
+    --sidebar-accent-foreground: #8a1458;
+    --sidebar-border: #f9c5d5;
+    --sidebar-ring: #cb0a7b;
 }
 
 .dark {
@@ -161,20 +162,20 @@
 
   .gradient-mesh {
     background:
-      radial-gradient(ellipse 70% 50% at 100% 0%, rgb(244 41 160 / 8%), transparent 55%),
-      radial-gradient(ellipse 60% 40% at 0% 100%, rgb(249 143 205 / 10%), transparent 50%),
+      radial-gradient(ellipse 70% 50% at 100% 0%, rgb(203 10 123 / 10%), transparent 55%),
+      radial-gradient(ellipse 60% 40% at 0% 100%, rgb(249 197 213 / 35%), transparent 50%),
       var(--background);
   }
 
   .dark .gradient-mesh {
     background:
-      radial-gradient(ellipse 70% 50% at 100% 0%, rgb(244 41 160 / 12%), transparent 55%),
-      radial-gradient(ellipse 60% 40% at 0% 100%, rgb(247 109 222 / 8%), transparent 50%),
+      radial-gradient(ellipse 70% 50% at 100% 0%, rgb(203 10 123 / 16%), transparent 55%),
+      radial-gradient(ellipse 60% 40% at 0% 100%, rgb(242 120 159 / 12%), transparent 50%),
       var(--background);
   }
 
   .brand-gradient-text {
-    @apply bg-gradient-to-r from-[#f429a0] via-[#f54baf] to-[#f98fcd] bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-[#cb0a7b] via-[#f2789f] to-[#f9c5d5] bg-clip-text text-transparent;
   }
 
   .section-eyebrow {
@@ -225,21 +226,21 @@
 
   .moon-glow {
     @apply pointer-events-none absolute rounded-full blur-3xl;
-    background: radial-gradient(circle, rgb(244 41 160 / 18%), transparent 70%);
+    background: radial-gradient(circle, rgb(203 10 123 / 16%), transparent 70%);
   }
 
   .auth-panel {
     background:
-      radial-gradient(ellipse 80% 60% at 20% 80%, rgb(244 41 160 / 14%), transparent 60%),
-      radial-gradient(ellipse 60% 50% at 80% 20%, rgb(249 143 205 / 18%), transparent 55%),
-      linear-gradient(160deg, rgb(254 245 251) 0%, rgb(255 255 255) 100%),
+      radial-gradient(ellipse 80% 60% at 20% 80%, rgb(203 10 123 / 12%), transparent 60%),
+      radial-gradient(ellipse 60% 50% at 80% 20%, rgb(249 197 213 / 55%), transparent 55%),
+      linear-gradient(160deg, #fee3ec 0%, #ffffff 100%),
       var(--brand-blush);
   }
 
   .dark .auth-panel {
     background:
-      radial-gradient(ellipse 80% 60% at 20% 80%, rgb(244 41 160 / 18%), transparent 60%),
-      radial-gradient(ellipse 60% 50% at 80% 20%, rgb(247 109 222 / 12%), transparent 55%),
+      radial-gradient(ellipse 80% 60% at 20% 80%, rgb(203 10 123 / 20%), transparent 60%),
+      radial-gradient(ellipse 60% 50% at 80% 20%, rgb(242 120 159 / 14%), transparent 55%),
       linear-gradient(160deg, rgb(26 12 20 / 80%) 0%, rgb(18 8 16 / 88%) 100%),
       #120810;
   }
@@ -267,11 +268,11 @@
   .clue-hero-ring {
     background: conic-gradient(
       from 0deg,
-      #f429a0 0deg 72deg,
-      #f54baf 72deg 144deg,
-      #f76dbe 144deg 216deg,
-      #f98fcd 216deg 288deg,
-      #ffffff 288deg 360deg
+      #cb0a7b 0deg 72deg,
+      #f2789f 72deg 144deg,
+      #f999b7 144deg 216deg,
+      #f9c5d5 216deg 288deg,
+      #fee3ec 288deg 360deg
     );
   }
 }

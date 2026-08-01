@@ -115,7 +115,7 @@ export function DashboardHomeView() {
 
                 <div className="mt-4 flex flex-wrap justify-center gap-3 px-2">
                   <Button
-                    className="rounded-full bg-[#f429a0] hover:bg-[#f54baf]"
+                    className="rounded-full bg-[#cb0a7b] hover:bg-[#f2789f]"
                     render={<Link href="/dashboard/cycle" />}
                   >
                     <CalendarDays className="size-4" />
