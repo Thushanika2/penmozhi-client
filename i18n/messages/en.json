@@ -532,7 +532,38 @@
       "title": "Next period prediction",
       "nextPeriod": "Predicted next period",
       "basedOnHistory": "Based on your cycle history",
-      "basedOnCycles": "Based on {count} logged cycles"
+      "basedOnCycles": "Based on {count} logged cycles",
+      "basedOnLength": "Using a typical cycle length of {days} days",
+      "excludedOutliers": "Unusual gaps excluded from prediction ({count})",
+      "usingDefault": "Using your profile cycle length until more typical cycles are logged"
+    },
+    "gap": {
+      "title": "Unusual gap between periods",
+      "description": "There are {days} days between {previous} and {next}. A typical cycle is 21–45 days.",
+      "explain": "Long gaps from medication, illness, stress, or missed logging should not set your next prediction. Tell us why this happened and add an earlier period so we can estimate more accurately.",
+      "reasonLabel": "Why was this gap longer than usual?",
+      "priorTitle": "Add an earlier period",
+      "priorHelp": "Add a missed period between these dates, or an earlier period before the last one, so predictions can use a typical cycle length.",
+      "addPrior": "Add this earlier period",
+      "confirm": "Save with corrected history",
+      "needAnotherPrior": "There are still {days} days between {previous} and {prior}. Please add one more earlier period.",
+      "reasons": {
+        "medication": "Medication / hormones",
+        "medical": "Medical issue or illness",
+        "stress": "High stress",
+        "missedLogging": "I missed logging periods",
+        "contraception": "Birth control change",
+        "pregnancyPostpartum": "Pregnancy / postpartum",
+        "other": "Other reason"
+      },
+      "validation": {
+        "reasonRequired": "Please select a reason for the unusual gap.",
+        "priorRequired": "Please add at least one earlier period date.",
+        "priorDatesRequired": "Earlier period start and end dates are required.",
+        "priorEndAfterStart": "Earlier period end must be on or after its start.",
+        "priorBeforeNew": "Earlier period must start before the period you are logging.",
+        "priorDuplicate": "That period start date is already logged. Choose a different date."
+      }
     },
     "trend": {
       "title": "Cycle length trend",
@@ -588,7 +619,8 @@
     "validation": {
       "startDateRequired": "Start date is required",
       "endDateRequired": "End date is required",
-      "flowIntensityRequired": "Flow intensity is required"
+      "flowIntensityRequired": "Flow intensity is required",
+      "endAfterStart": "End date must be on or after the start date"
     }
   },
   "dailyLog": {
@@ -1458,6 +1490,10 @@
       },
       "education": {
         "not_found": "Educational resource not found."
+      },
+      "cycle": {
+        "unusual_gap": "Unusual gap between periods. Explain the gap and add an earlier period date for accurate predictions.",
+        "not_found": "Cycle entry not found."
       }
     },
     "messages": {

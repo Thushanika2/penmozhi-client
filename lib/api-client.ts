@@ -12,6 +12,13 @@ export interface ApiErrorPayload {
   message_code?: string
   ai_flag?: string | null
   ai_flag_code?: string | null
+  gap_days?: number
+  previous_start?: string
+  new_start?: string
+  unusual_gap_threshold_days?: number
+  requires_gap_reason?: boolean
+  requires_prior_period?: boolean
+  gap_reason_options?: string[]
 }
 
 

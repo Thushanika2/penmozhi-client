@@ -46,7 +46,7 @@ export function AdminSidebar({ children }: { children: React.ReactNode }) {
     <div className="flex min-h-svh gradient-mesh">
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-40 flex w-72 flex-col border-r border-border/50 bg-sidebar/95 shadow-2xl shadow-primary/5 backdrop-blur-xl transition-transform lg:static lg:translate-x-0",
+          "fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-border/50 bg-sidebar/95 shadow-2xl shadow-primary/5 backdrop-blur-xl transition-transform lg:translate-x-0",
           mobileOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >
@@ -114,13 +114,15 @@ export function AdminSidebar({ children }: { children: React.ReactNode }) {
 
       {mobileOpen ? (
         <div
-          className="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm lg:hidden"
           onClick={() => setMobileOpen(false)}
         />
       ) : null}
 
+      <div aria-hidden className="hidden w-72 shrink-0 lg:block" />
+
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex items-center gap-3 border-b border-border/50 bg-background/80 px-4 py-3 backdrop-blur-md lg:hidden">
+        <header className="fixed inset-x-0 top-0 z-30 flex items-center gap-3 border-b border-border/50 bg-background/95 px-4 py-3 backdrop-blur-md lg:hidden">
           <Button
             variant="outline"
             size="icon"
@@ -135,6 +137,7 @@ export function AdminSidebar({ children }: { children: React.ReactNode }) {
           <LanguageSwitcher />
           <ThemeToggle />
         </header>
+        <div aria-hidden className="h-14 shrink-0 lg:hidden" />
         <main className="flex-1 p-4 md:p-8 lg:p-10">{children}</main>
       </div>
     </div>
