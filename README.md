@@ -79,8 +79,11 @@ Copy `.env.example` to `.env.local` for local development.
 
    | Name | Value (production) |
    |------|--------------------|
-   | `API_URL` | Your deployed Flask API URL, e.g. `https://your-api.example.com` |
+   | `API_URL` | Your deployed Flask API URL **without trailing slash**, e.g. `https://penmozhi-api-production.up.railway.app` |
    | `NEXT_PUBLIC_API_URL` | `/backend` |
+
+   After deploy, open `https://YOUR-VERCEL-APP/backend/api/health` — it should return `{"status":"ok","database":"connected"}`.
+   If that fails, fix Railway first (`/api/health` on the API domain), then confirm `API_URL` on Vercel matches the Railway public domain.
 
 6. Deploy. Vercel runs `npm run build` and serves the app.
 
