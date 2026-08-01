@@ -72,7 +72,7 @@ export function EducationListView({
             key={resource.id}
             className="group overflow-hidden rounded-2xl border border-border/70 bg-card/90 shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10"
           >
-            <div className="border-b border-border/50 bg-gradient-to-r from-primary/5 to-[#f98fcd]/10 px-6 py-4">
+            <div className="border-b border-border/50 bg-gradient-to-r from-primary/5 to-[#f9c5d5]/40 px-6 py-4">
               <div className="flex items-start justify-between gap-2">
                 <h3 className="text-lg font-semibold leading-snug">{resource.article_title}</h3>
                 <div className="flex shrink-0 flex-col items-end gap-1">

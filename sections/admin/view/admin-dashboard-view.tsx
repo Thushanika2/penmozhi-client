@@ -201,8 +201,8 @@ export function AdminDashboardView() {
                       <YAxis allowDecimals={false} tick={{ fontSize: 11 }} />
                       <Tooltip />
                       <Bar dataKey="cycles" name={t("admin.analytics.cycles")} fill="hsl(var(--primary))" />
-                      <Bar dataKey="symptoms" name={t("admin.analytics.symptoms")} fill="#f76dbe" />
-                      <Bar dataKey="daily_logs" name={t("admin.analytics.dailyLogs")} fill="#f98fcd" />
+                      <Bar dataKey="symptoms" name={t("admin.analytics.symptoms")} fill="#f2789f" />
+                      <Bar dataKey="daily_logs" name={t("admin.analytics.dailyLogs")} fill="#f9c5d5" />
                     </BarChart>
                   </ResponsiveContainer>
                 ) : (
