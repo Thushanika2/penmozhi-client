@@ -85,7 +85,7 @@ export function DashboardSidebar({ children }: { children: React.ReactNode }) {
     <div className="flex min-h-svh gradient-mesh">
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-border bg-sidebar transition-transform lg:static lg:translate-x-0",
+          "fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-border bg-sidebar transition-transform lg:translate-x-0",
           mobileOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >
@@ -174,7 +174,11 @@ export function DashboardSidebar({ children }: { children: React.ReactNode }) {
           ) : null}
 
           <div className="my-3 border-t border-border" />
-          <Link href="/education" className="nav-link nav-link-inactive pl-4">
+          <Link
+            href="/education"
+            onClick={() => setMobileOpen(false)}
+            className="nav-link nav-link-inactive pl-4"
+          >
             <BookOpen className="size-4 shrink-0" />
             {t("nav.education")}
           </Link>
@@ -195,11 +199,13 @@ export function DashboardSidebar({ children }: { children: React.ReactNode }) {
       </aside>
 
       {mobileOpen ? (
-        <div className="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm lg:hidden" onClick={() => setMobileOpen(false)} />
+        <div className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm lg:hidden" onClick={() => setMobileOpen(false)} />
       ) : null}
 
+      <div aria-hidden className="hidden w-64 shrink-0 lg:block" />
+
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex items-center gap-3 border-b border-border bg-background px-4 py-3 lg:hidden">
+        <header className="fixed inset-x-0 top-0 z-30 flex items-center gap-3 border-b border-border bg-background/95 px-4 py-3 backdrop-blur-md lg:hidden">
           <Button variant="outline" size="icon" aria-label={t("a11y.openSidebar")} onClick={() => setMobileOpen(true)}>
             <Menu className="size-4" />
           </Button>
@@ -207,6 +213,7 @@ export function DashboardSidebar({ children }: { children: React.ReactNode }) {
           <LanguageSwitcher />
           <ThemeToggle />
         </header>
+        <div aria-hidden className="h-14 shrink-0 lg:hidden" />
         <main className="flex-1 p-4 pb-24 md:p-8 lg:pb-10 lg:p-10">{children}</main>
         <DashboardBottomNav />
       </div>

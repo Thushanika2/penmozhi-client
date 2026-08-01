@@ -12,6 +12,18 @@ export interface CycleStatistics {
   longest_cycle: number | null
   shortest_cycle: number | null
   logged_cycles: number
+  typical_cycles_used?: number
+  outlier_gaps_excluded?: number
+  longest_typical_cycle?: number | null
+  shortest_typical_cycle?: number | null
+}
+
+export interface CyclePredictionQuality {
+  quality: "good" | "fair" | "fallback" | string
+  typical_cycles_used: number
+  outlier_gaps_excluded: number
+  using_profile_default: boolean
+  assumed_cycle_length: number
 }
 
 export interface CyclePhaseDayRange {
@@ -47,6 +59,7 @@ export interface CycleInsights {
   average_cycle_length: number
   average_period_length: number
   phase_ranges?: CyclePhaseRanges | null
+  prediction_quality?: CyclePredictionQuality | null
   statistics: CycleStatistics
 }
 
@@ -60,9 +73,12 @@ export interface CyclePrediction {
   cycle_day?: number | null
   current_phase?: CyclePhase | null
   days_until_next_period?: number | null
+  average_cycle_length?: number
   message?: string
   message_code?: string
   based_on_cycles?: number
+  outlier_gaps_excluded?: number
+  prediction_quality?: CyclePredictionQuality
   latest_cycle?: import("./cycle-history-log").CycleHistoryLog
 }
 
@@ -73,6 +89,7 @@ export interface CycleHistoryLog {
   cycle_end_date: string
   flow_intensity: string
   notes: string | null
+  gap_reason?: string | null
   predicted_next_period_date: string | null
   created_at: string | null
 }

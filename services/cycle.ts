@@ -5,11 +5,21 @@ import type {
   CyclePrediction,
 } from "@/types/cycle-history-log"
 
+export interface PriorPeriodPayload {
+  cycle_start_date: string
+  cycle_end_date: string
+  flow_intensity: string
+  notes?: string | null
+  gap_reason?: string | null
+}
+
 export interface CreateCyclePayload {
   cycle_start_date: string
   cycle_end_date: string
   flow_intensity: string
   notes?: string | null
+  gap_reason?: string | null
+  prior_periods?: PriorPeriodPayload[]
 }
 
 export async function createCycle(payload: CreateCyclePayload) {
