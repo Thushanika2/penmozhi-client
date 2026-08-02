@@ -72,7 +72,7 @@ export function CycleCalendar({
           !isPeriod && isPredicted && "bg-primary/20 text-primary",
           !isPeriod && !isPredicted && isOvulation && "bg-violet-600 text-white",
           !isPeriod && !isPredicted && !isOvulation && isFertile && "bg-violet-200 text-violet-900 dark:bg-violet-900/40 dark:text-violet-100",
-          !isPeriod && !isPredicted && !isOvulation && !isFertile && isPms && "bg-pink-200/80 text-pink-900 dark:bg-pink-900/30",
+          !isPeriod && !isPredicted && !isOvulation && !isFertile && isPms && "bg-[#f9c5d5]/80 text-[#6b0f45] dark:bg-pink-900/30",
           !isPeriod && !isPredicted && !isOvulation && !isFertile && !isPms && "hover:bg-muted",
         )}
       >
@@ -111,7 +111,7 @@ export function CycleCalendar({
         <Legend color="bg-primary/20" label={labels.predicted} />
         <Legend color="bg-violet-600" label={labels.ovulation} />
         <Legend color="bg-violet-200 dark:bg-violet-900/40" label={labels.fertile} />
-        <Legend color="bg-pink-200/80 dark:bg-pink-900/30" label={labels.pms} />
+        <Legend color="bg-[#f9c5d5]/80" label={labels.pms} />
         <Legend dot label={labels.logged} />
       </div>
     </div>
