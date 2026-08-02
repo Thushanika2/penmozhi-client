@@ -1042,8 +1042,7 @@
     "connected": "Connected",
     "disconnected": "Wearable disconnected",
     "lastSynced": "Last synced",
-    "stubMessage": "OAuth integration is not yet configured.",
-    "todoNote": "Real OAuth requires provider credentials in .env."
+    "stubMessage": "OAuth integration is not yet configured."
   },
   "aiAssistant": {
     "title": "AI Health Assistant",
