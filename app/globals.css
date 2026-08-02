@@ -49,7 +49,7 @@
 }
 
 :root {
-    /* Light palette: FEE3EC → F9C5D5 → F999B7 → F2789F → cb0a7b */
+    /* Light palette: #FEE3EC → #F9C5D5 → #F999B7 → #F2789F → #cb0a7b */
     --brand-deep: #cb0a7b;
     --brand: #f2789f;
     --brand-light: #f999b7;
@@ -64,7 +64,7 @@
     --cycle-luteal: #f9c5d5;
     --cycle-pms: #f999b7;
 
-    --background: #ffffff;
+    --background: #fee3ec;
     --foreground: #4a0a32;
     --card: #ffffff;
     --card-foreground: #4a0a32;
@@ -72,15 +72,15 @@
     --popover-foreground: #4a0a32;
     --primary: #cb0a7b;
     --primary-foreground: #ffffff;
-    --secondary: #fee3ec;
-    --secondary-foreground: #8a1458;
-    --muted: #fee3ec;
-    --muted-foreground: #9a4a6e;
-    --accent: #f9c5d5;
-    --accent-foreground: #6b0f45;
+    --secondary: #f9c5d5;
+    --secondary-foreground: #6b0f45;
+    --muted: #f9c5d5;
+    --muted-foreground: #8a1458;
+    --accent: #f999b7;
+    --accent-foreground: #4a0a32;
     --destructive: #dc2626;
-    --border: #f9c5d5;
-    --input: #fee3ec;
+    --border: #f999b7;
+    --input: #f9c5d5;
     --ring: #cb0a7b;
     --chart-1: #cb0a7b;
     --chart-2: #f2789f;
@@ -93,7 +93,7 @@
     --sidebar-primary: #cb0a7b;
     --sidebar-primary-foreground: #ffffff;
     --sidebar-accent: #fee3ec;
-    --sidebar-accent-foreground: #8a1458;
+    --sidebar-accent-foreground: #6b0f45;
     --sidebar-border: #f9c5d5;
     --sidebar-ring: #cb0a7b;
 }
@@ -162,8 +162,8 @@
 
   .gradient-mesh {
     background:
-      radial-gradient(ellipse 70% 50% at 100% 0%, rgb(203 10 123 / 10%), transparent 55%),
-      radial-gradient(ellipse 60% 40% at 0% 100%, rgb(249 197 213 / 35%), transparent 50%),
+      radial-gradient(ellipse 70% 50% at 100% 0%, rgb(203 10 123 / 12%), transparent 55%),
+      radial-gradient(ellipse 60% 40% at 0% 100%, rgb(242 120 159 / 28%), transparent 50%),
       var(--background);
   }
 
@@ -231,9 +231,9 @@
 
   .auth-panel {
     background:
-      radial-gradient(ellipse 80% 60% at 20% 80%, rgb(203 10 123 / 12%), transparent 60%),
-      radial-gradient(ellipse 60% 50% at 80% 20%, rgb(249 197 213 / 55%), transparent 55%),
-      linear-gradient(160deg, #fee3ec 0%, #ffffff 100%),
+      radial-gradient(ellipse 80% 60% at 20% 80%, rgb(203 10 123 / 14%), transparent 60%),
+      radial-gradient(ellipse 60% 50% at 80% 20%, rgb(249 153 183 / 45%), transparent 55%),
+      linear-gradient(160deg, #fee3ec 0%, #f9c5d5 45%, #ffffff 100%),
       var(--brand-blush);
   }
 
