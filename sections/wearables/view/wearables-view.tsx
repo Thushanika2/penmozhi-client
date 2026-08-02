@@ -87,7 +87,6 @@ export function WearablesView() {
               )
             })
           )}
-          <p className="text-xs text-muted-foreground">{t("wearables.todoNote")}</p>
         </CardContent>
       </Card>
     </div>

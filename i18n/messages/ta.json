@@ -1042,8 +1042,7 @@
     "connected": "இணைக்கப்பட்டது",
     "disconnected": "Wearable துண்டிக்கப்பட்டது",
     "lastSynced": "கடைசி sync",
-    "stubMessage": "OAuth இணைப்பு இன்னும் கட்டமைக்கப்படவில்லை.",
-    "todoNote": "உண்மையான OAuth க்கு .env இல் provider credentials தேவை."
+    "stubMessage": "OAuth இணைப்பு இன்னும் கட்டமைக்கப்படவில்லை."
   },
   "aiAssistant": {
     "title": "AI உடல்நல உதவியாளர்",
