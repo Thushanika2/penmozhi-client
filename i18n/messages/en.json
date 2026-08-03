@@ -1473,7 +1473,10 @@
         "session_id_invalid": "Invalid chat session id."
       },
       "ai": {
-        "session_not_found": "Chat session not found."
+        "session_not_found": "Chat session not found.",
+        "service_unavailable": "Something went wrong with the AI assistant. Please try again.",
+        "quota_exceeded": "The AI assistant is temporarily rate-limited. Please try again in a minute.",
+        "not_configured": "The AI assistant is not configured. Please try again later."
       },
       "reminders": {
         "not_found": "Reminder not found."
