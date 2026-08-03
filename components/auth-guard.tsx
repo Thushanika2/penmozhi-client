@@ -31,6 +31,14 @@ export function AuthenticatedRoute({
   React.useEffect(() => {
     if (isLoading) return
     if (!user) {
+      const returnToRegister =
+        typeof window !== "undefined" &&
+        sessionStorage.getItem("penmozhi_return_to_register") === "1"
+      if (returnToRegister) {
+        sessionStorage.removeItem("penmozhi_return_to_register")
+        router.replace("/auth/register")
+        return
+      }
       router.replace("/auth/login")
       return
     }
