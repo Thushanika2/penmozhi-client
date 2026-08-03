@@ -1470,7 +1470,8 @@
         "minutes_positive": "Minutes must be a positive number.",
         "message_required": "Message is required.",
         "body_required": "Comment text is required.",
-        "session_id_invalid": "Invalid chat session id."
+        "session_id_invalid": "Invalid chat session id.",
+        "email_exists": "This email is already registered — log in instead?"
       },
       "ai": {
         "session_not_found": "Chat session not found.",
