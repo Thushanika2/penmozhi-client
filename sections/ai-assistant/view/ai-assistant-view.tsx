@@ -94,11 +94,9 @@ export function AIAssistantView() {
     setIsNewConversation(true)
   }
 
-  async function handleSend(event: React.FormEvent) {
-    event.preventDefault()
-    if (!message.trim() || sending) return
+  async function sendUserMessage(userMessage: string) {
+    if (!userMessage.trim() || sending) return
 
-    const userMessage = message.trim()
     setMessage("")
     setChat((prev) => [...prev, { role: "user", content: userMessage }])
     setSending(true)
@@ -131,6 +129,17 @@ export function AIAssistantView() {
     }
   }
 
+  async function handleSend(event: React.FormEvent) {
+    event.preventDefault()
+    await sendUserMessage(message.trim())
+  }
+
+  async function handleOptionSelect(option: string) {
+    await sendUserMessage(option)
+  }
+
+  const lastMessageIndex = chat.length - 1
+
   return (
     <div>
       <PageHeader
@@ -162,18 +171,47 @@ export function AIAssistantView() {
                 </p>
               ) : (
                 <>
-                  {chat.map((entry, index) => (
-                    <div
-                      key={`${entry.role}-${index}`}
-                      className={
-                        entry.role === "user"
-                          ? "ml-auto max-w-[85%] rounded-lg bg-primary/10 p-3 text-sm"
-                          : "max-w-[85%] rounded-lg bg-muted p-3 text-sm"
-                      }
-                    >
-                      {entry.content}
-                    </div>
-                  ))}
+                  {chat.map((entry, index) => {
+                    const isAssistant = entry.role === "assistant"
+                    const options = entry.options ?? []
+                    const showOptions =
+                      isAssistant &&
+                      entry.response_type === "clarify" &&
+                      options.length > 0 &&
+                      index === lastMessageIndex &&
+                      !sending
+
+                    return (
+                      <div key={`${entry.role}-${index}`} className="space-y-2">
+                        <div
+                          className={
+                            entry.role === "user"
+                              ? "ml-auto max-w-[85%] rounded-lg bg-primary/10 p-3 text-sm"
+                              : "max-w-[85%] rounded-lg bg-muted p-3 text-sm"
+                          }
+                        >
+                          {entry.content}
+                        </div>
+                        {showOptions ? (
+                          <div className="flex max-w-[95%] flex-wrap gap-2">
+                            {options.map((option) => (
+                              <Button
+                                key={option}
+                                type="button"
+                                size="sm"
+                                variant="outline"
+                                className="rounded-full border-primary/40 bg-[#fee3ec] text-primary hover:bg-[#f9c5d5] hover:text-primary"
+                                disabled={sending}
+                                onClick={() => handleOptionSelect(option)}
+                              >
+                                {option}
+                              </Button>
+                            ))}
+                          </div>
+                        ) : null}
+                      </div>
+                    )
+                  })}
                   {sending ? <TypingIndicator label={t("aiAssistant.typing")} /> : null}
                 </>
               )}

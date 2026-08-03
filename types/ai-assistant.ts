@@ -1,6 +1,10 @@
+export type AIResponseType = "answer" | "clarify"
+
 export interface AIChatMessage {
   role: "user" | "assistant"
   content: string
+  response_type?: AIResponseType
+  options?: string[]
 }
 
 export interface AIHealthAssistantSession {
@@ -19,6 +23,8 @@ export interface AIHealthAssistantSession {
 export interface AIChatResponse {
   message: string
   reply: string
+  response_type?: AIResponseType
+  options?: string[]
   recommendations: string[]
   chat_id: number
   session_id: number
