@@ -407,6 +407,18 @@ function OnboardingWizardForm({ user }: { user: UserProfile }) {
     setStep((current) => Math.min(TOTAL_STEPS - 1, current + 1))
   }
 
+  function goBack() {
+    setAttemptedContinue(false)
+    // Step 1 (index 0): leave the wizard for registration.
+    // GuestRoute on /auth/register redirects already-authenticated users
+    // (JWT from successful signup) back into onboarding via getPostAuthPath.
+    if (step === 0) {
+      router.push("/auth/register")
+      return
+    }
+    setStep((current) => Math.max(0, current - 1))
+  }
+
   async function finishSetup() {
     if (!validateRequiredSteps()) return
 
@@ -772,11 +784,8 @@ function OnboardingWizardForm({ user }: { user: UserProfile }) {
             type="button"
             variant="outline"
             className="rounded-full"
-            disabled={step === 0 || submitting}
-            onClick={() => {
-              setAttemptedContinue(false)
-              setStep((current) => Math.max(0, current - 1))
-            }}
+            disabled={submitting}
+            onClick={goBack}
           >
             {t("common.back")}
           </Button>
