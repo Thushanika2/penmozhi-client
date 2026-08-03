@@ -1,8 +1,8 @@
 import apiClient from "@/lib/api-client"
 import type {
   AIChatHistoryResponse,
+  AIChatListResponse,
   AIChatResponse,
-  AIHealthAssistantSession,
 } from "@/types/ai-assistant"
 
 export interface ChatPayload {
@@ -31,16 +31,7 @@ export async function getChatHistory(sessionId?: number) {
   return data
 }
 
-export async function getRecommendations() {
-  const { data } = await apiClient.get<{ recommendations: string[] }>(
-    "/api/ai-assistant/recommendations",
-  )
-  return data
-}
-
-export async function getSessions() {
-  const { data } = await apiClient.get<{ sessions: AIHealthAssistantSession[] }>(
-    "/api/ai-assistant/sessions",
-  )
+export async function getChats() {
+  const { data } = await apiClient.get<AIChatListResponse>("/api/ai-assistant/chats")
   return data
 }
