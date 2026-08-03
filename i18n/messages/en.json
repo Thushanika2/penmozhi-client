@@ -1046,21 +1046,24 @@
   },
   "aiAssistant": {
     "title": "AI Health Assistant",
-    "description": "Ask questions and get personalized recommendations",
+    "description": "Ask questions about your cycle, symptoms, and wellness",
     "chat": "Chat",
     "emptyChat": "Ask a question about your cycle, symptoms, or wellness to get started.",
     "inputPlaceholder": "Type your question...",
     "send": "Send",
-    "recommendations": "Recommendations",
-    "recommendationsDescription": "Based on your recent symptoms and questions",
-    "noRecommendations": "No recommendations yet — start a chat to receive tips.",
-    "recentSessions": "Recent sessions",
+    "chatHistory": "Chat history",
     "sessionFallback": "Chat session",
     "newChat": "New chat",
     "loadingHistory": "Loading your chat history...",
     "noSessions": "No saved chats yet.",
     "messageCount": "{count} messages",
-    "typing": "Typing..."
+    "typing": "Typing...",
+    "examplePrompts": {
+      "nextPeriod": "When is my next period due?",
+      "stomachPain": "What could be causing my stomach pain?",
+      "pcosSymptoms": "What are the symptoms of PCOS?",
+      "cycleLength": "Is my cycle length healthy?"
+    }
   },
   "forum": {
     "anonymous": "Anonymous",

@@ -1,29 +1,39 @@
 "use client"
 
 import * as React from "react"
-import { Plus, Send, Sparkles } from "lucide-react"
+import {
+  Activity,
+  CalendarDays,
+  HeartPulse,
+  Info,
+  Plus,
+  Send,
+  Sparkles,
+  type LucideIcon,
+} from "lucide-react"
 import { toast } from "sonner"
 
 import { PageHeader } from "@/components/page-header"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { getLocalizedApiError } from "@/lib/localize-api-error"
+import { cn } from "@/lib/utils"
 import { useLanguage } from "@/providers/language-provider"
-import {
-  getChatHistory,
-  getRecommendations,
-  getSessions,
-  sendChatMessage,
-} from "@/services/ai-assistant"
-import type { AIChatMessage, AIHealthAssistantSession } from "@/types/ai-assistant"
+import { getChatHistory, getChats, sendChatMessage } from "@/services/ai-assistant"
+import type { AIChatListItem, AIChatMessage } from "@/types/ai-assistant"
+
+const EXAMPLE_PROMPTS: { key: string; icon: LucideIcon }[] = [
+  { key: "nextPeriod", icon: CalendarDays },
+  { key: "stomachPain", icon: HeartPulse },
+  { key: "pcosSymptoms", icon: Info },
+  { key: "cycleLength", icon: Activity },
+]
 
 function TypingIndicator({ label }: { label: string }) {
   return (
@@ -41,38 +51,62 @@ function TypingIndicator({ label }: { label: string }) {
   )
 }
 
+function formatChatDate(value: string | null, locale: string) {
+  if (!value) return ""
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return value.slice(0, 10)
+  return new Intl.DateTimeFormat(locale === "ta" ? "ta-IN" : "en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  }).format(date)
+}
+
 export function AIAssistantView() {
-  const { t } = useLanguage()
+  const { t, locale } = useLanguage()
   const [message, setMessage] = React.useState("")
   const [chat, setChat] = React.useState<AIChatMessage[]>([])
   const [activeSessionId, setActiveSessionId] = React.useState<number | null>(null)
-  const [recommendations, setRecommendations] = React.useState<string[]>([])
-  const [sessions, setSessions] = React.useState<AIHealthAssistantSession[]>([])
+  const [chats, setChats] = React.useState<AIChatListItem[]>([])
   const [sending, setSending] = React.useState(false)
   const [loadingHistory, setLoadingHistory] = React.useState(true)
   const [isNewConversation, setIsNewConversation] = React.useState(false)
+  const chatScrollRef = React.useRef<HTMLDivElement>(null)
+
+  async function refreshChatList() {
+    const data = await getChats()
+    setChats(data.chats)
+  }
 
   React.useEffect(() => {
     async function load() {
       setLoadingHistory(true)
       try {
-        const [recData, sessionData, historyData] = await Promise.all([
-          getRecommendations(),
-          getSessions(),
-          getChatHistory(),
-        ])
-        setRecommendations(recData.recommendations)
-        setSessions(sessionData.sessions)
-        setActiveSessionId(historyData.session_id)
-        setChat(historyData.messages)
+        const [chatList, historyData] = await Promise.all([getChats(), getChatHistory()])
+        setChats(chatList.chats)
+        if (historyData.session_id && historyData.messages.length) {
+          setActiveSessionId(historyData.session_id)
+          setChat(historyData.messages)
+          setIsNewConversation(false)
+        } else {
+          setActiveSessionId(null)
+          setChat([])
+          setIsNewConversation(true)
+        }
       } catch (error) {
         toast.error(getLocalizedApiError(error, t))
       } finally {
         setLoadingHistory(false)
       }
     }
-    load()
+    void load()
   }, [t])
+
+  React.useEffect(() => {
+    const el = chatScrollRef.current
+    if (!el) return
+    el.scrollTop = el.scrollHeight
+  }, [chat, sending])
 
   async function loadSession(sessionId: number) {
     setLoadingHistory(true)
@@ -92,6 +126,7 @@ export function AIAssistantView() {
     setActiveSessionId(null)
     setChat([])
     setIsNewConversation(true)
+    setMessage("")
   }
 
   async function sendUserMessage(userMessage: string) {
@@ -111,16 +146,7 @@ export function AIAssistantView() {
       setChat(data.messages)
       setActiveSessionId(data.chat_id ?? data.session_id)
       setIsNewConversation(false)
-      if (data.recommendations.length) {
-        setRecommendations((prev) => {
-          const merged = [...data.recommendations, ...prev]
-          return merged.filter((item, index) => merged.indexOf(item) === index)
-        })
-      }
-      setSessions((prev) => {
-        const withoutCurrent = prev.filter((session) => session.id !== data.session.id)
-        return [data.session, ...withoutCurrent]
-      })
+      await refreshChatList()
     } catch (error) {
       setChat((prev) => prev.slice(0, -1))
       toast.error(getLocalizedApiError(error, t))
@@ -139,6 +165,7 @@ export function AIAssistantView() {
   }
 
   const lastMessageIndex = chat.length - 1
+  const showExampleChips = !loadingHistory && chat.length === 0 && !sending
 
   return (
     <div>
@@ -147,28 +174,82 @@ export function AIAssistantView() {
         description={t("aiAssistant.description")}
       />
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        <Card className="lg:col-span-2">
+      <div className="grid gap-6 lg:grid-cols-[minmax(240px,280px)_minmax(0,1fr)]">
+        <Card className="h-fit border-primary/15 bg-gradient-to-b from-[#fee3ec]/70 to-background">
+          <CardHeader className="flex flex-row items-center justify-between gap-3 space-y-0 pb-3">
+            <CardTitle className="text-base">{t("aiAssistant.chatHistory")}</CardTitle>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="rounded-full"
+              onClick={startNewChat}
+            >
+              <Plus className="size-4" />
+              {t("aiAssistant.newChat")}
+            </Button>
+          </CardHeader>
+          <CardContent className="max-h-[28rem] space-y-2 overflow-y-auto pr-1">
+            {loadingHistory && !chats.length ? (
+              <p className="text-sm text-muted-foreground">{t("aiAssistant.loadingHistory")}</p>
+            ) : chats.length ? (
+              chats.map((item) => {
+                const selected = !isNewConversation && activeSessionId === item.chat_id
+                return (
+                  <button
+                    key={item.chat_id}
+                    type="button"
+                    onClick={() => void loadSession(item.chat_id)}
+                    className={cn(
+                      "w-full rounded-xl border px-3 py-2.5 text-left transition-colors",
+                      selected
+                        ? "border-primary/50 bg-primary/10 shadow-sm"
+                        : "border-border/70 bg-background/80 hover:border-primary/30 hover:bg-[#fee3ec]/50",
+                    )}
+                  >
+                    <p className="text-xs font-medium text-primary/80">
+                      {formatChatDate(item.last_message_at, locale)}
+                    </p>
+                    <p className="mt-0.5 line-clamp-2 text-sm text-foreground/90">
+                      {item.title || t("aiAssistant.sessionFallback")}
+                    </p>
+                  </button>
+                )
+              })
+            ) : (
+              <p className="text-sm text-muted-foreground">{t("aiAssistant.noSessions")}</p>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card className="min-w-0 border-primary/10">
           <CardHeader className="flex flex-row items-center justify-between gap-4 space-y-0">
             <CardTitle className="flex items-center gap-2">
               <Sparkles className="size-5 text-primary" />
               {t("aiAssistant.chat")}
             </CardTitle>
-            <Button type="button" variant="outline" size="sm" onClick={startNewChat}>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="rounded-full lg:hidden"
+              onClick={startNewChat}
+            >
               <Plus className="size-4" />
               {t("aiAssistant.newChat")}
             </Button>
           </CardHeader>
           <CardContent>
-            <div className="mb-4 max-h-96 space-y-3 overflow-y-auto rounded-lg border p-4">
+            <div
+              ref={chatScrollRef}
+              className="mb-4 max-h-[28rem] min-h-[16rem] space-y-3 overflow-y-auto rounded-xl border border-border/60 bg-gradient-to-b from-[#fee3ec]/35 to-background p-4"
+            >
               {loadingHistory ? (
                 <p className="text-sm text-muted-foreground">
                   {t("aiAssistant.loadingHistory")}
                 </p>
               ) : !chat.length ? (
-                <p className="text-sm text-muted-foreground">
-                  {t("aiAssistant.emptyChat")}
-                </p>
+                <p className="text-sm text-muted-foreground">{t("aiAssistant.emptyChat")}</p>
               ) : (
                 <>
                   {chat.map((entry, index) => {
@@ -186,8 +267,8 @@ export function AIAssistantView() {
                         <div
                           className={
                             entry.role === "user"
-                              ? "ml-auto max-w-[85%] rounded-lg bg-primary/10 p-3 text-sm"
-                              : "max-w-[85%] rounded-lg bg-muted p-3 text-sm"
+                              ? "ml-auto max-w-[85%] rounded-2xl bg-primary/15 p-3 text-sm"
+                              : "max-w-[85%] rounded-2xl bg-muted/80 p-3 text-sm"
                           }
                         >
                           {entry.content}
@@ -202,7 +283,7 @@ export function AIAssistantView() {
                                 variant="outline"
                                 className="rounded-full border-primary/40 bg-[#fee3ec] text-primary hover:bg-[#f9c5d5] hover:text-primary"
                                 disabled={sending}
-                                onClick={() => handleOptionSelect(option)}
+                                onClick={() => void handleOptionSelect(option)}
                               >
                                 {option}
                               </Button>
@@ -216,77 +297,46 @@ export function AIAssistantView() {
                 </>
               )}
             </div>
+
+            {showExampleChips ? (
+              <div className="mb-3 flex flex-wrap gap-2">
+                {EXAMPLE_PROMPTS.map(({ key, icon: Icon }) => {
+                  const prompt = t(`aiAssistant.examplePrompts.${key}`)
+                  return (
+                    <button
+                      key={key}
+                      type="button"
+                      disabled={sending}
+                      onClick={() => void sendUserMessage(prompt)}
+                      className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-primary/20 bg-[#fee3ec]/80 px-3 py-1.5 text-left text-xs text-foreground/90 transition-colors hover:border-primary/40 hover:bg-[#f9c5d5]/80 disabled:opacity-50"
+                    >
+                      <Icon className="size-3.5 shrink-0 text-primary" />
+                      <span className="truncate">{prompt}</span>
+                    </button>
+                  )
+                })}
+              </div>
+            ) : null}
+
             <form onSubmit={handleSend} className="flex gap-2">
               <Input
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder={t("aiAssistant.inputPlaceholder")}
                 disabled={sending || loadingHistory}
+                className="rounded-full"
               />
-              <Button type="submit" disabled={sending || loadingHistory}>
+              <Button
+                type="submit"
+                disabled={sending || loadingHistory || !message.trim()}
+                className="rounded-full"
+              >
                 <Send className="size-4" />
                 {t("aiAssistant.send")}
               </Button>
             </form>
           </CardContent>
         </Card>
-
-        <div className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>{t("aiAssistant.recommendations")}</CardTitle>
-              <CardDescription>{t("aiAssistant.recommendationsDescription")}</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              {recommendations.length ? (
-                recommendations.slice(0, 5).map((rec, i) => (
-                  <p key={i} className="rounded-lg bg-muted p-2 text-sm">
-                    {rec}
-                  </p>
-                ))
-              ) : (
-                <p className="text-sm text-muted-foreground">
-                  {t("aiAssistant.noRecommendations")}
-                </p>
-              )}
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>{t("aiAssistant.recentSessions")}</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              {sessions.length ? (
-                sessions.slice(0, 5).map((session) => (
-                  <button
-                    key={session.id}
-                    type="button"
-                    onClick={() => loadSession(session.id)}
-                    className={`w-full rounded-lg border p-3 text-left text-sm transition-colors hover:bg-muted/70 ${
-                      activeSessionId === session.id ? "border-primary bg-primary/5" : ""
-                    }`}
-                  >
-                    <Badge variant="outline" className="mb-1">
-                      {session.created_at?.slice(0, 10)}
-                    </Badge>
-                    <p className="line-clamp-2 text-muted-foreground">
-                      {session.preview ?? t("aiAssistant.sessionFallback")}
-                    </p>
-                    {session.message_count ? (
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        {t("aiAssistant.messageCount", { count: session.message_count })}
-                      </p>
-                    ) : null}
-                  </button>
-                ))
-              ) : (
-                <p className="text-sm text-muted-foreground">
-                  {t("aiAssistant.noSessions")}
-                </p>
-              )}
-            </CardContent>
-          </Card>
-        </div>
       </div>
     </div>
   )
