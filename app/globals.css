@@ -39,6 +39,9 @@
     --color-card: var(--card);
     --color-foreground: var(--foreground);
     --color-background: var(--background);
+    --color-text-primary: var(--text-primary);
+    --color-text-secondary: var(--text-secondary);
+    --color-text-accent: var(--text-accent);
     --radius-sm: calc(var(--radius) * 0.6);
     --radius-md: calc(var(--radius) * 0.8);
     --radius-lg: var(--radius);
@@ -64,18 +67,23 @@
     --cycle-luteal: #f9c5d5;
     --cycle-pms: #f999b7;
 
+    /* Text hierarchy tokens — use across UI for readable contrast */
+    --text-primary: #4a0a32;
+    --text-secondary: #6b3d52;
+    --text-accent: #cb0a7b;
+
     --background: #fee3ec;
-    --foreground: #4a0a32;
+    --foreground: var(--text-primary);
     --card: #ffffff;
-    --card-foreground: #4a0a32;
+    --card-foreground: var(--text-primary);
     --popover: #ffffff;
-    --popover-foreground: #4a0a32;
+    --popover-foreground: var(--text-primary);
     --primary: #cb0a7b;
     --primary-foreground: #ffffff;
     --secondary: #f9c5d5;
     --secondary-foreground: #6b0f45;
     --muted: #f9c5d5;
-    --muted-foreground: #8a1458;
+    --muted-foreground: var(--text-secondary);
     --accent: #f999b7;
     --accent-foreground: #4a0a32;
     --destructive: #dc2626;
@@ -89,7 +97,7 @@
     --chart-5: #fee3ec;
     --radius: 0.75rem;
     --sidebar: #ffffff;
-    --sidebar-foreground: #4a0a32;
+    --sidebar-foreground: var(--text-primary);
     --sidebar-primary: #cb0a7b;
     --sidebar-primary-foreground: #ffffff;
     --sidebar-accent: #fee3ec;
@@ -99,23 +107,28 @@
 }
 
 .dark {
+    /* Near-white / cool grey text — not dim pink — for readable dark UI */
+    --text-primary: #f5f3f7;
+    --text-secondary: #b8b3be;
+    --text-accent: #f98fcd;
+
     --background: #120810;
-    --foreground: #faf0f5;
-    --card: #1e1018;
-    --card-foreground: #faf0f5;
-    --popover: #1e1018;
-    --popover-foreground: #faf0f5;
+    --foreground: var(--text-primary);
+    --card: #1a1218;
+    --card-foreground: var(--text-primary);
+    --popover: #1a1218;
+    --popover-foreground: var(--text-primary);
     --primary: #f76dbe;
     --primary-foreground: #ffffff;
     --secondary: #261420;
-    --secondary-foreground: #f98fcd;
+    --secondary-foreground: var(--text-primary);
     --muted: #261420;
-    --muted-foreground: #c878a8;
+    --muted-foreground: var(--text-secondary);
     --accent: #301828;
-    --accent-foreground: #f98fcd;
+    --accent-foreground: var(--text-primary);
     --destructive: #f87171;
-    --border: rgb(247 109 222 / 18%);
-    --input: rgb(247 109 222 / 12%);
+    --border: rgb(245 243 247 / 14%);
+    --input: rgb(245 243 247 / 10%);
     --ring: #f76dbe;
     --chart-1: #f429a0;
     --chart-2: #f54baf;
@@ -123,12 +136,12 @@
     --chart-4: #f98fcd;
     --chart-5: #fef5fb;
     --sidebar: #160c12;
-    --sidebar-foreground: #faf0f5;
+    --sidebar-foreground: var(--text-primary);
     --sidebar-primary: #f76dbe;
     --sidebar-primary-foreground: #ffffff;
     --sidebar-accent: #261420;
-    --sidebar-accent-foreground: #f98fcd;
-    --sidebar-border: rgb(247 109 222 / 18%);
+    --sidebar-accent-foreground: var(--text-primary);
+    --sidebar-border: rgb(245 243 247 / 12%);
     --sidebar-ring: #f76dbe;
 }
 
@@ -179,7 +192,7 @@
   }
 
   .section-eyebrow {
-    @apply text-xs font-semibold uppercase tracking-[0.2em] text-primary;
+    @apply text-xs font-semibold uppercase tracking-[0.2em] text-text-accent;
   }
 
   .bento-card {
@@ -212,7 +225,7 @@
   }
 
   .nav-link-active {
-    @apply bg-primary/10 font-semibold text-primary;
+    @apply bg-primary/10 font-semibold text-text-accent;
   }
 
   .nav-link-active::before {
@@ -221,7 +234,7 @@
   }
 
   .nav-link-inactive {
-    @apply text-muted-foreground hover:bg-muted/80 hover:text-foreground;
+    @apply text-text-secondary hover:bg-muted/80 hover:text-text-primary;
   }
 
   .moon-glow {
@@ -254,11 +267,11 @@
   }
 
   .bottom-nav-active {
-    @apply text-primary;
+    @apply text-text-accent;
   }
 
   .bottom-nav-inactive {
-    @apply text-muted-foreground;
+    @apply text-text-secondary;
   }
 
   .clue-cycle-panel {

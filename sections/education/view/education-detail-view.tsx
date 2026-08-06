@@ -78,21 +78,21 @@ export function EducationDetailView({ id }: { id: number }) {
 
   if (loading)
     return (
-      <p className="text-muted-foreground">{t("education.detail.loadingArticle")}</p>
+      <p className="text-text-secondary">{t("education.detail.loadingArticle")}</p>
     )
   if (!resource)
     return <p className="text-destructive">{t("education.detail.articleNotFound")}</p>
 
   return (
     <Card className="overflow-hidden rounded-3xl border-border/70 shadow-lg shadow-primary/5">
-      <CardHeader className="border-b border-border/50 bg-gradient-to-r from-primary/5 to-[#f9c5d5]/40">
+      <CardHeader className="border-b border-border/50 bg-muted/50">
         <div className="flex items-center gap-2">
           <Badge>{resource.content_category}</Badge>
-          <span className="text-sm text-muted-foreground">
+          <span className="text-sm text-text-secondary">
             {resource.publication_date}
           </span>
         </div>
-        <CardTitle className="text-3xl">{resource.article_title}</CardTitle>
+        <CardTitle className="text-3xl text-text-primary">{resource.article_title}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="prose prose-sm max-w-none whitespace-pre-wrap dark:prose-invert">
