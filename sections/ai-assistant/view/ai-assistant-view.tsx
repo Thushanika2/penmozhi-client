@@ -45,7 +45,7 @@ function TypingIndicator({ label }: { label: string }) {
           <span className="size-2 animate-bounce rounded-full bg-primary/70 [animation-delay:150ms]" />
           <span className="size-2 animate-bounce rounded-full bg-primary/70 [animation-delay:300ms]" />
         </div>
-        <span className="text-xs text-muted-foreground">{label}</span>
+        <span className="text-xs text-text-secondary">{label}</span>
       </div>
     </div>
   )
@@ -82,19 +82,34 @@ export function AIAssistantView() {
     async function load() {
       setLoadingHistory(true)
       try {
-        const [chatList, historyData] = await Promise.all([getChats(), getChatHistory()])
-        setChats(chatList.chats)
-        if (historyData.session_id && historyData.messages.length) {
-          setActiveSessionId(historyData.session_id)
-          setChat(historyData.messages)
-          setIsNewConversation(false)
+        const results = await Promise.allSettled([getChats(), getChatHistory()])
+        const chatListResult = results[0]
+        const historyResult = results[1]
+
+        if (chatListResult.status === "fulfilled") {
+          setChats(chatListResult.value.chats)
         } else {
+          toast.error(getLocalizedApiError(chatListResult.reason, t))
+        }
+
+        if (historyResult.status === "fulfilled") {
+          const historyData = historyResult.value
+          if (historyData.session_id && historyData.messages.length) {
+            setActiveSessionId(historyData.session_id)
+            setChat(historyData.messages)
+            setIsNewConversation(false)
+          } else {
+            setActiveSessionId(null)
+            setChat([])
+            setIsNewConversation(true)
+          }
+        } else if (chatListResult.status === "fulfilled") {
+          // History failed but chat list worked — start empty rather than blocking the page.
           setActiveSessionId(null)
           setChat([])
           setIsNewConversation(true)
+          toast.error(getLocalizedApiError(historyResult.reason, t))
         }
-      } catch (error) {
-        toast.error(getLocalizedApiError(error, t))
       } finally {
         setLoadingHistory(false)
       }
@@ -175,9 +190,11 @@ export function AIAssistantView() {
       />
 
       <div className="grid gap-6 lg:grid-cols-[minmax(240px,280px)_minmax(0,1fr)]">
-        <Card className="h-fit border-primary/15 bg-gradient-to-b from-[#fee3ec]/70 to-background">
+        <Card className="h-fit border-border bg-card">
           <CardHeader className="flex flex-row items-center justify-between gap-3 space-y-0 pb-3">
-            <CardTitle className="text-base">{t("aiAssistant.chatHistory")}</CardTitle>
+            <CardTitle className="text-base text-text-primary">
+              {t("aiAssistant.chatHistory")}
+            </CardTitle>
             <Button
               type="button"
               variant="outline"
@@ -191,7 +208,7 @@ export function AIAssistantView() {
           </CardHeader>
           <CardContent className="max-h-[28rem] space-y-2 overflow-y-auto pr-1">
             {loadingHistory && !chats.length ? (
-              <p className="text-sm text-muted-foreground">{t("aiAssistant.loadingHistory")}</p>
+              <p className="text-sm text-text-secondary">{t("aiAssistant.loadingHistory")}</p>
             ) : chats.length ? (
               chats.map((item) => {
                 const selected = !isNewConversation && activeSessionId === item.chat_id
@@ -203,29 +220,29 @@ export function AIAssistantView() {
                     className={cn(
                       "w-full rounded-xl border px-3 py-2.5 text-left transition-colors",
                       selected
-                        ? "border-primary/50 bg-primary/10 shadow-sm"
-                        : "border-border/70 bg-background/80 hover:border-primary/30 hover:bg-[#fee3ec]/50",
+                        ? "border-primary/45 bg-primary/10 shadow-sm"
+                        : "border-border bg-background/40 hover:border-primary/30 hover:bg-muted/60",
                     )}
                   >
-                    <p className="text-xs font-medium text-primary/80">
+                    <p className="text-xs font-medium text-text-secondary">
                       {formatChatDate(item.last_message_at, locale)}
                     </p>
-                    <p className="mt-0.5 line-clamp-2 text-sm text-foreground/90">
+                    <p className="mt-0.5 line-clamp-2 text-sm text-text-primary">
                       {item.title || t("aiAssistant.sessionFallback")}
                     </p>
                   </button>
                 )
               })
             ) : (
-              <p className="text-sm text-muted-foreground">{t("aiAssistant.noSessions")}</p>
+              <p className="text-sm text-text-secondary">{t("aiAssistant.noSessions")}</p>
             )}
           </CardContent>
         </Card>
 
-        <Card className="min-w-0 border-primary/10">
+        <Card className="min-w-0 border-border bg-card">
           <CardHeader className="flex flex-row items-center justify-between gap-4 space-y-0">
-            <CardTitle className="flex items-center gap-2">
-              <Sparkles className="size-5 text-primary" />
+            <CardTitle className="flex items-center gap-2 text-text-primary">
+              <Sparkles className="size-5 text-text-accent" />
               {t("aiAssistant.chat")}
             </CardTitle>
             <Button
@@ -242,14 +259,14 @@ export function AIAssistantView() {
           <CardContent>
             <div
               ref={chatScrollRef}
-              className="mb-4 max-h-[28rem] min-h-[16rem] space-y-3 overflow-y-auto rounded-xl border border-border/60 bg-gradient-to-b from-[#fee3ec]/35 to-background p-4"
+              className="mb-4 max-h-[28rem] min-h-[16rem] space-y-3 overflow-y-auto rounded-xl border border-border bg-muted/40 p-4"
             >
               {loadingHistory ? (
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-text-secondary">
                   {t("aiAssistant.loadingHistory")}
                 </p>
               ) : !chat.length ? (
-                <p className="text-sm text-muted-foreground">{t("aiAssistant.emptyChat")}</p>
+                <p className="text-sm text-text-secondary">{t("aiAssistant.emptyChat")}</p>
               ) : (
                 <>
                   {chat.map((entry, index) => {
@@ -267,8 +284,8 @@ export function AIAssistantView() {
                         <div
                           className={
                             entry.role === "user"
-                              ? "ml-auto max-w-[85%] rounded-2xl bg-primary/15 p-3 text-sm"
-                              : "max-w-[85%] rounded-2xl bg-muted/80 p-3 text-sm"
+                              ? "ml-auto max-w-[85%] rounded-2xl bg-primary/15 p-3 text-sm text-text-primary"
+                              : "max-w-[85%] rounded-2xl bg-background/70 p-3 text-sm text-text-primary"
                           }
                         >
                           {entry.content}
@@ -281,7 +298,7 @@ export function AIAssistantView() {
                                 type="button"
                                 size="sm"
                                 variant="outline"
-                                className="rounded-full border-primary/40 bg-[#fee3ec] text-primary hover:bg-[#f9c5d5] hover:text-primary"
+                                className="rounded-full border-primary/35 bg-muted text-text-primary hover:bg-primary/15 hover:text-text-primary"
                                 disabled={sending}
                                 onClick={() => void handleOptionSelect(option)}
                               >
@@ -308,9 +325,9 @@ export function AIAssistantView() {
                       type="button"
                       disabled={sending}
                       onClick={() => void sendUserMessage(prompt)}
-                      className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-primary/20 bg-[#fee3ec]/80 px-3 py-1.5 text-left text-xs text-foreground/90 transition-colors hover:border-primary/40 hover:bg-[#f9c5d5]/80 disabled:opacity-50"
+                      className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-border bg-muted px-3 py-1.5 text-left text-xs text-text-primary transition-colors hover:border-primary/40 hover:bg-primary/10 disabled:opacity-50"
                     >
-                      <Icon className="size-3.5 shrink-0 text-primary" />
+                      <Icon className="size-3.5 shrink-0 text-text-accent" />
                       <span className="truncate">{prompt}</span>
                     </button>
                   )
@@ -324,7 +341,7 @@ export function AIAssistantView() {
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder={t("aiAssistant.inputPlaceholder")}
                 disabled={sending || loadingHistory}
-                className="rounded-full"
+                className="rounded-full text-text-primary placeholder:text-text-secondary"
               />
               <Button
                 type="submit"
