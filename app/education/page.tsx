@@ -19,13 +19,19 @@ function EducationPageContent() {
   const { t } = useLanguage()
   const searchParams = useSearchParams()
   const tabParam = searchParams.get("tab")
-  const [tab, setTab] = React.useState<EducationTab>(
-    tabParam === "videos" ? "videos" : "articles",
-  )
+  const initialTab: EducationTab = tabParam === "videos" ? "videos" : "articles"
 
-  React.useEffect(() => {
-    setTab(tabParam === "videos" ? "videos" : "articles")
-  }, [tabParam])
+  return <EducationTabs key={initialTab} initialTab={initialTab} t={t} />
+}
+
+function EducationTabs({
+  initialTab,
+  t,
+}: {
+  initialTab: EducationTab
+  t: ReturnType<typeof useLanguage>["t"]
+}) {
+  const [tab, setTab] = React.useState<EducationTab>(initialTab)
 
   return (
     <div className="flex min-h-svh flex-col gradient-mesh">

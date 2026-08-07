@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { useQueryClient } from "@tanstack/react-query"
 
 import * as loginService from "@/services/auth"
 import type { HealthProfile } from "@/types/health-profile"
@@ -48,6 +49,7 @@ function readStoredHealthProfile(): HealthProfile | null {
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const queryClient = useQueryClient()
   // Always start the same on server and client to avoid hydration mismatches.
   // localStorage is only read after mount.
   const [user, setUser] = React.useState<UserProfile | null>(null)
@@ -61,6 +63,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       nextHealth?: HealthProfile | null,
       refreshToken?: string,
     ) => {
+      queryClient.clear()
       localStorage.setItem(TOKEN_KEY, token)
       if (refreshToken) localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken)
       localStorage.setItem(USER_KEY, JSON.stringify(nextUser))
@@ -70,17 +73,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setHealthProfileState(nextHealth)
       }
     },
-    [],
+    [queryClient],
   )
 
   const clearSession = React.useCallback(() => {
+    queryClient.clear()
     localStorage.removeItem(TOKEN_KEY)
     localStorage.removeItem(REFRESH_TOKEN_KEY)
     localStorage.removeItem(USER_KEY)
     localStorage.removeItem(HEALTH_PROFILE_KEY)
     setUser(null)
     setHealthProfileState(null)
-  }, [])
+  }, [queryClient])
 
   const refreshProfile = React.useCallback(async () => {
     const token = localStorage.getItem(TOKEN_KEY)
