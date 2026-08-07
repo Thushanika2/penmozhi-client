@@ -1119,13 +1119,15 @@
     "published": "Published {date}",
     "readMore": "Read more",
     "editArticle": "Edit article",
+    "hasVideo": "Includes video",
     "languageEnglish": "English",
     "languageTamil": "Tamil",
     "allArticles": "All articles",
     "backToArticles": "Back to articles",
     "detail": {
       "loadingArticle": "Loading article...",
-      "articleNotFound": "Article not found"
+      "articleNotFound": "Article not found",
+      "videoUnsupported": "Your browser does not support video playback."
     },
     "admin": {
       "manageTitle": "Manage Articles",
@@ -1141,6 +1143,17 @@
       "languageLabel": "Language",
       "publicationDateLabel": "Publication date",
       "contentLabel": "Content",
+      "videoLabel": "Article video",
+      "videoHint": "Upload an mp4, mov, or webm video (max 200 MB). Hosted on Cloudinary.",
+      "videoSaveFirst": "Publish the article first, then edit it to upload a video.",
+      "videoUpload": "Upload video",
+      "videoUploading": "Uploading… {percent}%",
+      "videoUploaded": "Video uploaded",
+      "videoRemove": "Remove video",
+      "videoRemoving": "Removing…",
+      "videoRemoved": "Video removed",
+      "videoTooLarge": "Video must be 200 MB or smaller.",
+      "videoInvalidType": "Please choose an mp4, mov, webm, or m4v file.",
       "publish": "Publish",
       "update": "Update",
       "articlePublished": "Article published",
@@ -1495,7 +1508,10 @@
         "post_not_found": "Forum post not found."
       },
       "education": {
-        "not_found": "Educational resource not found."
+        "not_found": "Educational resource not found.",
+        "cloudinary_not_configured": "Video hosting is not configured. Add Cloudinary credentials on the API.",
+        "video_upload_failed": "Video upload failed. Please try again.",
+        "video_not_found": "This article has no video."
       },
       "cycle": {
         "unusual_gap": "Unusual gap between periods. Explain the gap and add an earlier period date for accurate predictions.",

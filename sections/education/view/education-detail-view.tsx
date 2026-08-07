@@ -94,7 +94,18 @@ export function EducationDetailView({ id }: { id: number }) {
         </div>
         <CardTitle className="text-3xl text-text-primary">{resource.article_title}</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="space-y-6">
+        {resource.video_url ? (
+          <video
+            src={resource.video_url}
+            controls
+            playsInline
+            preload="metadata"
+            className="aspect-video w-full rounded-xl bg-black"
+          >
+            {t("education.detail.videoUnsupported")}
+          </video>
+        ) : null}
         <div className="prose prose-sm max-w-none whitespace-pre-wrap dark:prose-invert">
           {renderArticleBody(resource.content_body)}
         </div>
