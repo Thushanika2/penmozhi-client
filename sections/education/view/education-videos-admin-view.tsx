@@ -57,7 +57,6 @@ export function EducationVideosAdminView() {
   const [deletingId, setDeletingId] = React.useState<number | null>(null)
 
   const loadVideos = React.useCallback(async () => {
-    setLoading(true)
     try {
       const data = await getAdminEducationVideos({
         category: categoryFilter || undefined,
@@ -71,7 +70,8 @@ export function EducationVideosAdminView() {
   }, [categoryFilter, t])
 
   React.useEffect(() => {
-    void loadVideos()
+    const timeoutId = window.setTimeout(() => void loadVideos(), 0)
+    return () => window.clearTimeout(timeoutId)
   }, [loadVideos])
 
   function resetUploadForm() {
@@ -191,7 +191,10 @@ export function EducationVideosAdminView() {
         <Input
           placeholder={t("education.filterPlaceholder")}
           value={categoryFilter}
-          onChange={(e) => setCategoryFilter(e.target.value)}
+          onChange={(e) => {
+            setLoading(true)
+            setCategoryFilter(e.target.value)
+          }}
           className="max-w-sm rounded-full"
         />
         <Button
