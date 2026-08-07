@@ -31,12 +31,39 @@ import {
 } from "@/services/admin"
 import type { AdminUsersFilters } from "@/types/admin"
 import type { SubscriptionLabel, UserProfile, UserStatus } from "@/types/user-profile"
+import { Ban, Eye, LogOut, Trash2 } from "lucide-react"
 import { useLanguage } from "@/providers/language-provider"
 
 function statusVariant(status: UserStatus): "default" | "secondary" | "destructive" {
   if (status === "active") return "default"
   if (status === "suspended") return "secondary"
   return "destructive"
+}
+
+function ActionIconButton({
+  label,
+  icon,
+  variant = "outline",
+  className,
+  ...props
+}: {
+  label: string
+  icon: React.ReactNode
+  variant?: "default" | "outline" | "secondary" | "ghost" | "destructive" | "link"
+} & React.ComponentPropsWithoutRef<typeof Button>) {
+  return (
+    <Button
+      type="button"
+      variant={variant}
+      size="icon-lg"
+      className={`rounded-full min-h-[36px] min-w-[36px] ${className ?? ""}`}
+      title={label}
+      aria-label={label}
+      {...props}
+    >
+      {icon}
+    </Button>
+  )
 }
 
 function subscriptionVariant(label: SubscriptionLabel): "default" | "secondary" | "outline" | "destructive" {
@@ -369,42 +396,40 @@ export function AdminUsersView() {
                             <TableCell>{formatDate(user.last_active_at ?? null)}</TableCell>
                             <TableCell>{formatDate(user.registration_date)}</TableCell>
                             <TableCell>
-                              <div className="flex flex-wrap gap-1">
-                                <Button
+                              <div className="flex items-center gap-2">
+                                <ActionIconButton
                                   variant="outline"
-                                  size="sm"
                                   render={<Link href={`/admin/users/${user.id}`} />}
-                                >
-                                  {t("admin.users.actions.view")}
-                                </Button>
+                                  icon={<Eye className="size-4" />}
+                                  label={t("admin.users.actions.view")}
+                                />
                                 {user.status !== "banned" && (
-                                  <Button
+                                  <ActionIconButton
                                     variant="outline"
-                                    size="sm"
                                     disabled={busy}
                                     onClick={() => handleToggleSuspend(user)}
-                                  >
-                                    {user.status === "active"
-                                      ? t("admin.users.actions.suspend")
-                                      : t("admin.users.actions.unsuspend")}
-                                  </Button>
+                                    icon={<Ban className="size-4" />}
+                                    label={
+                                      user.status === "active"
+                                        ? t("admin.users.actions.suspend")
+                                        : t("admin.users.actions.unsuspend")
+                                    }
+                                  />
                                 )}
-                                <Button
+                                <ActionIconButton
                                   variant="outline"
-                                  size="sm"
                                   disabled={busy}
                                   onClick={() => handleForceLogout(user.id)}
-                                >
-                                  {t("admin.users.actions.forceLogout")}
-                                </Button>
-                                <Button
-                                  variant="outline"
-                                  size="sm"
+                                  icon={<LogOut className="size-4" />}
+                                  label={t("admin.users.actions.forceLogout")}
+                                />
+                                <ActionIconButton
+                                  variant="destructive"
                                   disabled={busy}
                                   onClick={() => handleRequestDelete(user.id)}
-                                >
-                                  {t("admin.users.actions.delete")}
-                                </Button>
+                                  icon={<Trash2 className="size-4" />}
+                                  label={t("admin.users.actions.delete")}
+                                />
                               </div>
                             </TableCell>
                           </TableRow>

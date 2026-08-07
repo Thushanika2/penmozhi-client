@@ -1,15 +1,31 @@
 "use client"
 
 import Link from "next/link"
+import { useSearchParams } from "next/navigation"
+import * as React from "react"
+import { Suspense } from "react"
 
 import { SiteFooter } from "@/components/site-footer"
 import { SiteHeader } from "@/components/site-header"
 import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 import { useLanguage } from "@/providers/language-provider"
 import { EducationListView } from "@/sections/education/view/education-list-view"
+import { EducationVideosListView } from "@/sections/education/view/education-videos-list-view"
 
-export default function EducationPage() {
+type EducationTab = "articles" | "videos"
+
+function EducationPageContent() {
   const { t } = useLanguage()
+  const searchParams = useSearchParams()
+  const tabParam = searchParams.get("tab")
+  const [tab, setTab] = React.useState<EducationTab>(
+    tabParam === "videos" ? "videos" : "articles",
+  )
+
+  React.useEffect(() => {
+    setTab(tabParam === "videos" ? "videos" : "articles")
+  }, [tabParam])
 
   return (
     <div className="flex min-h-svh flex-col gradient-mesh">
@@ -29,10 +45,58 @@ export default function EducationPage() {
             {t("education.description")}
           </p>
         </div>
-        <EducationListView publicMode />
+
+        <div
+          className="mb-8 inline-flex rounded-full border border-border/70 bg-card/80 p-1 shadow-sm"
+          role="tablist"
+          aria-label={t("education.tabsLabel")}
+        >
+          <button
+            type="button"
+            role="tab"
+            aria-selected={tab === "articles"}
+            className={cn(
+              "rounded-full px-5 py-2 text-sm font-medium transition-colors",
+              tab === "articles"
+                ? "bg-primary text-primary-foreground"
+                : "text-text-secondary hover:text-text-primary",
+            )}
+            onClick={() => setTab("articles")}
+          >
+            {t("education.tabArticles")}
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={tab === "videos"}
+            className={cn(
+              "rounded-full px-5 py-2 text-sm font-medium transition-colors",
+              tab === "videos"
+                ? "bg-primary text-primary-foreground"
+                : "text-text-secondary hover:text-text-primary",
+            )}
+            onClick={() => setTab("videos")}
+          >
+            {t("education.tabVideos")}
+          </button>
+        </div>
+
+        {tab === "articles" ? (
+          <EducationListView publicMode />
+        ) : (
+          <EducationVideosListView />
+        )}
       </div>
 
       <SiteFooter />
     </div>
+  )
+}
+
+export default function EducationPage() {
+  return (
+    <Suspense fallback={null}>
+      <EducationPageContent />
+    </Suspense>
   )
 }
