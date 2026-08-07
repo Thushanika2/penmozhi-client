@@ -5,5 +5,7 @@ export interface EducationalResource {
   content_body: string
   language: "english" | "tamil"
   publication_date: string
+  video_url: string | null
+  video_public_id?: string | null
   created_at: string | null
 }

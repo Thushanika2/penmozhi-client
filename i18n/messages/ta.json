@@ -1119,13 +1119,15 @@
     "published": "{date} அன்று வெளியிடப்பட்டது",
     "readMore": "மேலும் படிக்க",
     "editArticle": "கட்டுரையைத் திருத்து",
+    "hasVideo": "வீடியோ உள்ளது",
     "languageEnglish": "English",
     "languageTamil": "தமிழ்",
     "allArticles": "அனைத்து கட்டுரைகள்",
     "backToArticles": "கட்டுரைகளுக்குத் திரும்பு",
     "detail": {
       "loadingArticle": "கட்டுரை ஏற்றப்படுகிறது...",
-      "articleNotFound": "கட்டுரை காணப்படவில்லை"
+      "articleNotFound": "கட்டுரை காணப்படவில்லை",
+      "videoUnsupported": "உங்கள் உலாவி வீடியோ இயக்கத்தை ஆதரிக்கவில்லை."
     },
     "admin": {
       "manageTitle": "கட்டுரைகளை நிர்வகி",
@@ -1141,6 +1143,17 @@
       "languageLabel": "மொழி",
       "publicationDateLabel": "வெளியீட்டுத் தேதி",
       "contentLabel": "உள்ளடக்கம்",
+      "videoLabel": "கட்டுரை வீடியோ",
+      "videoHint": "mp4, mov அல்லது webm வீடியோவைப் பதிவேற்றவும் (அதிகபட்சம் 200 MB). Cloudinary-இல் ஹோஸ்ட் செய்யப்படும்.",
+      "videoSaveFirst": "முதலில் கட்டுரையை வெளியிட்டு, பின்னர் வீடியோ பதிவேற்ற திருத்தவும்.",
+      "videoUpload": "வீடியோவைப் பதிவேற்று",
+      "videoUploading": "பதிவேற்றம்… {percent}%",
+      "videoUploaded": "வீடியோ பதிவேற்றப்பட்டது",
+      "videoRemove": "வீடியோவை அகற்று",
+      "videoRemoving": "அகற்றுகிறது…",
+      "videoRemoved": "வீடியோ அகற்றப்பட்டது",
+      "videoTooLarge": "வீடியோ 200 MB அல்லது அதற்குக் குறைவாக இருக்க வேண்டும்.",
+      "videoInvalidType": "mp4, mov, webm அல்லது m4v கோப்பைத் தேர்ந்தெடுக்கவும்.",
       "publish": "வெளியிடு",
       "update": "புதுப்பி",
       "articlePublished": "கட்டுரை வெளியிடப்பட்டது",
@@ -1495,7 +1508,10 @@
         "post_not_found": "மன்றப் பதிவு காணப்படவில்லை."
       },
       "education": {
-        "not_found": "கல்வி ஆதாரம் காணப்படவில்லை."
+        "not_found": "கல்வி ஆதாரம் காணப்படவில்லை.",
+        "cloudinary_not_configured": "வீடியோ ஹோஸ்டிங் அமைக்கப்படவில்லை. API-இல் Cloudinary விவரங்களைச் சேர்க்கவும்.",
+        "video_upload_failed": "வீடியோ பதிவேற்றம் தோல்வியடைந்தது. மீண்டும் முயற்சிக்கவும்.",
+        "video_not_found": "இந்தக் கட்டுரையில் வீடியோ இல்லை."
       },
       "cycle": {
         "unusual_gap": "மாதவிடாய்களுக்கு இடையே அசாதாரண இடைவெளி. துல்லியமான கணிப்புக்கு இடைவெளியை விளக்கி முந்தைய தேதியைச் சேருங்கள்.",
