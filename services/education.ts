@@ -1,4 +1,5 @@
 import apiClient from "@/lib/api-client"
+import { uploadEducationVideoFileDirectly } from "@/services/education-videos"
 import type { EducationalResource } from "@/types/educational-resource"
 
 export interface CreateEducationPayload {
@@ -22,25 +23,22 @@ export interface EducationListParams {
   language?: "english" | "tamil"
 }
 
-const VIDEO_UPLOAD_TIMEOUT_MS = 5 * 60_000
-
 export async function getEducationResources(params?: EducationListParams) {
-  const { data } = await apiClient.get<{ education_resources: EducationalResource[] }>(
-    "/api/education",
-    {
-      params: {
-        ...(params?.category ? { category: params.category } : {}),
-        ...(params?.language ? { language: params.language } : {}),
-      },
+  const { data } = await apiClient.get<{
+    education_resources: EducationalResource[]
+  }>("/api/education", {
+    params: {
+      ...(params?.category ? { category: params.category } : {}),
+      ...(params?.language ? { language: params.language } : {}),
     },
-  )
+  })
   return data
 }
 
 export async function getEducationResource(id: number) {
-  const { data } = await apiClient.get<{ education_resource: EducationalResource }>(
-    `/api/education/${id}`,
-  )
+  const { data } = await apiClient.get<{
+    education_resource: EducationalResource
+  }>(`/api/education/${id}`)
   return data
 }
 
@@ -54,7 +52,7 @@ export async function createEducationResource(payload: CreateEducationPayload) {
 
 export async function updateEducationResource(
   id: number,
-  payload: UpdateEducationPayload,
+  payload: UpdateEducationPayload
 ) {
   const { data } = await apiClient.put<{
     message: string
@@ -65,7 +63,7 @@ export async function updateEducationResource(
 
 export async function deleteEducationResource(id: number) {
   const { data } = await apiClient.delete<{ message: string }>(
-    `/api/education/${id}`,
+    `/api/education/${id}`
   )
   return data
 }
@@ -73,23 +71,15 @@ export async function deleteEducationResource(id: number) {
 export async function uploadEducationVideo(
   id: number,
   file: File,
-  onProgress?: (percent: number) => void,
+  onProgress?: (percent: number) => void
 ) {
-  const formData = new FormData()
-  formData.append("video", file)
+  const upload = await uploadEducationVideoFileDirectly(file, onProgress)
 
   const { data } = await apiClient.post<{
     message: string
     education_resource: EducationalResource
-  }>(`/admin/education/${id}/video`, formData, {
-    timeout: VIDEO_UPLOAD_TIMEOUT_MS,
-    // Let the browser set multipart boundary (default JSON Content-Type breaks uploads).
-    headers: { "Content-Type": undefined as unknown as string },
-    onUploadProgress: (event) => {
-      if (!onProgress || !event.total) return
-      onProgress(Math.round((event.loaded / event.total) * 100))
-    },
-  })
+  }>(`/admin/education/${id}/video`, { upload })
+  onProgress?.(100)
   return data
 }
 

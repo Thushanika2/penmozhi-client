@@ -21,7 +21,10 @@ import { Label } from "@/components/ui/label"
 import { Select } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { localeToEducationLanguage } from "@/i18n/config"
-import { getLocalizedApiError } from "@/lib/localize-api-error"
+import {
+  getLocalizedApiError,
+  getLocalizedVideoUploadError,
+} from "@/lib/localize-api-error"
 import { useLanguage } from "@/providers/language-provider"
 import {
   createEducationResource,
@@ -56,7 +59,7 @@ export function EducationFormView({
   const router = useRouter()
   const fileInputRef = React.useRef<HTMLInputElement>(null)
   const [videoUrl, setVideoUrl] = React.useState<string | null>(
-    resource?.video_url ?? null,
+    resource?.video_url ?? null
   )
   const [selectedFile, setSelectedFile] = React.useState<File | null>(null)
   const [uploading, setUploading] = React.useState(false)
@@ -80,7 +83,7 @@ export function EducationFormView({
           .min(1, t("education.form.validation.publicationDateRequired")),
         language: z.enum(["english", "tamil"]),
       }),
-    [t],
+    [t]
   )
 
   const {
@@ -122,7 +125,9 @@ export function EducationFormView({
       lower.endsWith(".m4v")
     if (
       !extensionOk ||
-      (file.type && !ALLOWED_VIDEO_TYPES.has(file.type) && !file.type.startsWith("video/"))
+      (file.type &&
+        !ALLOWED_VIDEO_TYPES.has(file.type) &&
+        !file.type.startsWith("video/"))
     ) {
       toast.error(t("education.form.videoInvalidType"))
       event.target.value = ""
@@ -136,13 +141,17 @@ export function EducationFormView({
     setUploading(true)
     setUploadProgress(0)
     try {
-      const data = await uploadEducationVideo(resource.id, selectedFile, setUploadProgress)
+      const data = await uploadEducationVideo(
+        resource.id,
+        selectedFile,
+        setUploadProgress
+      )
       setVideoUrl(data.education_resource.video_url)
       setSelectedFile(null)
       if (fileInputRef.current) fileInputRef.current.value = ""
       toast.success(t("education.form.videoUploaded"))
     } catch (error) {
-      toast.error(getLocalizedApiError(error, t))
+      toast.error(getLocalizedVideoUploadError(error, t))
     } finally {
       setUploading(false)
     }
@@ -189,20 +198,28 @@ export function EducationFormView({
     <Card>
       <CardHeader>
         <CardTitle>
-          {resource ? t("education.form.editArticle") : t("education.form.newArticle")}
+          {resource
+            ? t("education.form.editArticle")
+            : t("education.form.newArticle")}
         </CardTitle>
       </CardHeader>
       <form onSubmit={handleSubmit(onSubmit)}>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="articleTitle">{t("education.form.titleLabel")}</Label>
+            <Label htmlFor="articleTitle">
+              {t("education.form.titleLabel")}
+            </Label>
             <Input id="articleTitle" {...register("articleTitle")} />
             {errors.articleTitle ? (
-              <p className="text-sm text-destructive">{errors.articleTitle.message}</p>
+              <p className="text-sm text-destructive">
+                {errors.articleTitle.message}
+              </p>
             ) : null}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="contentCategory">{t("education.form.categoryLabel")}</Label>
+            <Label htmlFor="contentCategory">
+              {t("education.form.categoryLabel")}
+            </Label>
             <Input id="contentCategory" {...register("contentCategory")} />
             {errors.contentCategory ? (
               <p className="text-sm text-destructive">
@@ -211,13 +228,17 @@ export function EducationFormView({
             ) : null}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="language">{t("education.form.languageLabel")}</Label>
+            <Label htmlFor="language">
+              {t("education.form.languageLabel")}
+            </Label>
             <Select id="language" {...register("language")}>
               <option value="english">{t("education.languageEnglish")}</option>
               <option value="tamil">{t("education.languageTamil")}</option>
             </Select>
             {errors.language ? (
-              <p className="text-sm text-destructive">{errors.language.message}</p>
+              <p className="text-sm text-destructive">
+                {errors.language.message}
+              </p>
             ) : null}
           </div>
           <div className="space-y-2">
@@ -231,14 +252,14 @@ export function EducationFormView({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="contentBody">{t("education.form.contentLabel")}</Label>
-            <Textarea
-              id="contentBody"
-              rows={12}
-              {...register("contentBody")}
-            />
+            <Label htmlFor="contentBody">
+              {t("education.form.contentLabel")}
+            </Label>
+            <Textarea id="contentBody" rows={12} {...register("contentBody")} />
             {errors.contentBody ? (
-              <p className="text-sm text-destructive">{errors.contentBody.message}</p>
+              <p className="text-sm text-destructive">
+                {errors.contentBody.message}
+              </p>
             ) : null}
           </div>
 
@@ -285,7 +306,8 @@ export function EducationFormView({
                 />
                 {selectedFile ? (
                   <p className="text-xs text-text-secondary">
-                    {selectedFile.name} ({Math.round(selectedFile.size / (1024 * 1024))} MB)
+                    {selectedFile.name} (
+                    {Math.round(selectedFile.size / (1024 * 1024))} MB)
                   </p>
                 ) : null}
                 {uploading ? (
@@ -297,7 +319,9 @@ export function EducationFormView({
                       />
                     </div>
                     <p className="text-xs text-text-secondary">
-                      {t("education.form.videoUploading", { percent: String(uploadProgress) })}
+                      {t("education.form.videoUploading", {
+                        percent: String(uploadProgress),
+                      })}
                     </p>
                   </div>
                 ) : null}
@@ -309,7 +333,9 @@ export function EducationFormView({
                 >
                   <Upload className="size-4" />
                   {uploading
-                    ? t("education.form.videoUploading", { percent: String(uploadProgress) })
+                    ? t("education.form.videoUploading", {
+                        percent: String(uploadProgress),
+                      })
                     : t("education.form.videoUpload")}
                 </Button>
               </div>
@@ -317,7 +343,10 @@ export function EducationFormView({
           </div>
         </CardContent>
         <CardFooter className="gap-2">
-          <Button type="submit" disabled={isSubmitting || uploading || removingVideo}>
+          <Button
+            type="submit"
+            disabled={isSubmitting || uploading || removingVideo}
+          >
             {isSubmitting
               ? t("common.saving")
               : resource

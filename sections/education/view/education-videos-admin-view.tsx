@@ -17,7 +17,10 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
-import { getLocalizedApiError } from "@/lib/localize-api-error"
+import {
+  getLocalizedApiError,
+  getLocalizedVideoUploadError,
+} from "@/lib/localize-api-error"
 import { useLanguage } from "@/providers/language-provider"
 import {
   createEducationVideo,
@@ -49,7 +52,9 @@ export function EducationVideosAdminView() {
 
   const [title, setTitle] = React.useState("")
   const [description, setDescription] = React.useState("")
-  const [category, setCategory] = React.useState<string>(EDUCATION_CATEGORIES[0])
+  const [category, setCategory] = React.useState<string>(
+    EDUCATION_CATEGORIES[0]
+  )
   const [selectedFile, setSelectedFile] = React.useState<File | null>(null)
   const [uploading, setUploading] = React.useState(false)
   const [uploadProgress, setUploadProgress] = React.useState(0)
@@ -102,7 +107,9 @@ export function EducationVideosAdminView() {
       lower.endsWith(".m4v")
     if (
       !extensionOk ||
-      (file.type && !ALLOWED_VIDEO_TYPES.has(file.type) && !file.type.startsWith("video/"))
+      (file.type &&
+        !ALLOWED_VIDEO_TYPES.has(file.type) &&
+        !file.type.startsWith("video/"))
     ) {
       toast.error(t("education.form.videoInvalidType"))
       event.target.value = ""
@@ -126,14 +133,14 @@ export function EducationVideosAdminView() {
           category: category.trim(),
           file: selectedFile,
         },
-        setUploadProgress,
+        setUploadProgress
       )
       toast.success(t("education.videos.uploaded"))
       resetUploadForm()
       setShowUpload(false)
       await loadVideos()
     } catch (error) {
-      toast.error(getLocalizedApiError(error, t))
+      toast.error(getLocalizedVideoUploadError(error, t))
     } finally {
       setUploading(false)
     }
@@ -223,7 +230,9 @@ export function EducationVideosAdminView() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="video-title">{t("education.form.titleLabel")}</Label>
+              <Label htmlFor="video-title">
+                {t("education.form.titleLabel")}
+              </Label>
               <Input
                 id="video-title"
                 value={title}
@@ -242,7 +251,9 @@ export function EducationVideosAdminView() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="video-category">{t("education.form.categoryLabel")}</Label>
+              <Label htmlFor="video-category">
+                {t("education.form.categoryLabel")}
+              </Label>
               <Select
                 id="video-category"
                 value={category}
@@ -252,7 +263,7 @@ export function EducationVideosAdminView() {
                   new Set([
                     ...EDUCATION_CATEGORIES,
                     ...(category ? [category] : []),
-                  ]),
+                  ])
                 ).map((value) => (
                   <option key={value} value={value}>
                     {value}
@@ -262,7 +273,9 @@ export function EducationVideosAdminView() {
             </div>
             {!editing ? (
               <div className="space-y-2">
-                <Label htmlFor="video-file">{t("education.videos.fileLabel")}</Label>
+                <Label htmlFor="video-file">
+                  {t("education.videos.fileLabel")}
+                </Label>
                 <p className="text-xs text-text-secondary">
                   {t("education.form.videoHint")}
                 </p>
@@ -274,7 +287,9 @@ export function EducationVideosAdminView() {
                   onChange={onFileChange}
                 />
                 {selectedFile ? (
-                  <p className="text-xs text-text-secondary">{selectedFile.name}</p>
+                  <p className="text-xs text-text-secondary">
+                    {selectedFile.name}
+                  </p>
                 ) : null}
                 {uploading ? (
                   <p className="text-sm text-text-secondary">

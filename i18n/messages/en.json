@@ -249,14 +249,35 @@
     "finishing": "Saving...",
     "completeSuccess": "Your health profile is ready!",
     "steps": {
-      "0": { "title": "Basic information", "description": "Your date of birth, country, height, and weight." },
-      "1": { "title": "Menstrual baseline", "description": "Your cycle length and recent period history." },
-      "2": { "title": "Symptoms", "description": "Select symptoms you commonly experience." },
-      "3": { "title": "Health conditions", "description": "Select any conditions that apply to you." },
+      "0": {
+        "title": "Basic information",
+        "description": "Your date of birth, country, height, and weight."
+      },
+      "1": {
+        "title": "Menstrual baseline",
+        "description": "Your cycle length and recent period history."
+      },
+      "2": {
+        "title": "Symptoms",
+        "description": "Select symptoms you commonly experience."
+      },
+      "3": {
+        "title": "Health conditions",
+        "description": "Select any conditions that apply to you."
+      },
       "4": { "title": "Lifestyle", "description": "Share your daily habits." },
-      "5": { "title": "Pregnancy & birth control", "description": "Optional reproductive health details." },
-      "6": { "title": "Notifications", "description": "Choose the reminders you want." },
-      "7": { "title": "Summary", "description": "Review your information before finishing." }
+      "5": {
+        "title": "Pregnancy & birth control",
+        "description": "Optional reproductive health details."
+      },
+      "6": {
+        "title": "Notifications",
+        "description": "Choose the reminders you want."
+      },
+      "7": {
+        "title": "Summary",
+        "description": "Review your information before finishing."
+      }
     },
     "fields": {
       "fullName": "Full name",
@@ -1183,6 +1204,10 @@
       "videoRemoving": "Removing…",
       "videoRemoved": "Video removed",
       "videoTooLarge": "Video must be 200 MB or smaller.",
+      "videoUploadTimeout": "The video upload timed out. Check your connection and try again.",
+      "videoUploadNetwork": "The connection to the video host was interrupted. Check your connection and try again.",
+      "videoUploadRejected": "The video host rejected the upload: {reason}",
+      "videoUploadProviderError": "The video host rejected the upload. Check the file format and your Cloudinary account limits.",
       "videoInvalidType": "Please choose an mp4, mov, webm, or m4v file.",
       "publish": "Publish",
       "update": "Update",
@@ -1517,7 +1542,9 @@
         "message_required": "Message is required.",
         "body_required": "Comment text is required.",
         "session_id_invalid": "Invalid chat session id.",
-        "email_exists": "This email is already registered — log in instead?"
+        "email_exists": "This email is already registered — log in instead?",
+        "video_too_large": "The video is too large. The maximum file size is 200 MB.",
+        "video_invalid": "Choose an MP4, MOV, WebM, or M4V video file."
       },
       "ai": {
         "session_not_found": "Chat session not found.",
@@ -1540,6 +1567,13 @@
       "education": {
         "not_found": "Educational resource not found.",
         "cloudinary_not_configured": "Video hosting is not configured. Add Cloudinary credentials on the API.",
+        "cloudinary_auth_failed": "Cloudinary rejected the Railway credentials. Check all three Cloudinary variables in Railway.",
+        "cloudinary_rate_limited": "Cloudinary is temporarily rate-limiting uploads. Wait a moment and try again.",
+        "cloudinary_unavailable": "Cloudinary could not be reached. Check the service status and try again.",
+        "video_rejected": "Cloudinary rejected this file. Check its format and your account upload-size limit.",
+        "video_provider_error": "Cloudinary could not complete the upload.",
+        "video_invalid_response": "The completed upload could not be verified. Please upload it again.",
+        "video_save_failed": "The video uploaded, but its education record could not be saved.",
         "video_upload_failed": "Video upload failed. Please try again.",
         "video_not_found": "This article has no video."
       },
