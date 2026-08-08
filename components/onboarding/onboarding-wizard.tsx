@@ -417,10 +417,23 @@ function OnboardingWizardForm({ user }: { user: UserProfile }) {
       }
 
       const nextValue = !current[option]
+      const mutuallyExclusiveUpdates: Partial<OnboardingFormState> = {}
+
+      if (nextValue && option === "trying_to_conceive") {
+        mutuallyExclusiveUpdates.is_pregnant = false
+        mutuallyExclusiveUpdates.using_birth_control = false
+        mutuallyExclusiveUpdates.birth_control_type = "none"
+      } else if (nextValue && option === "is_pregnant") {
+        mutuallyExclusiveUpdates.trying_to_conceive = false
+      } else if (nextValue && option === "using_birth_control") {
+        mutuallyExclusiveUpdates.trying_to_conceive = false
+      }
+
       return {
         ...current,
         reproductive_none: false,
         [option]: nextValue,
+        ...mutuallyExclusiveUpdates,
         ...(option === "using_birth_control" && !nextValue
           ? { birth_control_type: "none" as BirthControlType }
           : {}),
