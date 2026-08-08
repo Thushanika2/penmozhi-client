@@ -8,7 +8,6 @@ import {
   Bell,
   BookOpen,
   CalendarDays,
-  ChevronDown,
   ClipboardList,
   HeartPulse,
   LayoutDashboard,
@@ -22,6 +21,7 @@ import {
   Watch,
   X,
 } from "lucide-react"
+import type { LucideIcon } from "lucide-react"
 import * as React from "react"
 
 import { DashboardBottomNav } from "@/components/dashboard-bottom-nav"
@@ -34,25 +34,33 @@ import { cn } from "@/lib/utils"
 import { useAuth } from "@/providers/auth-provider"
 import { useLanguage } from "@/providers/language-provider"
 
-const primaryNav = [
+interface NavigationItem {
+  href: string
+  labelKey: string
+  icon: LucideIcon
+  exact?: boolean
+}
+
+const primaryNav: NavigationItem[] = [
   { href: "/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard, exact: true },
   { href: "/dashboard/cycle", labelKey: "nav.cycleTracking", icon: CalendarDays },
   { href: "/dashboard/daily-log", labelKey: "nav.dailyLog", icon: ClipboardList },
+  { href: "/dashboard/symptoms", labelKey: "nav.symptoms", icon: Activity },
   { href: "/dashboard/ai-assistant", labelKey: "nav.aiAssistant", icon: Sparkles },
   { href: "/dashboard/insights", labelKey: "nav.insights", icon: LineChart },
-  { href: "/dashboard/profile", labelKey: "nav.profile", icon: User },
-]
-
-const moreNav = [
-  { href: "/dashboard/symptoms", labelKey: "nav.symptoms", icon: Activity },
   { href: "/dashboard/reminders", labelKey: "nav.reminders", icon: Bell },
   { href: "/dashboard/pcos-status", labelKey: "nav.pcosStatus", icon: HeartPulse },
+]
+
+const remainingNav: NavigationItem[] = [
+  { href: "/education", labelKey: "nav.education", icon: BookOpen },
   { href: "/dashboard/forum", labelKey: "nav.forum", icon: MessageSquare },
   { href: "/dashboard/sharing", labelKey: "nav.sharing", icon: Share2 },
   { href: "/dashboard/wearables", labelKey: "nav.wearables", icon: Watch },
+  { href: "/dashboard/profile", labelKey: "nav.profile", icon: User },
 ]
 
-const modeNavMap: Record<string, { href: string; labelKey: string; icon: typeof Baby }[]> = {
+const modeNavMap: Record<string, NavigationItem[]> = {
   pregnancy: [{ href: "/dashboard/pregnancy", labelKey: "nav.pregnancy", icon: Baby }],
   perimenopause: [{ href: "/dashboard/perimenopause", labelKey: "nav.perimenopause", icon: HeartPulse }],
   conceive: [{ href: "/dashboard/conceive", labelKey: "nav.conceive", icon: Sparkles }],
@@ -71,15 +79,14 @@ export function DashboardSidebar({ children }: { children: React.ReactNode }) {
   const { user, logout } = useAuth()
   const { t } = useLanguage()
   const [mobileOpen, setMobileOpen] = React.useState(false)
-  const [moreOpen, setMoreOpen] = React.useState(false)
 
   async function handleLogout() {
     await logout()
     router.replace("/")
   }
 
-  const moreActive = moreNav.some((item) => isActive(pathname, item.href))
   const modeNav = modeNavMap[user?.mode ?? "period"] ?? []
+  const navItems = [...primaryNav, ...modeNav, ...remainingNav]
 
   return (
     <div className="flex min-h-svh gradient-mesh">
@@ -108,8 +115,8 @@ export function DashboardSidebar({ children }: { children: React.ReactNode }) {
           </div>
         </div>
 
-        <nav className="flex-1 space-y-0.5 overflow-y-auto p-3">
-          {primaryNav.map((item) => {
+        <nav className="flex-1 space-y-px overflow-y-auto px-3 py-2">
+          {navItems.map((item) => {
             const Icon = item.icon
             const active = isActive(pathname, item.href, item.exact)
             return (
@@ -117,71 +124,16 @@ export function DashboardSidebar({ children }: { children: React.ReactNode }) {
                 key={item.href}
                 href={item.href}
                 onClick={() => setMobileOpen(false)}
-                className={cn("nav-link pl-4", active ? "nav-link-active" : "nav-link-inactive")}
+                className={cn(
+                  "nav-link gap-2.5 py-1 pl-4",
+                  active ? "nav-link-active" : "nav-link-inactive",
+                )}
               >
                 <Icon className="size-4 shrink-0" />
                 {t(item.labelKey)}
               </Link>
             )
           })}
-
-          {modeNav.map((item) => {
-            const Icon = item.icon
-            const active = isActive(pathname, item.href)
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setMobileOpen(false)}
-                className={cn("nav-link pl-4", active ? "nav-link-active" : "nav-link-inactive")}
-              >
-                <Icon className="size-4 shrink-0" />
-                {t(item.labelKey)}
-              </Link>
-            )
-          })}
-
-          <button
-            type="button"
-            onClick={() => setMoreOpen((open) => !open)}
-            className={cn(
-              "nav-link w-full pl-4",
-              moreActive ? "nav-link-active" : "nav-link-inactive",
-            )}
-          >
-            <ChevronDown className={cn("size-4 shrink-0 transition-transform", moreOpen && "rotate-180")} />
-            {t("nav.more")}
-          </button>
-
-          {moreOpen ? (
-            <div className="ml-2 space-y-0.5 border-l border-border pl-2">
-              {moreNav.map((item) => {
-                const Icon = item.icon
-                const active = isActive(pathname, item.href)
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={() => setMobileOpen(false)}
-                    className={cn("nav-link pl-3 text-sm", active ? "nav-link-active" : "nav-link-inactive")}
-                  >
-                    <Icon className="size-4 shrink-0" />
-                    {t(item.labelKey)}
-                  </Link>
-                )
-              })}
-            </div>
-          ) : null}
-
-          <div className="my-3 border-t border-border" />
-          <Link
-            href="/education"
-            onClick={() => setMobileOpen(false)}
-            className="nav-link nav-link-inactive pl-4"
-          >
-            <BookOpen className="size-4 shrink-0" />
-            {t("nav.education")}
-          </Link>
 
           <ModeSwitcher />
         </nav>
