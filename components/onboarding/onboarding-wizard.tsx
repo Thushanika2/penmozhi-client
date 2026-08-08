@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select } from "@/components/ui/select"
 import { compareDateKeysDesc } from "@/lib/date-only"
+import { cn } from "@/lib/utils"
 import { getPostAuthPath } from "@/lib/auth-redirect"
 import { getLocalizedApiError } from "@/lib/localize-api-error"
 import {
@@ -67,6 +68,8 @@ const CONDITION_OPTIONS: HealthConditionOption[] = [
 ]
 
 const TOTAL_STEPS = 8
+const MIN_ONBOARDING_AGE = 9
+const MAX_ONBOARDING_AGE = 80
 
 type OnboardingFormState = Omit<
   OnboardingPayload,
@@ -86,7 +89,7 @@ function isTeenagerFromDateOfBirth(dateOfBirth: string): boolean {
 
 function isBasicInfoStepComplete(form: OnboardingFormState): boolean {
   return (
-    Boolean(form.date_of_birth) &&
+    isDateOfBirthValid(form.date_of_birth) &&
     Boolean(form.country.trim()) &&
     form.height >= 50 &&
     form.height <= 300 &&
@@ -142,6 +145,9 @@ function getStepFieldErrors(
   const errors: StepFieldErrors = {}
   if (stepIndex === 0) {
     if (!form.date_of_birth) errors.date_of_birth = t("onboarding.validation.dateOfBirthRequired")
+    else if (!isDateOfBirthValid(form.date_of_birth)) {
+      errors.date_of_birth = t("onboarding.validation.dateOfBirthAgeRange")
+    }
     if (!form.country.trim()) errors.country = t("onboarding.validation.countryRequired")
     if (!form.height || form.height < 50 || form.height > 300) {
       errors.height = t("onboarding.validation.heightRequired")
@@ -225,14 +231,46 @@ function clearDraft(userId: number) {
   localStorage.removeItem(`${DRAFT_STORAGE_PREFIX}${userId}`)
 }
 
-function calculateAge(dateOfBirth: string) {
+function calculateAge(dateOfBirth: string, today = new Date()) {
   if (!dateOfBirth) return null
-  const dob = new Date(dateOfBirth)
-  const today = new Date()
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateOfBirth)
+  if (!match) return null
+  const [, year, month, day] = match.map(Number)
+  const dob = new Date(year, month - 1, day)
+  if (
+    dob.getFullYear() !== year ||
+    dob.getMonth() !== month - 1 ||
+    dob.getDate() !== day ||
+    dob > today
+  ) {
+    return null
+  }
   let age = today.getFullYear() - dob.getFullYear()
   const monthDiff = today.getMonth() - dob.getMonth()
   if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) age -= 1
   return age
+}
+
+function isDateOfBirthValid(dateOfBirth: string): boolean {
+  const age = calculateAge(dateOfBirth)
+  return age !== null && age >= MIN_ONBOARDING_AGE && age <= MAX_ONBOARDING_AGE
+}
+
+function dateYearsAgo(years: number, offsetDays = 0): string {
+  const today = new Date()
+  const targetYear = today.getFullYear() - years
+  const lastDayOfTargetMonth = new Date(targetYear, today.getMonth() + 1, 0).getDate()
+  const value = new Date(
+    targetYear,
+    today.getMonth(),
+    Math.min(today.getDate(), lastDayOfTargetMonth),
+  )
+  value.setDate(value.getDate() + offsetDays)
+  return [
+    value.getFullYear(),
+    String(value.getMonth() + 1).padStart(2, "0"),
+    String(value.getDate()).padStart(2, "0"),
+  ].join("-")
 }
 
 function calculateBmi(weight: number, height: number) {
@@ -292,6 +330,7 @@ function OnboardingWizardForm({ user }: { user: UserProfile }) {
   const [submitting, setSubmitting] = React.useState(false)
   const [leavingToRegister, setLeavingToRegister] = React.useState(false)
   const [attemptedContinue, setAttemptedContinue] = React.useState(false)
+  const [dateOfBirthTouched, setDateOfBirthTouched] = React.useState(false)
   const [form, setForm] = React.useState<OnboardingFormState>(
     () => initialDraft?.form ?? defaultForm(user),
   )
@@ -317,6 +356,18 @@ function OnboardingWizardForm({ user }: { user: UserProfile }) {
 
   function updateField<K extends keyof OnboardingFormState>(key: K, value: OnboardingFormState[K]) {
     setForm((current) => ({ ...current, [key]: value }))
+  }
+
+  function updateDateOfBirth(value: string) {
+    updateField("date_of_birth", value)
+    if (!value) {
+      setDateOfBirthTouched(false)
+      return
+    }
+
+    const invalid = !isDateOfBirthValid(value)
+    setDateOfBirthTouched(invalid)
+    if (invalid) toast.error(t("onboarding.validation.dateOfBirthAgeRange"))
   }
 
   function toggleListItem(
@@ -474,10 +525,15 @@ function OnboardingWizardForm({ user }: { user: UserProfile }) {
     }
   }
 
-  const age = calculateAge(form.date_of_birth)
+  const age = isDateOfBirthValid(form.date_of_birth)
+    ? calculateAge(form.date_of_birth)
+    : null
   const bmi = calculateBmi(form.weight, form.height)
   const stepComplete = isStepComplete(step, form)
   const fieldErrors = attemptedContinue ? getStepFieldErrors(step, form, t) : {}
+  if (step === 0 && dateOfBirthTouched && !isDateOfBirthValid(form.date_of_birth)) {
+    fieldErrors.date_of_birth = t("onboarding.validation.dateOfBirthAgeRange")
+  }
   const sortedPeriodHistory = [...form.period_history].sort((a, b) =>
     compareDateKeysDesc(a.period_start, b.period_start),
   )
@@ -510,9 +566,15 @@ function OnboardingWizardForm({ user }: { user: UserProfile }) {
               >
                 <Input
                   type="date"
-                  className="rounded-xl"
+                  min={dateYearsAgo(MAX_ONBOARDING_AGE + 1, 1)}
+                  max={dateYearsAgo(MIN_ONBOARDING_AGE)}
+                  aria-invalid={Boolean(fieldErrors.date_of_birth)}
+                  className={cn(
+                    "rounded-xl",
+                    fieldErrors.date_of_birth && "border-destructive focus-visible:border-destructive",
+                  )}
                   value={form.date_of_birth}
-                  onChange={(e) => updateField("date_of_birth", e.target.value)}
+                  onChange={(e) => updateDateOfBirth(e.target.value)}
                 />
               </Field>
               <Field label={t("onboarding.fields.age")}>

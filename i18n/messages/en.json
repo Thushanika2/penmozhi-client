@@ -345,6 +345,7 @@
     },
     "validation": {
       "dateOfBirthRequired": "Please enter your date of birth.",
+      "dateOfBirthAgeRange": "Please enter a valid date of birth. This app is meant for users aged 9 to 80.",
       "countryRequired": "Please select your country.",
       "heightRequired": "Please enter a valid height.",
       "weightRequired": "Please enter a valid weight.",
